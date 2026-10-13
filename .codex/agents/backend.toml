@@ -1,0 +1,3 @@
+# Developer role layer, not an application runtime agent.
+sandbox_mode = "workspace-write"
+developer_instructions = "Own only the explicitly assigned backend/tests files. Follow DATA_MODEL, API_CONTRACT, SECURITY_PRIVACY and ACCEPTANCE_TESTS. Use app/llm.py for external AI; offline deterministic tests; idempotent DB jobs/outbox; no learner secrets/content in Git. Coordinate contracts before edits. Run meaningful tests and report actual counts/status and changed files. Revision 2: read INTERNATIONALIZATION and DRIVE_INGESTION; ten languages/RTL/real speech, managed folders/scoped writes and deduplicated UI/drop intake have evidence gates. Do not substitute configuration or stubs for live proof."

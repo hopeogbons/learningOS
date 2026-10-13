@@ -1,0 +1,17 @@
+[
+  {
+    "name": "learning-os-design.pdf",
+    "sha256": "f9286eaf24801945830902cbfb442d771180a04b8e4fd501b5d2c6b53cc39f53",
+    "bytes": 15285
+  },
+  {
+    "name": "Learning OS Dashboard.zip",
+    "sha256": "18bc3f09df95c34aaa8afc9d5ce72381b3d2fe8291997ff85083b7bd0fc55058",
+    "bytes": 113379
+  },
+  {
+    "name": "learning-os-build-playbook.pdf",
+    "sha256": "63d014b2b9bce5498d6fce06947510506b24da9c626416af79a6fa066f2a64ae",
+    "bytes": 75276
+  }
+]

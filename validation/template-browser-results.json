@@ -1,0 +1,40 @@
+[
+  {
+    "view": "mobile",
+    "viewport": [
+      390,
+      844
+    ],
+    "http_status": 200,
+    "title": "Learning OS",
+    "body_has_product": true,
+    "horizontal_overflow": false,
+    "page_errors": [],
+    "drawer_open": true,
+    "drawer_escape_closes": true
+  },
+  {
+    "view": "tablet",
+    "viewport": [
+      768,
+      1024
+    ],
+    "http_status": 200,
+    "title": "Learning OS",
+    "body_has_product": true,
+    "horizontal_overflow": false,
+    "page_errors": []
+  },
+  {
+    "view": "desktop",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "http_status": 200,
+    "title": "Learning OS",
+    "body_has_product": true,
+    "horizontal_overflow": false,
+    "page_errors": []
+  }
+]

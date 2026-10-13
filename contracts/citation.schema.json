@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "material_revision_id",
+    "source",
+    "excerpt",
+    "excerpt_hash"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "material_revision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "pdf"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "page": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "page"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "text"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "heading": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "line_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "line_end": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "heading",
+                "line_start",
+                "line_end"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "spreadsheet"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "sheet": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "cell_range": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "sheet",
+                "cell_range"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "csv"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "row_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "row_end": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "row_start",
+                "row_end",
+                "columns"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "photo"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "filename": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "section": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "filename",
+                "section"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "web"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "paragraph": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "captured_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "url",
+                "paragraph",
+                "captured_at"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "locator"
+          ],
+          "properties": {
+            "kind": {
+              "const": "captions"
+            },
+            "locator": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "video_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start_seconds": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end_seconds": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "language": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "video_id",
+                "start_seconds",
+                "end_seconds",
+                "language"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "excerpt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "excerpt_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

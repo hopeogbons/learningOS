@@ -1,0 +1,101 @@
+{
+  "citation": {
+    "id": "cite-atom",
+    "material_revision_id": "revision-ch3",
+    "source": {
+      "kind": "text",
+      "locator": {
+        "heading": "Atomic number",
+        "line_start": 4,
+        "line_end": 4
+      }
+    },
+    "excerpt": "The atomic number equals the number of protons in an atom's nucleus. A neutral atom has the same number of electrons as protons.",
+    "excerpt_hash": "dab20064a586b225a9ddd5d764d34a0a32c9a43bf2419add67155d33933178ee"
+  },
+  "reviewer": {
+    "item_id": "item-1",
+    "correctness": "incorrect",
+    "confidence": 5,
+    "missing_parts": [
+      "Atomic number is proton count, not mass number."
+    ],
+    "guessing_signal": "unknown",
+    "feedback": "Review the cited definition and compare it with mass number.",
+    "title_complete": false,
+    "rationale": "Answer contradicts the source.",
+    "evidence_event_ids": [
+      "event-1"
+    ],
+    "citation_ids": [
+      "cite-atom"
+    ]
+  },
+  "quiz_set": {
+    "chunk_id": "atomic-number",
+    "source_revision_id": "revision-ch3",
+    "questions": [
+      {
+        "id": "q0",
+        "kind": "recall",
+        "concept_ids": [
+          "atomic-number"
+        ],
+        "question": "What quantity defines the atomic number?",
+        "expected_answer": "The number of protons.",
+        "citation_ids": [
+          "cite-atom"
+        ]
+      },
+      {
+        "id": "q1",
+        "kind": "explain",
+        "concept_ids": [
+          "atomic-number"
+        ],
+        "question": "Explain how neutrality constrains an atom's particle counts.",
+        "expected_answer": "A neutral atom has equal numbers of protons and electrons.",
+        "citation_ids": [
+          "cite-atom"
+        ]
+      },
+      {
+        "id": "q2",
+        "kind": "apply",
+        "concept_ids": [
+          "atomic-number"
+        ],
+        "question": "A neutral atom has six protons. How many electrons does it have?",
+        "expected_answer": "Six electrons.",
+        "citation_ids": [
+          "cite-atom"
+        ]
+      },
+      {
+        "id": "q3",
+        "kind": "recall",
+        "concept_ids": [
+          "atomic-number"
+        ],
+        "question": "A neutral atom has ten electrons. What is its atomic number?",
+        "expected_answer": "Ten, because the neutral atom has ten protons.",
+        "citation_ids": [
+          "cite-atom"
+        ]
+      },
+      {
+        "id": "q4",
+        "kind": "explain",
+        "concept_ids": [
+          "atomic-number"
+        ],
+        "question": "What does an atomic number label tell you about the nucleus?",
+        "expected_answer": "The number of protons in the nucleus.",
+        "citation_ids": [
+          "cite-atom"
+        ]
+      }
+    ]
+  },
+  "scope": "manually authored schema examples, not Codex skill execution proof"
+}

@@ -1,0 +1,8 @@
+{
+  "cli_version": "0.159.2",
+  "schema_url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json",
+  "schema_sha256": "4db5e2d466e8c34f80e6843654af736f5dab04c88aebf60c234e57cd3ccca0da",
+  "fetched_on": "2026-10-13",
+  "developer_site": "blocked by network proxy, HTTP CONNECT 403",
+  "scope": "schema compatibility only, no agent/hook runtime activation proven"
+}

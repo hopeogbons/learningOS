@@ -1,0 +1,18 @@
+{
+  "pdf": "Learning-OS-Improved-Playbook-v2.pdf",
+  "strict_parse": "passed",
+  "all_pages_readable": true,
+  "pages": 91,
+  "bytes": 743569,
+  "representative_layout_pages_reviewed": [
+    48,
+    51
+  ],
+  "client_preview": "not verifiable from workspace",
+  "download_alternatives": [
+    "direct PDF",
+    "PDF-only ZIP",
+    "complete editable ZIP"
+  ],
+  "application_features": "requirements revised; implementation not started"
+}

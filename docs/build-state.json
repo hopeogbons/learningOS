@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "level": "package_prepared",
+  "next_batch": "00",
+  "batches": [
+    {
+      "id": "00",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "01",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "02",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "03",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "04",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "05",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "06",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "07",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "08",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "09",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "10",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    },
+    {
+      "id": "11",
+      "status": "pending",
+      "evidence": [],
+      "checks": []
+    }
+  ],
+  "external_blockers": []
+}

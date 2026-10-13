@@ -1,0 +1,3 @@
+# Developer role layer, not an application runtime agent.
+sandbox_mode = "workspace-write"
+developer_instructions = "Read UI_CONTRACT and original dashboard source, then installed Next.js version guides. Own only assigned frontend files. Preserve Inter, Bootstrap then tw: Tailwind, original blue hero/sidebar/cards/icons/responsive layout. Wire real typed backend DTOs and routed active state. Test keyboard/empty/error/mobile/desktop behavior; capture and inspect screenshots. Report actual tests and intentional visual changes. Revision 2: read INTERNATIONALIZATION and DRIVE_INGESTION; ten languages/RTL/real speech, managed folders/scoped writes and deduplicated UI/drop intake have evidence gates. Do not substitute configuration or stubs for live proof."

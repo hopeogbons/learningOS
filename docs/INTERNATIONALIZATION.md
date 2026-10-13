@@ -1,0 +1,35 @@
+# Internationalization: ten launch languages, including speech
+
+The language-selector screenshot is the target registry: English (`en`), Chinese Simplified (`zh-Hans`), Spanish (`es`), Arabic (`ar`), Portuguese (`pt`), French (`fr`), Japanese (`ja`), Russian (`ru`), German (`de`) and Indonesian (`id`). Exact native labels/order live in `contracts/language-registry.json`. These are required launch targets; each advertised capability still needs implementation/verification. This document replaces the old English-only-baseline decision.
+
+## Three linked preferences, not one overloaded locale
+
+`ui_locale` controls menus, forms, state/error messages, confidence labels, dates/numbers and accessibility text. `study_locale` controls teaching, questions, feedback, summaries and spoken follow-ups. `speech_locale` is a supported region-specific BCP 47 tag for speech recognition/output. First choice links UI and study language with a suggested speech variant; the learner can change them separately. Browser language suggests a first-time default, never repeatedly overrides an explicit preference. Persist preferences per account; use a non-sensitive locale cookie before login and server-render the correct `lang`/`dir` to avoid hydration flicker. Voice fallback does not reset the learner's chosen language.
+
+## Interface requirements
+
+Add the language chooser to Profile and the existing desktop account/top-bar area; make it reachable in the mobile drawer. Keep all six shortcuts and the current brand blue/card styling. Show native language label plus English annotation like the reference, selected state, keyboard navigation and accessible names. Individual native labels use bidi isolation. No flags: languages and countries are not interchangeable.
+
+Central message IDs and full catalogs for all ten languages, with interpolation/plural rules via a supported React/Next.js i18n library after compatibility verification. Extract every user-visible string, including source status/errors, voice help, confidence scale, notifications and screen-reader text. Do not run translation services in render or silently turn untranslated placeholders into a support claim. Missing catalog keys fail CI; an explicit unavailable-language state is better than a partly translated screen labeled supported. User collection/source titles stay user-authored unless the learner asks for a translated display alias.
+
+Arabic sets root `dir=rtl`; convert directional CSS to logical properties so sidebar spacing, drawer, cards and reading order mirror appropriately while preserving 264px width/992–1400 breakpoints. Keep code/formulas/citation identifiers and URLs LTR in isolated spans. Add locally bundled, licensed Arabic/CJK font fallbacks while retaining Inter for Latin text; no third-party font network dependence. Test longer German/Russian labels, Chinese/Japanese glyphs, Arabic mixed numerals, screen readers, 200% zoom and mobile bottom bar.
+
+## Learning across languages
+
+Source language is detected or specified per material revision and can be corrected by the learner. Teaching and checks respond in study_locale even when source language differs. Keep original excerpts/source locators immutable; optionally show a clearly labeled translation alongside the original quote, never replace the citation text/hash with translated prose. Do not change chemical symbols, equations, code or meaning. Cross-language answers are assessed for conceptual correctness against source meaning, not English spelling. Low translation/semantic confidence triggers clarification/uncertain assessment rather than completing a title. Pin prompt/model/language versions and evaluation fixtures.
+
+Progress, critical-concept coverage, completion and the review ladder are independent of display language. Switching language keeps the same Collection, source revision, scope, session and history; no new source ingestion solely for a locale change. Freeze an active turn's generation language; apply a change at the next turn, clearly reflecting it. Never restart the session or lose a pending answer.
+
+## Multilingual speech is a runtime feature
+
+Set recognition input language explicitly and select a matching browser voice using its actual language inventory; handle asynchronous voice loading. If a browser has no usable recognition or synthesis for the chosen language, route to a supported server STT/TTS adapter through backend/app/llm.py (the single external AI boundary) after provider verification. The old optional-server-only assumption is replaced: all ten spoken-language targets must have a real usable provider path before advertising all-ten voice support. Do not synthesize English while labeling output Arabic, or interpret a feature flag as an actual voice.
+
+Provider capability matrix separates UI translation, generated study text, speech-to-text and text-to-speech for each language/variant, with verified date/provider/browser and evidence. Provider documentation is a prerequisite, actual clear-speech transcription/audible-output checks are the proof. No model/voice ID is invented in this package. Voice entry shows language, transcript preview/edit, one targeted cited follow-up per turn, stop control and three-turn limit. Permission refusal/no-network remains explicit typing fallback in selected language, not a claim of spoken success. Raw audio is transient by default and browser/provider processing disclosed.
+
+## Required gates
+
+L01: complete key/plural/interpolation catalogs for ten locales; browser render/navigation/status checks per locale, account preference survives reload/sign-out/sign-in; legitimate locale fallback documented. L02: Arabic RTL and all glyph/long-label/zoom/mobile/desktop layouts pass with original shell fidelity. L03: cross-source-language concept teaching, answer grading, source-translation label and unchanged original citation verified in each locale with meaningful native/proficient review; synthetic multilingual evaluation set versioned. L04: per-language STT/TTS proof of a three-turn exchange, provider/browser identity, denied-mic/no-voice fallback. L05: switching UI/study/speech preferences does not alter scope/progress/history or lose a turn. Catalog tests alone cannot satisfy L03/L04; languages lacking proof remain unverified/blocked in the release ledger.
+
+## Geographic scalability evidence
+
+Demonstrate the same source and immutable scope viewed/studied in at least two languages including Arabic RTL, plus all-ten catalog and speech capability evidence. Pair this with low-bandwidth/timezone/tenant/load tests from SCALABILITY. Multi-language support is measurable accessibility and market reach, not proof of unlimited worldwide availability or provider/legal coverage in every country.

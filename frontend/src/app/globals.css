@@ -1,0 +1,291 @@
+/*
+ * Styling strategy
+ * - Bootstrap 5.3 (imported in layout.tsx) owns layout primitives and components:
+ *   grid, cards, list groups, tables, progress bars, badges, offcanvas, nav pills.
+ * - Tailwind (prefixed "tw:") owns fine-grained visual tuning: sizes, radii, shadows,
+ *   gradients and responsive tweaks. Preflight is NOT imported, so Bootstrap's reboot is untouched.
+ * - Order matters: Bootstrap loads first, Tailwind utilities second, the hand-written
+ *   rules below last. Never set the same property in both a custom class and a "tw:" utility
+ *   on one element.
+ */
+@import "@fontsource-variable/inter/wght.css";
+@import "tailwindcss/theme.css" prefix(tw);
+@import "tailwindcss/utilities.css" prefix(tw);
+
+@theme {
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dbe5ff;
+  --color-brand-500: #2f62ea;
+  --color-brand-600: #2149e0;
+  --color-brand-700: #1a37c9;
+  --color-brand-900: #14267f;
+  --color-ink: #1f2a44;
+  --color-muted: #5d6882;
+  --color-surface: #f4f6fb;
+  --breakpoint-xxl: 87.5rem; /* 1400px, same as Bootstrap xxl */
+}
+
+:root {
+  --edu-brand: #2149e0;
+  --edu-brand-dark: #1a37c9;
+  --edu-ink: #1f2a44;
+  --edu-muted: #5d6882;
+  --edu-surface: #f4f6fb;
+  --edu-sidebar-w: 264px;
+  --bs-body-font-family: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bs-body-color: var(--edu-ink);
+  --bs-body-bg: var(--edu-surface);
+  --bs-primary: #2149e0;
+  --bs-primary-rgb: 33, 73, 224;
+  --bs-link-color: #2149e0;
+  --bs-link-color-rgb: 33, 73, 224;
+  --bs-link-hover-color: #1a37c9;
+  --bs-secondary-color: #5d6882;
+  --bs-border-color: #e6eaf3;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- App shell ---------- */
+.app-main {
+  min-height: 100vh;
+}
+
+.app-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 16px 112px;
+  margin: -28px auto 0;
+  max-width: 640px;
+}
+
+/* ---------- Mobile hero (blue header + greeting) ---------- */
+.card {
+  --bs-card-bg: #fff;
+}
+
+.offcanvas {
+  --bs-offcanvas-bg: #fff;
+}
+
+.hero {
+  background:
+    radial-gradient(120% 90% at 85% 0%, rgba(86, 130, 255, 0.55) 0%, rgba(86, 130, 255, 0) 60%),
+    linear-gradient(165deg, var(--edu-brand-dark) 0%, #2a5bea 70%, #4a79f2 100%);
+  color: #fff;
+  padding: calc(env(safe-area-inset-top) + 14px) 20px 64px;
+  position: relative;
+  z-index: 0;
+}
+
+/* The reference hero ends in a flat edge. Beside the quick-action card a lighter
+   blue band continues downward and fades into the page background. */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 250px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #2f78eb 0,
+    #93bef2 30px,
+    #a3c8f3 25%,
+    #bcd6f6 55%,
+    #d6e6fa 80%,
+    var(--edu-surface) 100%
+  );
+}
+
+.hero-bar {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  margin: 0 auto 22px;
+  max-width: 640px;
+}
+
+.hero-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.hero-greeting {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: inherit;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  background-color: rgba(255, 255, 255, 0.14);
+  outline: none;
+}
+.icon-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+.icon-btn--light {
+  background: #fff;
+  color: var(--edu-ink);
+  border: 1px solid var(--bs-border-color);
+}
+.icon-btn--light:hover,
+.icon-btn--light:focus-visible {
+  background: var(--edu-surface);
+}
+
+.dot-badge--hero {
+  border-color: #2a5bea;
+}
+
+.nav-group-label {
+  margin: 0 0 6px;
+  padding: 0 14px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--edu-muted);
+}
+
+.dot-badge {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff5a5f;
+  border: 2px solid #fff;
+}
+
+/* ---------- Quick actions ---------- */
+.quick-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--edu-ink);
+  text-decoration: none;
+  border-radius: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.quick-tile:hover {
+  color: var(--edu-ink);
+  transform: translateY(-2px);
+}
+.quick-tile:focus-visible {
+  outline: 3px solid rgba(33, 73, 224, 0.35);
+  outline-offset: 3px;
+}
+
+/* ---------- Bottom tab bar (mobile) ---------- */
+.bottom-nav {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 1030;
+  background: #fff;
+  border-top: 1px solid var(--bs-border-color);
+  box-shadow: 0 -8px 24px rgba(31, 42, 68, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #5b667d;
+  text-decoration: none;
+}
+.bottom-nav a[aria-current="page"] {
+  color: var(--edu-brand);
+  font-weight: 600;
+}
+
+/* ---------- Sidebar (desktop) ---------- */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--edu-sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--bs-border-color);
+  padding: 24px 16px;
+  z-index: 1020;
+}
+.sidebar .nav-link,
+.drawer-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  color: #4a5670;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.sidebar .nav-link:hover,
+.drawer-nav .nav-link:hover {
+  background: var(--edu-surface);
+  color: var(--edu-ink);
+}
+.sidebar .nav-link.active,
+.drawer-nav .nav-link.active {
+  background: var(--edu-brand);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(33, 73, 224, 0.28);
+}
+
+@media (min-width: 992px) and (max-height: 860px) {
+  .sidebar-help {
+    display: none;
+  }
+}
+
+/* ---------- Desktop layout switch ---------- */
+@media (min-width: 992px) {
+  .app-main {
+    margin-left: var(--edu-sidebar-w);
+  }
+  .app-content {
+    margin: 0 auto;
+    padding: 8px 32px 48px;
+    max-width: 1280px;
+  }
+}
+
+/* ---------- Misc ---------- */
+.event-row + .event-row {
+  border-top: 1px solid var(--bs-border-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-tile,
+  .icon-btn,
+  .offcanvas {
+    transition: none;
+  }
+}

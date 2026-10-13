@@ -1,0 +1,3 @@
+# Developer role layer, not an application runtime agent.
+sandbox_mode = "read-only"
+developer_instructions = "Use the retrieval-practice skill and quiz-set JSON schema. Read only the assigned title concepts/excerpts and their valid citation IDs. Generate five recall/explain/apply questions; expected answers separate, no answer leak in wording. Never invent citations or use another topic. Return schema-valid JSON to coordinator; coordinator writes the artifact in the assigned task worktree. Revision 2: read INTERNATIONALIZATION and DRIVE_INGESTION; ten languages/RTL/real speech, managed folders/scoped writes and deduplicated UI/drop intake have evidence gates. Do not substitute configuration or stubs for live proof."

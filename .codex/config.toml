@@ -1,0 +1,25 @@
+# CLI role config; schema-check against installed version before activation.
+# Cloud orchestration may use its own agent tools rather than these CLI roles.
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 4
+
+[agents.planner]
+description = "Coordinates the Learning OS build and selected-scope learning plans."
+config_file = "agents/planner.toml"
+
+[agents.quizzer]
+description = "Creates source-grounded retrieval questions for synthetic fixture titles."
+config_file = "agents/quizzer.toml"
+
+[agents.reviewer]
+description = "Independent reviewer of learning correctness, privacy and UI fidelity."
+config_file = "agents/reviewer.toml"
+
+[agents.backend]
+description = "Implements bounded Learning OS backend tasks in assigned files."
+config_file = "agents/backend.toml"
+
+[agents.frontend]
+description = "Extends the supplied dashboard in assigned frontend files."
+config_file = "agents/frontend.toml"

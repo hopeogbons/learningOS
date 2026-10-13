@@ -1,0 +1,19 @@
+# Operations, continuity and recovery
+
+## Runtime
+
+Monitor API p95/error rate, worker heartbeat and queue age, stuck/failed jobs, provider error/usage/latency, scheduled due backlog, DB/storage health, auth failures, quota rejection and backup age. Log request/job/event IDs and sanitized codes, not content. `/health` proves process life; `/ready` checks DB/migration/worker freshness and required configuration. Provider outage yields queued/retryable UI and bounded backoff; never fake a correct answer.
+
+Daily backup schedule covers PostgreSQL, private source blobs, extraction/citation metadata and encryption-key recovery through secure key management. Define first-release RPO 24h/RTO 4h as targets; measure restore and revise before claiming them. Store encrypted off-host backups with retention and ownership. Monthly rehearsal (and before first public release) restores into an isolated namespace with no worker/email side effects and validates source/citation hashes, attempts, due state and counts. Deletion/retention policy includes backup expiry.
+
+## Build continuation
+
+Read `docs/build-state.json` and `docs/build-log.md` on resume, inspect Git, locate last gate/evidence, and continue earliest pending requirement. Lock dependency/tool versions and preserve valid build output. A failed check is recorded with exit status, expected vs actual, diagnosis and next action; unrelated successful checks don't erase it. Re-running a command must follow a changed condition or a specific diagnosis, not unchanged retry loops.
+
+Use local batch tags as optional non-overwriting checkpoints after meaningful tests. Recover by a new corrective commit or revert of a scoped known change with clean review; preserve user modifications. Never instruct `git reset --hard` as normal recovery. An unborn repo has no recovery tag until an initial commit exists. Worktree cleanup only removes task-owned clean, merged worktrees after preserving artifacts and confirming no user changes; never remove the shared main checkout.
+
+## Incidents
+
+Source ingestion failures: preserve last valid revision, classify need-attention vs retryable, verify parser/provider limits and scope. Duplicate results: inspect idempotency/event/lease IDs, pause offending worker, correct transaction boundaries before replay. Auth/token failures: check names/status and scoped operation, prompt user for re-consent securely; don't duplicate secret declarations. Suspected ownership leak: disable affected route, revoke implicated sessions/links, preserve redacted evidence, run two-user suite and review before reopening. Production migration failure: stop release, use tested image/schema compatibility plan and isolated restore, not untested destructive downgrade.
+
+Revision 2 monitoring adds folder provisioning/write queue age, Drive quota/consent/revocation errors, upload retries/dedup reconciliation and manual-drop scan freshness. Record speech errors/latency/quotas by capability/locale without retaining audio/transcripts in telemetry. Restore verifies Drive folder/file mappings and saved user language preferences along with citations/history; no restore job should create duplicate folders or reupload sources blindly.

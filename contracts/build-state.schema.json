@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "level",
+    "next_batch",
+    "batches",
+    "external_blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "level": {
+      "enum": [
+        "package_prepared",
+        "offline_demo_validated",
+        "live_workflow_validated",
+        "production_candidate",
+        "deployed_verified"
+      ]
+    },
+    "next_batch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "external_blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "batches": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "evidence",
+          "checks"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(0[0-9]|1[01])$"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "in_progress",
+              "passed",
+              "blocked",
+              "failed"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "outcome",
+                "command",
+                "cwd",
+                "exit_code",
+                "artifact"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "outcome": {
+                  "enum": [
+                    "passed",
+                    "failed",
+                    "expected_failure",
+                    "skipped",
+                    "unrun",
+                    "blocked"
+                  ]
+                },
+                "command": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cwd": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "exit_code": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "artifact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

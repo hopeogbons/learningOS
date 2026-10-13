@@ -1,0 +1,26 @@
+{
+  "scope": "original uploaded dashboard in inspection directory, not future app",
+  "install": {
+    "command": "npm ci --no-audit --no-fund --cache /workspace/learning-os-planning/npm-cache",
+    "exit_code": 0,
+    "packages_added": 374
+  },
+  "lint": {
+    "command": "npm run lint",
+    "exit_code": 0,
+    "log": "template-lint.log"
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "result": "Next.js 16.4.0 production build with TypeScript succeeded; / prerendered"
+  },
+  "browser": "template-browser-results.json",
+  "manual_image_review": {
+    "views": [
+      "mobile.png",
+      "desktop.png"
+    ],
+    "observations": "Blue mobile hero and 3x2 action card, bottom tabs; desktop sidebar/greeting/6 actions/stats/panel composition confirmed against original source."
+  }
+}

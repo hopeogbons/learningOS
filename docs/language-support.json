@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "languages": [
+    {
+      "ui_locale": "en",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "zh-Hans",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "es",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "ar",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "pt",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "fr",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "ja",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "ru",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "de",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    },
+    {
+      "ui_locale": "id",
+      "study_text": "unverified",
+      "ui_catalog": "unverified",
+      "stt": "unverified",
+      "tts": "unverified",
+      "evidence": []
+    }
+  ]
+}

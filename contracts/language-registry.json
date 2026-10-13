@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "source": "Language-selector screenshot supplied by user; this is a target registry, not passed implementation evidence.",
+  "languages": [
+    {
+      "ui_locale": "en",
+      "native_label": "English",
+      "english_label": "English",
+      "direction": "ltr",
+      "default_speech_locale": "en-GB"
+    },
+    {
+      "ui_locale": "zh-Hans",
+      "native_label": "中文",
+      "english_label": "Chinese (Simplified)",
+      "direction": "ltr",
+      "default_speech_locale": "zh-CN"
+    },
+    {
+      "ui_locale": "es",
+      "native_label": "Español",
+      "english_label": "Spanish",
+      "direction": "ltr",
+      "default_speech_locale": "es-ES"
+    },
+    {
+      "ui_locale": "ar",
+      "native_label": "العربية",
+      "english_label": "Arabic",
+      "direction": "rtl",
+      "default_speech_locale": "ar-SA"
+    },
+    {
+      "ui_locale": "pt",
+      "native_label": "Português",
+      "english_label": "Portuguese",
+      "direction": "ltr",
+      "default_speech_locale": "pt-BR"
+    },
+    {
+      "ui_locale": "fr",
+      "native_label": "Français",
+      "english_label": "French",
+      "direction": "ltr",
+      "default_speech_locale": "fr-FR"
+    },
+    {
+      "ui_locale": "ja",
+      "native_label": "日本語",
+      "english_label": "Japanese",
+      "direction": "ltr",
+      "default_speech_locale": "ja-JP"
+    },
+    {
+      "ui_locale": "ru",
+      "native_label": "Русский",
+      "english_label": "Russian",
+      "direction": "ltr",
+      "default_speech_locale": "ru-RU"
+    },
+    {
+      "ui_locale": "de",
+      "native_label": "Deutsch",
+      "english_label": "German",
+      "direction": "ltr",
+      "default_speech_locale": "de-DE"
+    },
+    {
+      "ui_locale": "id",
+      "native_label": "Bahasa Indonesia",
+      "english_label": "Indonesian",
+      "direction": "ltr",
+      "default_speech_locale": "id-ID"
+    }
+  ]
+}

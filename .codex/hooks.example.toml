@@ -1,0 +1,5 @@
+# Disabled example: not loaded as .codex/config.toml.
+# Schema-compatible with captured official schema; installed-version probe/trust required.
+# Stop is a Codex lifecycle event, never a web-app session.finished event.
+[[hooks.Stop]]
+hooks = [{ type = "command", command = "python3 scripts/codex_hook_receipt.py", timeout = 10 }]

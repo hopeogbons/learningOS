@@ -1,0 +1,46 @@
+{
+  "prepared_at": "2026-10-13T08:12:20.647271+00:00",
+  "scope": "package contracts and helpers only; application not implemented",
+  "checks": [
+    {
+      "name": "JSON schemas and initial state",
+      "status": "passed",
+      "detail": "6 schemas valid; 12 unique pending batches; no application pass fabricated"
+    },
+    {
+      "name": "Codex TOML schema compatibility",
+      "status": "passed",
+      "detail": "CLI config, 5 role layers and disabled hook example match captured official schema"
+    },
+    {
+      "name": "Source preservation and provenance",
+      "status": "passed",
+      "detail": "3 exact input hashes; 25 exact dashboard source files; only generated tsbuildinfo excluded"
+    },
+    {
+      "name": "Links and batch UI inheritance",
+      "status": "passed",
+      "detail": "35 local Markdown links resolve; all 12 prompts carry specific UI/delegation/gate requirements"
+    },
+    {
+      "name": "Schema positive and negative examples",
+      "status": "passed",
+      "detail": "Representative samples validate; invalid confidence/hash rejected; semantic resolver still required"
+    },
+    {
+      "name": "Revision 2 language and Drive-intake consistency",
+      "status": "passed",
+      "detail": "All 10 exact screenshot locales/Arabic RTL and unverified capability matrix checked; link receipt positive/negative checks; UI/drop/folder contracts and obsolete-default removal verified"
+    },
+    {
+      "name": "Staging and bounded hook helper behavior",
+      "status": "passed",
+      "detail": "Dry-run/stage/idempotence/conflict/symlink safeguards passed; manual hook helper sanitized payload (not automatic hook proof)"
+    }
+  ],
+  "template_install": "passed npm ci from supplied lockfile",
+  "template_lint": "passed",
+  "template_production_build": "passed",
+  "application_test_status": "unrun",
+  "deployment_status": "unrun"
+}
