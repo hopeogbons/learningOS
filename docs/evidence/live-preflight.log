@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "fixture_version": "atomic-number-live-v1",
+  "generated_at": "2026-10-13T19:59:10.739683+00:00",
+  "provider_calls_authorized": false,
+  "provider_calls_attempted": 0,
+  "requirements": {
+    "LEARNING_OS_API_KEY": false,
+    "LLM_MODEL": false,
+    "STT_MODEL": false,
+    "TTS_MODEL": false,
+    "TTS_VOICE": false
+  },
+  "configured_models": {
+    "LLM_MODEL": null,
+    "STT_MODEL": null,
+    "TTS_MODEL": null
+  },
+  "checks": [
+    {
+      "case": "en:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "zh-Hans:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "es:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "ar:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "pt:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "fr:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "ja:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "ru:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "de:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    },
+    {
+      "case": "id:fixture-preflight",
+      "status": "programmatic_pass",
+      "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+    }
+  ],
+  "human_semantic_review": "pending",
+  "native_transcript_review": "pending",
+  "audibility_and_browser_three_turn_review": "pending",
+  "L03": "blocked-until-proficient-review",
+  "L04": "blocked-until-native-transcript-audibility-and-browser-proof",
+  "missing_requirements": [
+    "LEARNING_OS_API_KEY",
+    "LLM_MODEL",
+    "STT_MODEL",
+    "TTS_MODEL",
+    "TTS_VOICE"
+  ],
+  "execution": "preflight-only-no-external-calls"
+}

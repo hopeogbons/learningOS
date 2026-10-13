@@ -1,0 +1,134 @@
+[
+  {
+    "route": "/",
+    "width": 390,
+    "violations": [],
+    "passes": 23
+  },
+  {
+    "route": "/collections",
+    "width": 390,
+    "violations": [],
+    "passes": 24
+  },
+  {
+    "route": "/outline",
+    "width": 390,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/add-material",
+    "width": 390,
+    "violations": [],
+    "passes": 28
+  },
+  {
+    "route": "/study",
+    "width": 390,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/review",
+    "width": 390,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/progress",
+    "width": 390,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/connections",
+    "width": 390,
+    "violations": [],
+    "passes": 23
+  },
+  {
+    "route": "/profile",
+    "width": 390,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/search",
+    "width": 390,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/notifications",
+    "width": 390,
+    "violations": [],
+    "passes": 23
+  },
+  {
+    "route": "/",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/collections",
+    "width": 1440,
+    "violations": [],
+    "passes": 27
+  },
+  {
+    "route": "/outline",
+    "width": 1440,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/add-material",
+    "width": 1440,
+    "violations": [],
+    "passes": 28
+  },
+  {
+    "route": "/study",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/review",
+    "width": 1440,
+    "violations": [],
+    "passes": 25
+  },
+  {
+    "route": "/progress",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/connections",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/profile",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/search",
+    "width": 1440,
+    "violations": [],
+    "passes": 26
+  },
+  {
+    "route": "/notifications",
+    "width": 1440,
+    "violations": [],
+    "passes": 25
+  }
+]

@@ -1,0 +1,82 @@
+name: offline-and-postgres-checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      APP_MODE: demo
+      UV_CACHE_DIR: /tmp/learningos-uv-cache
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Pinned tooling and browser prerequisites
+        run: |
+          python -m pip install uv==0.12.23 playwright==1.56.0 httpx==0.28.1
+          python -m playwright install --with-deps chromium
+      - name: Frozen installation and actual checks
+        run: |
+          scripts/setup.sh
+          scripts/check.sh
+          scripts/check_api_contracts.sh
+          scripts/security_check.sh
+      - name: Browser behavior on running API, worker and supplied UI
+        run: |
+          scripts/dev.sh &
+          dev_pid=$!
+          trap 'kill "$dev_pid" 2>/dev/null || true; wait "$dev_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..90}; do
+            kill -0 "$dev_pid" || exit 1
+            if curl --fail --silent http://127.0.0.1:8000/api/v1/ready >/dev/null && curl --fail --silent http://127.0.0.1:3000 >/dev/null; then break; fi
+            sleep 1
+          done
+          python tests/e2e_smoke.py
+      - name: Compose syntax
+        run: |
+          docker compose -f deploy/compose.demo.yml config --quiet
+          docker compose -f deploy/compose.postgres-test.yml config --quiet
+  postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16.15-bookworm@sha256:0ea6700a3b4f0ae6ce746519073558aed4d88a79d8d07622a9a644946c7319c4
+        env:
+          POSTGRES_DB: learningos_test
+          POSTGRES_USER: learningos_test
+          POSTGRES_PASSWORD: synthetic-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U learningos_test -d learningos_test"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      APP_MODE: test
+      DATABASE_URL: postgresql+psycopg://learningos_test:synthetic-ci-only@127.0.0.1:5432/learningos_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - run: python -m pip install uv==0.12.23
+      - name: Frozen backend, PostgreSQL migration and contracts
+        working-directory: backend
+        run: |
+          uv sync --frozen
+          uv run --frozen alembic upgrade head
+          TEST_POSTGRES_URL="$DATABASE_URL" uv run --frozen pytest -q

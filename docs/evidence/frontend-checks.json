@@ -1,0 +1,38 @@
+{
+  "mode": "synthetic offline demo",
+  "actual_fresh_source_copy": true,
+  "lint": {
+    "exit_code": 0,
+    "artifact": "docs/evidence/fresh-checks.log"
+  },
+  "typescript": {
+    "exit_code": 0,
+    "artifact": "docs/evidence/fresh-checks.log"
+  },
+  "production_build": {
+    "exit_code": 0,
+    "routes": 16,
+    "artifact": "docs/evidence/frontend-build.log"
+  },
+  "public_contract_drift": {
+    "exit_code": 0,
+    "artifact": "docs/evidence/api-contracts.log"
+  },
+  "functional_browser": {
+    "exit_code": 0,
+    "checks": 16,
+    "artifact": "docs/evidence/browser/results.json"
+  },
+  "axe": {
+    "exit_code": 0,
+    "route_viewport_combinations": 22,
+    "violations": 0,
+    "artifact": "docs/evidence/frontend/a11y.json"
+  },
+  "voice_browser_mock": {
+    "exit_code": 0,
+    "live_speech": false,
+    "artifact": "docs/evidence/frontend/voice.json"
+  },
+  "new_test_after_clean_copy": "One synthetic two-turn locale regression added; current full backend suite104passed, original full clean-copy103passed."
+}

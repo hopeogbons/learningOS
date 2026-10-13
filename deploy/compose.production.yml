@@ -1,0 +1,63 @@
+name: learningos-production
+x-backend: &backend
+  image: ${BACKEND_IMAGE:?Set a reviewed immutable backend image reference}
+  env_file: ${PRODUCTION_ENV_FILE:-.env.production}
+  environment:
+    APP_MODE: production
+    APP_ORIGIN: https://${PUBLIC_DOMAIN:?Set the actual public domain}
+    PUBLIC_URL: https://${PUBLIC_DOMAIN:?Set the actual public domain}
+    FRONTEND_URL: https://${PUBLIC_DOMAIN:?Set the actual public domain}
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  read_only: true
+  tmpfs: [/tmp:size=128m,mode=1777]
+  mem_limit: 1g
+  cpus: '2.0'
+services:
+  migrate:
+    <<: *backend
+    command: [alembic, upgrade, head]
+    restart: 'no'
+    healthcheck: {disable: true}
+  backend:
+    <<: *backend
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --workers, '2', --proxy-headers, --forwarded-allow-ips, '*']
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck: {disable: true}
+  frontend:
+    image: ${FRONTEND_IMAGE:?Set a reviewed immutable frontend image reference}
+    environment:
+      LEARNING_OS_BACKEND_URL: http://backend:8000
+      API_BASE_URL: http://backend:8000
+    depends_on:
+      backend: {condition: service_healthy}
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    read_only: true
+    tmpfs: [/tmp:size=128m,mode=1777, /app/frontend/.next/cache:size=128m,uid=1000,gid=1000]
+    mem_limit: 768m
+    cpus: '1.0'
+  edge:
+    image: caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+    ports: ['80:80', '443:443', '443:443/udp']
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:?Set the actual public domain}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      frontend: {condition: service_healthy}
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: '0.5'
+volumes:
+  caddy-data:
+  caddy-config:

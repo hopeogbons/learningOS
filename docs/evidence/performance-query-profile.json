@@ -1,0 +1,35 @@
+{
+  "note": "Direct isolated schema endpoint-function profile during concurrent loopback load. Excludes authentication, ASGI serialization/thread dispatch and pool acquisition; shared-host contention. No real tenant data.",
+  "endpoints": {
+    "dashboard": {
+      "sql_count": 18,
+      "sql_ms": 37.24,
+      "direct_function_ms": 79.22,
+      "serialized_payload_bytes": 7914
+    },
+    "collections": {
+      "sql_count": 7,
+      "sql_ms": 16.57,
+      "direct_function_ms": 25.19,
+      "serialized_payload_bytes": 4766
+    },
+    "outline": {
+      "sql_count": 16,
+      "sql_ms": 24.59,
+      "direct_function_ms": 56.41,
+      "serialized_payload_bytes": 24090
+    },
+    "progress": {
+      "sql_count": 5,
+      "sql_ms": 4.08,
+      "direct_function_ms": 7.27,
+      "serialized_payload_bytes": 146
+    },
+    "search": {
+      "sql_count": 2,
+      "sql_ms": 58.6,
+      "direct_function_ms": 68.76,
+      "serialized_payload_bytes": 7689
+    }
+  }
+}

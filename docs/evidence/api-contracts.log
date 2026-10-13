@@ -1,0 +1,6 @@
+/workspace/learningOS/backend/.venv/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.
+  from ._compat import httpx2
+OpenAPI matches
+✨ openapi-typescript 7.10.1
+🚀 /workspace/learningOS/contracts/openapi.json → /workspace/learningOS/.runtime/api-schema-rR7iAE/api.generated.ts [239.5ms]
+Actual backend OpenAPI and generated TypeScript contract match.

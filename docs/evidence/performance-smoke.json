@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "database": "PostgreSQL isolated random schema",
+  "network": "loopback HTTP; local DB, no WAN/TLS edge",
+  "provider": "no live AI, Drive or speech",
+  "authentication": "real opaque DB sessions, synthetic preauthenticated learners; no OIDC exchange",
+  "dataset": {
+    "learners": 50,
+    "collections": 50,
+    "materials": 250,
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "api_workers": 2,
+  "clients": 50,
+  "duration_requested_seconds": 10,
+  "think_time_ms_per_user": 100,
+  "source_jobs_initial": 20,
+  "source_job_note": "20 actual text-ingestion jobs with two offline workers; initial concurrent queue, not maintained for five minutes",
+  "hardware": {
+    "cpu_count_visible": 5,
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14"
+  },
+  "thresholds": {
+    "p95_ms": 500,
+    "error_rate": 0.01
+  },
+  "seed_seconds": 5.65,
+  "seed_verified": {
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "fixture_auth_tenant_checks": 50,
+  "warmup_seconds": 5,
+  "elapsed_seconds": 10.43,
+  "maximum_in_flight_requests": 50,
+  "overall": {
+    "requests": 829,
+    "errors": 0,
+    "error_rate": 0.0,
+    "p50_ms": 351.29,
+    "p95_ms": 1318.67,
+    "p99_ms": 1893.26,
+    "requests_per_second": 79.47
+  },
+  "endpoints": {
+    "dashboard": {
+      "requests": 156,
+      "errors": 0,
+      "p50_ms": 467.28,
+      "p95_ms": 1893.26,
+      "p99_ms": 2282.56
+    },
+    "collections": {
+      "requests": 146,
+      "errors": 0,
+      "p50_ms": 373.16,
+      "p95_ms": 1016.19,
+      "p99_ms": 1242.94
+    },
+    "outline": {
+      "requests": 142,
+      "errors": 0,
+      "p50_ms": 492.18,
+      "p95_ms": 1279.79,
+      "p99_ms": 1428.02
+    },
+    "progress": {
+      "requests": 135,
+      "errors": 0,
+      "p50_ms": 239.22,
+      "p95_ms": 1082.86,
+      "p99_ms": 1430.92
+    },
+    "review/due": {
+      "requests": 129,
+      "errors": 0,
+      "p50_ms": 164.21,
+      "p95_ms": 943.5,
+      "p99_ms": 1138.07
+    },
+    "search": {
+      "requests": 121,
+      "errors": 0,
+      "p50_ms": 270.61,
+      "p95_ms": 666.47,
+      "p99_ms": 780.51
+    }
+  },
+  "source_jobs": {
+    "total": 20,
+    "succeeded": 20,
+    "failed_or_attention": 0,
+    "all_attempts_once": true,
+    "completion_observed_within_seconds": 10.45
+  },
+  "targets_passed": false,
+  "full_five_minute_target_run": false,
+  "cleanup": "Only owned random probe schema and temporary private files removed",
+  "instrumentation_limitation": "Early 10-second probe included synchronous client construction in initial timed requests; not a release scalability result. Fixed before full 5-minute runs."
+}

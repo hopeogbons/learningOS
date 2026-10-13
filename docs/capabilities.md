@@ -1,23 +1,21 @@
-# Capability ledger — initial observations, not release claims
+# Codex and runtime capability evidence
 
-Preparation date: 2026-10-13. CLI inspected: 0.159.2. Raw official repository config schema captured; developer-site access blocked by proxy. `validation/` records the preparation evidence. Fill separate development and runtime proof at each batch.
+Updated during this build, 13 October 2026. Development and deployed application capabilities are separate. CLI inspected: 0.159.2; the native cloud collaboration surface executed the developer tasks. No native capability is inferred from a configuration file alone.
 
-| Feature | Availability observed | Planned implementation | Verification now | Evidence needed |
-|---|---|---|---|---|
-| Subagents | CLI `multi_agent` true; collaboration tools exposed | Native developer tasks; runtime provider roles | Not exercised for this build | spawned tasks/results + runtime role checks |
-| Worktrees | CLI `worktrees` true, `--worktree` help | Explicit B6 native Git demo | Not created | during-run listing and artifacts |
-| MCP | CLI management commands; no deployed source server proven | Native developer tools if authorized; runtime adapter | Unverified | live folder read + scoped deployed boundary |
-| Skills | Supplied SKILL file format; onboarding skill used in earlier setup | Native developer retrieval/design/release skills | New project skills authored, not invoked by Codex yet | invocation and output |
-| Hooks | CLI `hooks` true; schema has Stop/SessionEnd | Native developer receipt if enabled; app outbox fallback | Example only; no hook activated | automatic event receipt + app summary test |
-| Scheduled tasks | No scheduling surface proven in this chat | Optional native audit; runtime DB worker | Unverified | actual configured/fired task; worker due proof |
-| Memory | CLI `memories` false | Optional native developer memory; DB app history | Native disabled; app not built | safe native proof if later enabled; DB restart proof |
-| Image input | Tools available; supplied design image and actual screenshots inspected | Native developer critique; runtime vision adapter | Template screenshots captured/inspected; app vision unrun | clear/blurry runtime tests |
-| Voice | CLI realtime feature flag true; client interaction untested | Optional native Codex voice; app browser speech+typing | Unverified | client-native proof separate from app exchange |
-| Review | `codex review` command available | Independent native code review | Unrun | reviewed release diff + finding disposition |
-| CLI / SDK | `codex exec` present; SDK not installed/probed | Bounded tooling/optional runtime experiment | Help only | supported sandboxed invocation |
-| Cloud environment | Existing empty checkout/Git read works | Tested install/start draft after application implementation | Dashboard validated outside checkout | backend/frontend startup validation + confirmed draft save |
-| Browser validation | Chromium + Playwright available | Functional/visual/accessibility automation | Template viewport and drawer smoke passed | complete application journeys |
+| Capability | Actually exercised | Runtime boundary / limitation |
+|---|---|---|
+| Native subagents | Backend, UI, localization, source, learning and operations contributors; independent review; final operations/review/source-language tasks. See evidence/native-agents.json and final-review.md. | App Planner/Quizzer/Reviewer are versioned provider prompts, not those development agents. Earlier quota interruptions are not counted as completed reviews. |
+| Git worktrees | Two explicitly authorized topic worktrees, five cited questions each, local topic commits e487f12/117fcc3, safely integrated into work. See evidence/worktrees-created.log and data/quiz_sets/. | Worktrees remain preserved. No protected merge, force push or GitHub publication occurred. |
+| Skills | cloud-environment-onboarding:setup; project retrieval-practice in the two topic contributions; design-fidelity and release-readiness in validation/review. | Skills guide developers. Runtime summaries/reviews are app code and provider calls. |
+| MCP / connectors | Native tools read the onboarding skill and save environment configuration. Runtime Drive OAuth adapter and contract tests are implemented. | Personal Codex Drive is not a deployed learner connection. Actual runtime OAuth folder/write/manual-drop proof remains blocked. |
+| Hooks | Disabled, schema-checked CLI lifecycle example and bounded metadata helper preserved. | Automatic native Stop/SessionEnd invocation is unverified. App finish uses a tested durable outbox; it is not a Codex hook. |
+| Scheduling | Actual database worker, leases, due scan and interval/replay tests; two-process PostgreSQL recovery tests. | A native Codex automation was not available/configured/fired. App scheduling is independently durable. |
+| Memory | App history, assessment and review state persist in the DB; restart/backup restoration tested. | CLI memories flag was false. No native Codex memory claim. |
+| Image input | Uploaded design/reference and actual mobile/desktop/Arabic screenshots inspected by Codex; visual review recorded separately. | Runtime clear/blurry vision contracts exist; real provider vision is unrun without credentials. |
+| Voice | Recorder cancellation, transcript editing, asynchronous browser-voice inventory, owned server fallback and typing tested with labeled mocks; 10 backend speech checks. | Native Codex client voice is unverified. Real per-language STT/TTS and audible three-turn browser proof remain blocked. |
+| Review | Two actual independent native reviewer tasks reproduced issues and verified fixes; final review ran 59 regressions plus 12 source-language cases. | The standalone CLI codex review command was inspected but not used as the review surface. No production approval is implied. |
+| CLI / SDK | CLI version/help/feature/config schema inspected; Git and shell orchestration used to build/test. | Codex SDK runtime experiment remains optional/unrun. OpenAI SDK is the app provider boundary, not the Codex SDK. |
+| Cloud environment | Frozen setup, clean-copy full check and functional API/worker/frontend startup executed; install/start draft saved with confirmation in environment-draft.json. | A saved draft is not publication or proof of fresh-task restoration; local-only Git commits are bundled for recovery. |
+| Browser / accessibility | Real upload/link/scope/preferences journeys, responsive/RTL captures, keyboard focus/reorder and axe checks. Exact results in evidence/browser/results.json and evidence/frontend/. | Mocked voice is not live speech; catalog completeness is not native-language quality review. |
 
-No row means the deployed learning application works today. Native/partial/fallback marks for submission must be derived from actual execution artifacts, not planned files. Keep evidence synthetic/redacted.
-
-Revision 2 targets ten-language UI/study/runtime speech and managed Drive create/upload plus folder drops. These new app capabilities are unimplemented/unverified at package stage; existing template checks do not validate them. Runtime matrix L01–L05/D01–D06 and real OAuth/STT/TTS results must be recorded before release claims.
+The runtime English demo uses licensed synthetic fixtures. Arbitrary sources receive conservative uncertainty rather than a fabricated complete verdict. All ten UI catalogs are authored candidates with mechanically verified coverage; live teaching/speech and proficient linguistic review remain distinct gates. See RELEASE_REPORT.md for current outcomes.

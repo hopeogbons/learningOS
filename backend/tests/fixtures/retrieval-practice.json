@@ -1,0 +1,122 @@
+{
+  "context": {
+    "chunk_id": "synthetic-memory",
+    "source_revision_id": "synthetic-memory-v1",
+    "study_locale": "en",
+    "concepts": [
+      {
+        "id": "retrieval",
+        "text": "Recalling information without looking at the source strengthens later recall.",
+        "citation_ids": [
+          "line-1"
+        ]
+      },
+      {
+        "id": "spacing",
+        "text": "Practice distributed across separate days reduces forgetting.",
+        "citation_ids": [
+          "line-2"
+        ]
+      },
+      {
+        "id": "feedback",
+        "text": "Checking an answer against the source reveals missing ideas that need correction.",
+        "citation_ids": [
+          "line-3"
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "id": "line-1",
+        "excerpt": "Recalling information without looking at the source strengthens later recall.",
+        "locator": {
+          "line_start": 1,
+          "line_end": 1
+        }
+      },
+      {
+        "id": "line-2",
+        "excerpt": "Practice distributed across separate days reduces forgetting.",
+        "locator": {
+          "line_start": 2,
+          "line_end": 2
+        }
+      },
+      {
+        "id": "line-3",
+        "excerpt": "Checking an answer against the source reveals missing ideas that need correction.",
+        "locator": {
+          "line_start": 3,
+          "line_end": 3
+        }
+      }
+    ]
+  },
+  "quiz": {
+    "chunk_id": "synthetic-memory",
+    "source_revision_id": "synthetic-memory-v1",
+    "questions": [
+      {
+        "id": "synthetic-q1",
+        "kind": "recall",
+        "concept_ids": [
+          "retrieval"
+        ],
+        "question": "What study action helps you remember the material later?",
+        "expected_answer": "Attempt to recall information without looking at the source.",
+        "citation_ids": [
+          "line-1"
+        ]
+      },
+      {
+        "id": "synthetic-q2",
+        "kind": "explain",
+        "concept_ids": [
+          "retrieval"
+        ],
+        "question": "Why should you try answering before reopening your notes?",
+        "expected_answer": "Recalling without looking strengthens later recall.",
+        "citation_ids": [
+          "line-1"
+        ]
+      },
+      {
+        "id": "synthetic-q3",
+        "kind": "apply",
+        "concept_ids": [
+          "spacing"
+        ],
+        "question": "A learner studies a topic once and forgets it. How should they arrange further practice?",
+        "expected_answer": "Distribute practice across separate days to reduce forgetting.",
+        "citation_ids": [
+          "line-2"
+        ]
+      },
+      {
+        "id": "synthetic-q4",
+        "kind": "recall",
+        "concept_ids": [
+          "feedback"
+        ],
+        "question": "After giving an answer, how can you find what your explanation missed?",
+        "expected_answer": "Check the answer against the source to reveal missing ideas.",
+        "citation_ids": [
+          "line-3"
+        ]
+      },
+      {
+        "id": "synthetic-q5",
+        "kind": "apply",
+        "concept_ids": [
+          "feedback"
+        ],
+        "question": "Your explanation leaves out one idea from the source. What should you do after comparing them?",
+        "expected_answer": "Identify and correct the missing idea revealed by source checking.",
+        "citation_ids": [
+          "line-3"
+        ]
+      }
+    ]
+  }
+}

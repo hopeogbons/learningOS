@@ -1,80 +1,428 @@
 {
   "schema_version": 1,
-  "level": "package_prepared",
-  "next_batch": "00",
+  "level": "offline_demo_validated",
+  "next_batch": "07",
   "batches": [
     {
       "id": "00",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "docs/capabilities.md",
+        "validation/package-validation.json",
+        "docs/evidence/worktrees-created.log"
+      ],
+      "checks": [
+        {
+          "name": "Original source/template preparation and preserved reference",
+          "outcome": "passed",
+          "command": "git diff --exit-code -- reference/dashboard",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "validation/template-checks.json"
+        },
+        {
+          "name": "Native features assessed and exercised honestly",
+          "outcome": "passed",
+          "command": "native collaboration tasks; codex --version; codex features list",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/native-agents.json"
+        }
+      ]
     },
     {
       "id": "01",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "docs/evidence/fresh-copy.json"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Functional API+worker+actual supplied Home startup",
+          "outcome": "passed",
+          "command": "LEARNING_OS_RUNTIME_DIR=.runtime/review-runtime API_PORT=8040 WEB_PORT=3040 bash scripts/dev.sh",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        },
+        {
+          "name": "Frozen full clean-copy check",
+          "outcome": "passed",
+          "command": "TEST_POSTGRES_URL=<isolated-synthetic-postgres> bash scripts/check.sh",
+          "cwd": "/workspace/learningOS/.runtime/fresh-checkout",
+          "exit_code": 0,
+          "artifact": "docs/evidence/fresh-checks.log"
+        }
+      ]
     },
     {
       "id": "02",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "docs/evidence/browser/ui-upload-receipt.png"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Real UI upload, worker, original citation and lost-receipt dedup",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/e2e_smoke.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        }
+      ]
     },
     {
       "id": "03",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "docs/evidence/browser/ui-study-five-title-scope.png",
+        "docs/evidence/frontend/journeys.json"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Five titled sections, keyboard order/reload, frozen prior scope",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/e2e_smoke.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        }
+      ]
     },
     {
       "id": "04",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "backend/app/prompts/",
+        "docs/LIVE_VERIFICATION.md"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Pending English frozen, French next-turn context, immutable original citations",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/turn-locale-tests.log"
+        },
+        {
+          "name": "Real multilingual provider semantics",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/evidence/live-preflight.json"
+        }
+      ]
     },
     {
       "id": "05",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "docs/session-log.md",
+        "data/quiz_sets/atomic-number.json",
+        "data/quiz_sets/bonding.json"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Automatic summary and idempotent finish persisted",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/e2e_smoke.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        },
+        {
+          "name": "Automatic native Codex lifecycle hook",
+          "outcome": "unrun",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/capabilities.md"
+        }
+      ]
     },
     {
       "id": "06",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "e487f122f12bfbe98b2e9931ba36e82f931c40a8",
+        "117fcc36a9ff4f6c269cc2441485c560246119fb",
+        "data/quiz_sets/"
+      ],
+      "checks": [
+        {
+          "name": "Two real native quiz contributions in explicitly authorized worktrees",
+          "outcome": "passed",
+          "command": "git worktree list --porcelain; native retrieval-practice tasks; local topic integration",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/worktrees-active.log"
+        }
+      ]
     },
     {
       "id": "07",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "blocked",
+      "evidence": [
+        "backend/tests/test_sources.py",
+        "docs/DRIVE_INGESTION.md"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "UI safe URL queued during DNS outage; unsafe fetch stays guarded",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/e2e_smoke.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        },
+        {
+          "name": "Live D01\u2013D06 folder/UI original/manual drop/convergence/consent",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/LIVE_VERIFICATION.md"
+        },
+        {
+          "name": "Permitted live web/captions",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/LIVE_VERIFICATION.md"
+        }
+      ]
     },
     {
       "id": "08",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "blocked",
+      "evidence": [
+        "backend/app/sources/local.py",
+        "scripts/verify_live_learning.py"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Real clear/blurry vision provider proof",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/evidence/live-preflight.json"
+        }
+      ]
     },
     {
       "id": "09",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "passed",
+      "evidence": [
+        "backend/tests/test_learning.py",
+        "docs/evidence/container-flow.json"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Nonempty history/schedule restores and container restart preserves state",
+          "outcome": "passed",
+          "command": "backup/isolated restore + python scripts/container_smoke.py --swap-image-archives",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/operations-validation.json"
+        }
+      ]
     },
     {
       "id": "10",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "blocked",
+      "evidence": [
+        "backend/tests/test_speech_owned.py",
+        "docs/LIVE_VERIFICATION.md"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "Recorder cancel/edit/owned fallback/typing states",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/frontend_voice.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/frontend/voice.json"
+        },
+        {
+          "name": "L04 real all-ten three-turn spoken proof",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/evidence/live-preflight.json"
+        }
+      ]
     },
     {
       "id": "11",
-      "status": "pending",
-      "evidence": [],
-      "checks": []
+      "status": "blocked",
+      "evidence": [
+        "docs/RELEASE_REPORT.md",
+        "docs/evidence/final-review.md",
+        "docs/evidence/dependency-audit.json",
+        "docs/evidence/operations-validation.json"
+      ],
+      "checks": [
+        {
+          "name": "104 deterministic backend/SQLite/PostgreSQL checks; zero skips",
+          "outcome": "passed",
+          "command": "UV_CACHE_DIR=/tmp/learningos-uv-cache TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/backend-tests.log"
+        },
+        {
+          "name": "16 real browser checks, mobile/desktop/ten locales/200% reflow",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/e2e_smoke.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/browser/results.json"
+        },
+        {
+          "name": "22 axe route/viewport cases",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 AXE_SCRIPT_PATH=<installed-axe> python tests/frontend_a11y.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/frontend/a11y.json"
+        },
+        {
+          "name": "Static sidebar/topbar pixels match declared baseline regions",
+          "outcome": "passed",
+          "command": "E2E_BASE_URL=http://127.0.0.1:3040 python tests/visual_capture.py",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/visual-capture.log"
+        },
+        {
+          "name": "Actual schema/TS drift",
+          "outcome": "passed",
+          "command": "bash scripts/check_api_contracts.sh",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/api-contracts.log"
+        },
+        {
+          "name": "Final images, private-content exclusion, full-stack rollback/forward",
+          "outcome": "passed",
+          "command": "python scripts/container_smoke.py --swap-image-archives",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/container-flow.json"
+        },
+        {
+          "name": "Five-minute authenticated PostgreSQL P05 latency target",
+          "outcome": "failed",
+          "command": "TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python tests/performance_probe.py --seconds 300",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 1,
+          "artifact": "docs/evidence/performance-postgres.json"
+        },
+        {
+          "name": "Required live production/HTTPS/language/Drive gates",
+          "outcome": "blocked",
+          "command": null,
+          "cwd": "/workspace/learningOS",
+          "exit_code": null,
+          "artifact": "docs/RELEASE_REPORT.md"
+        },
+        {
+          "name": "Environment install/start draft saved; not published",
+          "outcome": "passed",
+          "command": "cloud_environment_onboarding_update_environment_config_draft",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/environment-draft.json"
+        }
+      ]
     }
   ],
-  "external_blockers": []
+  "external_blockers": [
+    "Live model/vision credentials and actual model identifiers missing; L03 semantic review unrun.",
+    "Real per-learner Drive OAuth scopes/consent, folder/UI placement/direct-drop D01\u2013D06 unverified.",
+    "Live all-ten STT/TTS, native transcript/audibility/browser three-turn L04 proof pending; translation catalogs need proficient review.",
+    "Public-page pinned DNS route unavailable in this cloud; permitted captions access unverified.",
+    "Production OIDC/private S3/domain/DNS/HTTPS/account settings and P09 deployment proof missing; no publication performed.",
+    "P05 latency target failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
+    "Development lint chain has five high advisory findings; standalone production npm audit zero; OS/container scanning unrun.",
+    "Environment draft saved/requires publish; remote GitHub publication and fresh-task local-only commit restoration unverified."
+  ]
 }

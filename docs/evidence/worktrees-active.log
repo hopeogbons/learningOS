@@ -1,0 +1,11 @@
+worktree /workspace/learningOS
+HEAD 6ec2935083241ee03e669b706c0facb80504af2f
+branch refs/heads/work
+
+worktree /workspace/learning-os-worktrees/atomic-number
+HEAD e487f122f12bfbe98b2e9931ba36e82f931c40a8
+branch refs/heads/quiz/atomic-number
+
+worktree /workspace/learning-os-worktrees/bonding
+HEAD 6ec2935083241ee03e669b706c0facb80504af2f
+branch refs/heads/quiz/bonding

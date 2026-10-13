@@ -1,0 +1,63 @@
+{
+  "time": "2026-10-13T08:30:07.742670+00:00",
+  "surface": "native Codex collaboration tools in cloud task",
+  "task_root": "/root",
+  "tasks": [
+    {
+      "name": "/root/backend_core",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "backend_core"
+    },
+    {
+      "name": "/root/learning_engine",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "learning_engine"
+    },
+    {
+      "name": "/root/ingestion_sources",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "ingestion_sources"
+    },
+    {
+      "name": "/root/frontend_ui",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "frontend_ui"
+    },
+    {
+      "name": "/root/localization",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "localization"
+    },
+    {
+      "name": "/root/release_ops",
+      "state": "implementation_artifacts_and_targeted_tests_recorded",
+      "scope": "release_ops"
+    },
+    {
+      "name": "/root/independent_review",
+      "state": "review_and_benchmark_artifacts_recorded; earlier quota interruption recorded",
+      "scope": "read-only review and isolated benchmark"
+    },
+    {
+      "name": "/root/final_review",
+      "state": "completed",
+      "scope": "59 review regressions, 12 language regressions, failed four-worker smoke"
+    },
+    {
+      "name": "/root/source_language",
+      "state": "completed",
+      "scope": "source language API/UI/catalogs, 44 source tests"
+    },
+    {
+      "name": "/root/final_ops",
+      "state": "completed",
+      "scope": "final containers and full-stack rollback, no publication"
+    },
+    {
+      "name": "/root/turn_locale",
+      "state": "verified existing implementation, no source edits",
+      "scope": "21 existing learning checks plus recording-provider two-turn locale test; copied regression included in final104 suite"
+    }
+  ],
+  "claim": "Actual native task executions and results; development roles distinct from runtime provider roles. Earlier quota interruptions do not count as successful reviews."
+}

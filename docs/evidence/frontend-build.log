@@ -1,0 +1,41 @@
+> school-dashboard@0.1.0 build
+> next build
+
+▲ Next.js 16.4.0 (Turbopack)
+✓ Running next.config.ts took 21ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.9s
+  Running TypeScript ...
+  Finished TypeScript in 4.5s ...
+  Collecting page data using 4 workers ...
+  Generating static pages using 4 workers (0/16) ...
+  Generating static pages using 4 workers (4/16)
+  Generating static pages using 4 workers (8/16)
+  Generating static pages using 4 workers (12/16)
+✓ Generating static pages using 4 workers (16/16) in 377ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /add-material
+├ ƒ /collections
+├ ƒ /collections/[id]/outline
+├ ƒ /connections
+├ ○ /icon.svg
+├ ƒ /logout
+├ ƒ /notifications
+├ ƒ /outline
+├ ƒ /profile
+├ ƒ /progress
+├ ƒ /review
+├ ƒ /search
+└ ƒ /study
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+Browser suite not requested. Run scripts/check.sh --browser with Playwright browsers installed.
+Requested checks passed. Offline checks do not verify live AI, speech, Drive consent or production release gates.

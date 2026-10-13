@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "database": "PostgreSQL isolated random schema",
+  "network": "loopback HTTP; local DB, no WAN/TLS edge",
+  "provider": "no live AI, Drive or speech",
+  "authentication": "real opaque DB sessions, synthetic preauthenticated learners; no OIDC exchange",
+  "dataset": {
+    "learners": 50,
+    "collections": 50,
+    "materials": 250,
+    "titles": 5000,
+    "concepts": 50000,
+    "initial_titles_per_collection": 100
+  },
+  "api_workers": 4,
+  "clients": 50,
+  "duration_requested_seconds": 15,
+  "think_time_ms_per_user": 100,
+  "source_jobs_initial": 20,
+  "source_job_note": "20 actual text-ingestion jobs with two offline workers; initial concurrent queue, not maintained for five minutes",
+  "hardware": {
+    "cpu_count_visible": 5,
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "cgroup": {
+      "cpu.max": "400000 100000",
+      "memory.max": "34359738368",
+      "cpuset.cpus.effective": "0-4",
+      "cpu_quota_cores": 4.0,
+      "memory_limit_bytes": 34359738368
+    },
+    "shared_host_note": "Other development checks may share this cloud host; not a dedicated production benchmark host."
+  },
+  "thresholds": {
+    "p95_ms": 500,
+    "error_rate": 0.01
+  },
+  "source_sha256_at_start": {
+    "backend/app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/auth.py": "5cb70db56c61a309a6efb5f31f8bcf012ee5959902621a13bb4da0194391ee28",
+    "backend/app/core_api.py": "2afd61a21db0903b362d04afdfa1878c6f38dd699936f147697cca6594fc261b",
+    "backend/app/core_schemas.py": "f56895aa11f99ecc610ae256247993f64adbf13f64b59f690598cc4ff26b8767",
+    "backend/app/db.py": "b13b82552978e970f05ea5d8fd59ada3041e6ad41a0d88f7f73de71301419653",
+    "backend/app/ingest.py": "1cc95e7efc3e67bf527fa8cd1c6b93f252c863981513692d0a7b5c3f0892e85c",
+    "backend/app/ingestion_api.py": "2d677ee9a4ffe4fb49857f9e2f0aaa16da7a2cb7526bb65987c8f89ede23d20d",
+    "backend/app/jobs.py": "325a548b08d652aba5c521be528ca874aa339c14983d82220db75c9a281723b4",
+    "backend/app/learning_api.py": "dff3969430bcb9b0c97ffc9e48595f27150cd2698f7c99138e4e8ec8a298333e",
+    "backend/app/llm.py": "0988816fb74b416874fb3b866b0ba463401dcc4b70d9b77078e385058a36adac",
+    "backend/app/main.py": "8021ab61d9e08bc167eace262aa6f1338358a3f6c4d2ba6f5f1c93bae931ef6d",
+    "backend/app/models.py": "56ba35238b42ae24e5137bb635ece21e5277dc47e01426b14e82088ded696324",
+    "backend/app/review.py": "82cbe349fbf9815151f382d0b5fdba761e28cc243722916e49037d6e18bf1f02",
+    "backend/app/seed.py": "ebbbebb53a6e9b38896d384086c77b400ed61ae0374ca91ca9c9148e2ef6116a",
+    "backend/app/sessions.py": "7b418d0a5c35dd99ee91dcc2af3a5cd217854b051af6e691e38adb9ef273238f",
+    "backend/app/settings.py": "8189dd509cda805c844bb64ae00ba2d4c734199fad008c6f03c604353523f6df",
+    "backend/app/sources/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/sources/base.py": "670737d0128532cd696c31eded3c3205c7c581acf2b467b21850588dd5822733",
+    "backend/app/sources/captions.py": "97c9ebd6e586f359618d8d288928b714dd4fb53ed8d070feed3a1e07a472dc3c",
+    "backend/app/sources/drive.py": "21a4662931ad0274a812387563c79407454c4603f3f0fa55d9134906b49d8163",
+    "backend/app/sources/local.py": "38194fa50f211f8419b9933b35e557b2982cbbce468d1d4481853fffacb1b162",
+    "backend/app/sources/publicweb.py": "5bc344a09fbf7366f1beadf00f5d57d0acfd5437027017487d3f86de79f0639d",
+    "backend/app/speech.py": "c537f15ea17bcaa8bc2ea7f4322acb73a6f9f0f46931605d600b836ba4c3e579",
+    "backend/app/storage.py": "190d86b0c6ce4dc5420be2f292f0ca1d4d30141cef1e0556408ffcff906d52f8",
+    "backend/app/worker.py": "6d8c6f85dbbb54e30568f7de5747bff47b136873700eda857e6446de6c822d4f"
+  },
+  "git_head_at_start": "6189ede2ea4248e37aa603d19bfa699e9a7078d9",
+  "working_tree_note": "Source hashes identify the reviewed working-tree implementation; HEAD alone may predate uncommitted files.",
+  "seed_seconds": 3.58,
+  "seed_verified": {
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "direct_query_profile": {
+    "note": "Single-user direct function profile excludes authentication, ASGI/thread serialization and pool acquisition",
+    "endpoints": {
+      "dashboard": {
+        "sql_count": 13,
+        "sql_ms": 7.85,
+        "direct_function_ms": 21.32,
+        "serialized_payload_bytes": 7507
+      },
+      "collections": {
+        "sql_count": 7,
+        "sql_ms": 4.38,
+        "direct_function_ms": 8.86,
+        "serialized_payload_bytes": 4766
+      },
+      "outline": {
+        "sql_count": 11,
+        "sql_ms": 5.5,
+        "direct_function_ms": 17.44,
+        "serialized_payload_bytes": 23505
+      },
+      "progress": {
+        "sql_count": 5,
+        "sql_ms": 2.34,
+        "direct_function_ms": 4.56,
+        "serialized_payload_bytes": 146
+      },
+      "search": {
+        "sql_count": 2,
+        "sql_ms": 14.66,
+        "direct_function_ms": 22.65,
+        "serialized_payload_bytes": 7689
+      }
+    }
+  },
+  "fixture_auth_tenant_checks": 50,
+  "warmup_seconds": 5,
+  "elapsed_seconds": 15.47,
+  "maximum_in_flight_requests": 50,
+  "overall": {
+    "requests": 2126,
+    "errors": 0,
+    "error_rate": 0.0,
+    "p50_ms": 94.85,
+    "p95_ms": 792.86,
+    "p99_ms": 1064.22,
+    "requests_per_second": 137.46
+  },
+  "endpoints": {
+    "dashboard": {
+      "requests": 380,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 154.1,
+      "p95_ms": 928.35,
+      "p99_ms": 1235.01
+    },
+    "collections": {
+      "requests": 365,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 100.03,
+      "p95_ms": 830.94,
+      "p99_ms": 1061.37
+    },
+    "outline": {
+      "requests": 352,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 195.39,
+      "p95_ms": 956.14,
+      "p99_ms": 1298.56
+    },
+    "progress": {
+      "requests": 346,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 55.74,
+      "p95_ms": 681.58,
+      "p99_ms": 897.65
+    },
+    "review/due": {
+      "requests": 343,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 34.77,
+      "p95_ms": 547.55,
+      "p99_ms": 809.88
+    },
+    "search": {
+      "requests": 340,
+      "errors": 0,
+      "error_rate": 0.0,
+      "p50_ms": 81.56,
+      "p95_ms": 570.68,
+      "p99_ms": 785.82
+    }
+  },
+  "source_jobs": {
+    "total": 20,
+    "succeeded": 20,
+    "failed_or_attention": 0,
+    "all_attempts_once": true,
+    "completion_observed_within_seconds": 16.48
+  },
+  "endpoint_targets": {
+    "dashboard": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    },
+    "collections": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    },
+    "outline": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    },
+    "progress": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    },
+    "review/due": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    },
+    "search": {
+      "p95_passed": false,
+      "error_rate_passed": true
+    }
+  },
+  "all_endpoint_targets_passed": false,
+  "targets_passed": false,
+  "full_five_minute_target_run": false,
+  "cleanup": "Only owned random probe schema and temporary private files removed",
+  "source_files_changed_during_run": [
+    "backend/app/ingestion_api.py"
+  ]
+}

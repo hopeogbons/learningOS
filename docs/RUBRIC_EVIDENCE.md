@@ -20,3 +20,11 @@ Record evidence under private development artifacts with synthetic study content
 ## Additional 25% scalability evidence
 
 Show a real language switch (including Arabic RTL), a concept from the same original source taught/answered in another language with unchanged citation/progress, and a selected-language spoken exchange. Accompany the demonstration with all-ten catalog/speech matrix evidence; a selector by itself is insufficient. Show a UI upload placed in the correct Drive Collection folder, a directly dropped file discovered without UI upload, and one record after sync of the UI upload. Pair these with existing multi-user isolation, job recovery, load, timezone and low-bandwidth results. The screenshot is a requirements reference, not implementation proof.
+
+## Build evidence now available
+
+Uniqueness: browser/results.json and 104 backend tests demonstrate original citations, immutable learner scope, coverage/confidence guards, replay-safe summaries and review scheduling. Drive UI/drop convergence is implemented and contract-tested, with live receipts pending. No efficacy or novelty score is invented.
+
+Scalability: ten UI catalogs/RTL/local fonts and independently saved preferences, PostgreSQL tenant/concurrency/recovery, bounded intake/provider queues and actual backup/restore are implemented. The five-minute dataset used 50 fixture-authenticated learners, 5,000 titles and 50,000 concepts: 35,350 requests/zero errors, p95 855.08 ms. The latency target failed; all-ten live teaching/STT/TTS, proficient translation and geographic provider proof remain blocked.
+
+Codex usage: native-agents.json, two topic-worktree commits, project skill artifacts, image review and two independent native reviews demonstrate executed development capabilities. capabilities.md explicitly separates native tools from runtime prompts/DB/outbox/speech and labels unavailable/unverified features. The user owns presentation delivery.

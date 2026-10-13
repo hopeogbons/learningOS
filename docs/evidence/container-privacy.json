@@ -1,0 +1,1 @@
+{"check": "built backend contains no excluded runtime database/private directory, Git metadata or dotenv at copied app paths", "checked_paths": ["/app/.runtime", "/app/backend/.runtime", "/app/.git", "/app/backend/.git", "/app/.env", "/app/backend/.env"], "absent": true, "found_count": 0}

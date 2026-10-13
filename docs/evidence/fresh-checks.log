@@ -1,0 +1,77 @@
+........................................................................ [ 69%]
+...............................                                          [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/learningOS/.runtime/fresh-checkout/backend/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5
+  /workspace/learningOS/.runtime/fresh-checkout/backend/.venv/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.
+    from ._compat import httpx2
+
+tests/test_oidc.py:7
+  /workspace/learningOS/.runtime/fresh-checkout/backend/tests/test_oidc.py:7: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.
+  It will be compatible before version 2.0.0.
+    from authlib.jose import jwt, JsonWebKey
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+103 passed, 3 warnings in 17.50s
+6 JSON schemas, current build state and ten-language registry passed.
+test_detects_private_object_tampering (__main__.BackupSafety.test_detects_private_object_tampering) ... ok
+test_does_not_follow_private_object_symlinks (__main__.BackupSafety.test_does_not_follow_private_object_symlinks) ... ok
+test_isolated_restore_preserves_rows_and_objects_without_source_mutation (__main__.BackupSafety.test_isolated_restore_preserves_rows_and_objects_without_source_mutation) ... ok
+test_manifest_cannot_escape_backup_root (__main__.BackupSafety.test_manifest_cannot_escape_backup_root) ... ok
+test_never_overwrites_existing_backup (__main__.BackupSafety.test_never_overwrites_existing_backup) ... ok
+test_requires_explicit_quiescence (__main__.BackupSafety.test_requires_explicit_quiescence) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.009s
+
+OK
+passed: 10 locales, 261 keys each, 23490 ICU formats, 230 local font assets
+
+> school-dashboard@0.1.0 lint
+> eslint
+
+
+> school-dashboard@0.1.0 build
+> next build
+
+▲ Next.js 16.4.0 (Turbopack)
+✓ Running next.config.ts took 21ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.9s
+  Running TypeScript ...
+  Finished TypeScript in 4.5s ...
+  Collecting page data using 4 workers ...
+  Generating static pages using 4 workers (0/16) ...
+  Generating static pages using 4 workers (4/16)
+  Generating static pages using 4 workers (8/16)
+  Generating static pages using 4 workers (12/16)
+✓ Generating static pages using 4 workers (16/16) in 377ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /add-material
+├ ƒ /collections
+├ ƒ /collections/[id]/outline
+├ ƒ /connections
+├ ○ /icon.svg
+├ ƒ /logout
+├ ƒ /notifications
+├ ƒ /outline
+├ ƒ /profile
+├ ƒ /progress
+├ ƒ /review
+├ ƒ /search
+└ ƒ /study
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+Browser suite not requested. Run scripts/check.sh --browser with Playwright browsers installed.
+Requested checks passed. Offline checks do not verify live AI, speech, Drive consent or production release gates.

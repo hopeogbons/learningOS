@@ -1,0 +1,11 @@
+{
+  "copy": "/workspace/learningOS/.runtime/fresh-checkout",
+  "initial_dependency_directories_absent": true,
+  "frozen_setup_exit_code": 0,
+  "full_check_exit_code": 0,
+  "backend_tests": 103,
+  "postgres_checks": "executed via isolated TEST_POSTGRES_URL",
+  "frontend": "lint, TypeScript and 16-route production build passed",
+  "source_and_private_demo_state": "retained",
+  "generated_dependencies_and_build_caches": "removed after validation and stopping only the owned dev service to recover disk space"
+}

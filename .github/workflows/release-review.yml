@@ -1,0 +1,26 @@
+name: prepare-release-for-review
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: release-review
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build immutable candidate images without pushing or deploying
+        run: |
+          docker build -f deploy/backend.Dockerfile -t learningos-backend:review .
+          docker build -f deploy/frontend.Dockerfile -t learningos-frontend:review .
+          mkdir -p release-review
+          docker image inspect --format '{{json .}}' learningos-backend:review learningos-frontend:review > release-review/images.jsonl
+          cp docs/RELEASE_REPORT.md release-review/
+          cp docs/RUBRIC_EVIDENCE.md release-review/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: learningos-release-review-${{ github.sha }}
+          path: release-review/
+          retention-days: 7

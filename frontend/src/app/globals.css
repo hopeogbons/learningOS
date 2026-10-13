@@ -32,7 +32,8 @@
   --edu-muted: #5d6882;
   --edu-surface: #f4f6fb;
   --edu-sidebar-w: 264px;
-  --bs-body-font-family: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bs-body-font-family:
+    "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --bs-body-color: var(--edu-ink);
   --bs-body-bg: var(--edu-surface);
   --bs-primary: #2149e0;
@@ -73,7 +74,11 @@ body {
 
 .hero {
   background:
-    radial-gradient(120% 90% at 85% 0%, rgba(86, 130, 255, 0.55) 0%, rgba(86, 130, 255, 0) 60%),
+    radial-gradient(
+      120% 90% at 85% 0%,
+      rgba(86, 130, 255, 0.55) 0%,
+      rgba(86, 130, 255, 0) 60%
+    ),
     linear-gradient(165deg, var(--edu-brand-dark) 0%, #2a5bea 70%, #4a79f2 100%);
   color: #fff;
   padding: calc(env(safe-area-inset-top) + 14px) 20px 64px;
@@ -189,7 +194,9 @@ body {
   color: var(--edu-ink);
   text-decoration: none;
   border-radius: 16px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 .quick-tile:hover {
   color: var(--edu-ink);
@@ -288,4 +295,333 @@ body {
   .offcanvas {
     transition: none;
   }
+}
+
+/* New routes extend the supplied dashboard's cards and shell. */
+:root {
+  --bs-btn-border-radius: 0.75rem;
+}
+.btn {
+  min-height: 44px;
+}
+.btn-sm {
+  min-height: 44px;
+}
+input:not([type="radio"]):not([type="checkbox"]),
+select {
+  min-height: 44px;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--edu-brand);
+}
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.min-w-0 {
+  min-width: 0;
+}
+bdi,
+.question-text,
+.teach-paragraph,
+.event-row,
+.outline-row {
+  overflow-wrap: anywhere;
+}
+.route-heading {
+  padding-top: 24px;
+}
+.route-heading h1 {
+  font-size: 1.6rem;
+}
+.route-heading p {
+  font-size: 0.95rem;
+  max-width: 850px;
+}
+.demo-notice {
+  color: #5d6882;
+  background: #fff9e6;
+  border: 1px solid #f0dfae;
+  padding: 6px 12px;
+  border-radius: 10px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.language-select.compact {
+  max-width: 170px;
+  min-width: 110px;
+}
+.language-select select {
+  text-overflow: ellipsis;
+}
+.skip-link {
+  position: fixed;
+  inset-block-start: -100px;
+  inset-inline-start: 16px;
+  background: white;
+  padding: 12px;
+  z-index: 2000;
+  border: 2px solid var(--edu-brand);
+  border-radius: 8px;
+}
+.skip-link:focus {
+  inset-block-start: 8px;
+}
+:focus-visible {
+  outline: 3px solid var(--edu-brand);
+  outline-offset: 3px;
+}
+.app-content:focus {
+  outline: 0;
+}
+.skeleton {
+  gap: 16px;
+  min-height: 160px;
+  margin-block: 16px;
+}
+.skeleton span:not(.visually-hidden) {
+  height: 16px;
+  display: block;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e6eaf3, #f4f6fb, #e6eaf3);
+}
+.skeleton span:nth-child(2) {
+  width: 70%;
+}
+.skeleton span:nth-child(3) {
+  width: 90%;
+}
+.skeleton span:nth-child(4) {
+  width: 50%;
+}
+.outline-row + .outline-row {
+  border-top: 1px solid var(--bs-border-color);
+}
+.outline-row .icon-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.scope-toolbar {
+  position: sticky;
+  bottom: 86px;
+  z-index: 1000;
+}
+.upload-dropzone {
+  border: 2px dashed #cbd6f3;
+  border-radius: 18px;
+  padding: 26px 20px;
+  background: #f8faff;
+}
+.upload-dropzone input {
+  max-width: 100%;
+  font-size: 0.875rem;
+}
+.citation-chip {
+  background: #eef3ff;
+  border: 1px solid #dbe5ff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+  color: #28458c;
+}
+.citation-chip summary {
+  cursor: pointer;
+  min-height: 24px;
+}
+.citation-chip blockquote {
+  border-inline-start: 3px solid #b2c5fd;
+  padding-inline-start: 10px;
+  white-space: pre-wrap;
+}
+.voice-controls {
+  background: #fff4f5;
+  border: 1px solid #f4d6db;
+}
+.reviewer-feedback {
+  background: #edf7f3;
+  border: 1px solid #c8e8db;
+}
+.confidence-fieldset {
+  border: 0;
+  min-width: 0;
+}
+.confidence-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.confidence-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 4px;
+  border: 1px solid #d6ddea;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 78px;
+  text-align: center;
+}
+.confidence-option input {
+  position: absolute;
+  opacity: 0;
+}
+.confidence-option:has(input:focus-visible) {
+  outline: 3px solid var(--edu-brand);
+  outline-offset: 2px;
+}
+.confidence-option span {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.confidence-option small {
+  font-size: 0.63rem;
+  margin-top: 4px;
+  line-height: 1.2;
+}
+.confidence-option.selected {
+  border-color: var(--edu-brand);
+  color: var(--edu-brand);
+  background: #eef3ff;
+}
+.source-icon {
+  display: grid;
+  place-items: center;
+  background: #eef3ff;
+  color: var(--edu-brand);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+.teach-paragraph {
+  font-size: 1.02rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.account-chip {
+  max-width: 190px;
+}
+.account-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body:has(.offcanvas.show) .app-main > main,
+body:has(.offcanvas.show) .bottom-nav {
+  pointer-events: none;
+}
+@media (max-width: 991px) {
+  .demo-notice {
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+  .route-heading {
+    padding-top: 10px;
+  }
+  .quick-tile {
+    min-width: 0;
+  }
+  .quick-tile > span:nth-child(2) {
+    overflow-wrap: anywhere;
+  }
+}
+@media (min-width: 992px) {
+  .scope-toolbar {
+    bottom: 20px;
+  }
+  .route-heading {
+    padding-top: 24px;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .account-chip span,
+  .account-chip svg:last-child {
+    display: none;
+  }
+  .language-select.compact {
+    max-width: 120px;
+    min-width: 95px;
+  }
+  .app-main > .sticky-top > div:first-child p {
+    display: none;
+  }
+  .app-main > .sticky-top {
+    gap: 12px !important;
+    padding-inline: 18px !important;
+  }
+  .app-main > .sticky-top h1 {
+    font-size: 1.1rem;
+  }
+}
+/* Logical shell positioning mirrors Arabic without replacing the original geometry. */
+.sidebar {
+  inset: 0 auto 0 0;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+  border-right: 0;
+  border-inline-end: 1px solid var(--bs-border-color);
+}
+.dot-badge {
+  right: auto;
+  inset-inline-end: 10px;
+}
+@media (min-width: 992px) {
+  .app-main {
+    margin-left: 0;
+    margin-inline-start: var(--edu-sidebar-w);
+  }
+}
+[dir="rtl"] .offcanvas-start {
+  left: auto;
+  right: 0;
+  border-left: var(--bs-offcanvas-border-width) solid
+    var(--bs-offcanvas-border-color);
+  border-right: 0;
+  transform: translateX(100%);
+}
+[dir="rtl"] .offcanvas-start.show {
+  transform: none;
+}
+[dir="rtl"] .tw\:lg\:text-left {
+  text-align: start;
+}
+[dir="rtl"] .hero {
+  background:
+    radial-gradient(
+      120% 90% at 15% 0%,
+      rgba(86, 130, 255, 0.55) 0%,
+      rgba(86, 130, 255, 0) 60%
+    ),
+    linear-gradient(195deg, var(--edu-brand-dark) 0%, #2a5bea 70%, #4a79f2 100%);
+}
+[dir="rtl"] .input-group > .input-group-text {
+  border-radius: 0 0.375rem 0.375rem 0;
+  border-inline-end: 0;
+  border-inline-start: 1px solid var(--bs-border-color) !important;
+}
+[dir="rtl"] .input-group > .form-control {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+  border-inline-start: 0;
+  border-inline-end: 1px solid var(--bs-border-color) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Explicit visible focus on light surfaces, while hero controls retain their white ring. */
+.icon-btn--light:focus-visible {
+  outline: 3px solid var(--edu-brand);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+.outline-row label {
+  min-height: 44px;
 }

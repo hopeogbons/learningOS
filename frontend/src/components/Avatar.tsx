@@ -18,12 +18,23 @@ export default function Avatar({
   tone?: "onDark" | "onLight";
   className?: string;
 }) {
-  const ring = tone === "onDark" ? "tw:border-4 tw:border-white/90 tw:shadow-lg" : "tw:border tw:border-brand-100";
+  const ring =
+    tone === "onDark"
+      ? "tw:border-4 tw:border-white/90 tw:shadow-lg"
+      : "tw:border tw:border-brand-100";
   const base = `tw:shrink-0 tw:rounded-full ${ring} ${className}`;
 
   if (src) {
     return (
-      <Image src={src} alt="" width={size} height={size} unoptimized className={`${base} tw:object-cover`} style={{ width: size, height: size }} />
+      <Image
+        src={src}
+        alt=""
+        width={size}
+        height={size}
+        unoptimized
+        className={`${base} tw:object-cover`}
+        style={{ width: size, height: size }}
+      />
     );
   }
 

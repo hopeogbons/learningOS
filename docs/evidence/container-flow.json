@@ -1,0 +1,72 @@
+{
+  "project": "learningos-release-check-248120cfb9",
+  "mode": "synthetic offline demo",
+  "publication": "not performed",
+  "image_ids": {
+    "backend": "sha256:23ce5f326038e4b70ce8b6f2267893c2e211f9d2d63003e94ad6da45413a7c34",
+    "frontend": "sha256:c6aef39212a57f0a9e488e493ab6ba70de6e1033816e1c73211e4697293b93f1"
+  },
+  "source_manifest": "docs/evidence/container-source-manifest.json",
+  "checks": [
+    {
+      "check": "migrate+seed, API readiness, worker heartbeat and standalone frontend same-origin proxy",
+      "status": "passed"
+    },
+    {
+      "check": "standalone HTML, JavaScript/CSS chunks and Arabic/Chinese/Japanese local fonts served intact",
+      "status": "passed",
+      "static_asset_count": 13,
+      "font_families": 3
+    },
+    {
+      "check": "real multipart original, extraction/citation, frozen scope, cited turn, answer and persisted history",
+      "status": "passed",
+      "original_sha256": "1918b2716846d8b056b1c07d87281d1201eeb6ff14351a8b11712eb286ece2c8"
+    },
+    {
+      "check": "down/up named-volume persistence preserves private original, selected scope, session and one history event",
+      "status": "passed"
+    },
+    {
+      "check": "previous image rollback reads current additive schema, original, session and history without DB downgrade",
+      "status": "passed",
+      "backend_image_id": "sha256:915481f1c8081aa0c8ec534b9bcc00f5b0ed393bedb1f169fbc72eb609ae9aa7",
+      "frontend_image_id": "sha256:e7561d9ef91083525a16b7cf6d30b4904fd1762674f19f829d358f34c8fff35d",
+      "frontend": "previous standalone image"
+    },
+    {
+      "check": "forward return to current backend+worker images",
+      "status": "passed"
+    }
+  ],
+  "image_archives": {
+    "previous": {
+      "path": ".runtime/learningos-release-check-248120cfb9/previous-images.tar.gz",
+      "sha256": "b710bd9175690a48582484b0bbd07e83ed3196482a489dc0ae3b9900f9f1e1e3",
+      "bytes": 405603100,
+      "sha256_after_reload": "b710bd9175690a48582484b0bbd07e83ed3196482a489dc0ae3b9900f9f1e1e3",
+      "archive_unchanged_after_reload": true
+    },
+    "current": {
+      "path": ".runtime/learningos-release-check-248120cfb9/current-images.tar.gz",
+      "sha256": "1467a6d06ae2526ea51bd1b8ba99ac4438a29ef0fd7fcc7712b460867dd4f750",
+      "bytes": 405602408,
+      "sha256_after_reload": "1467a6d06ae2526ea51bd1b8ba99ac4438a29ef0fd7fcc7712b460867dd4f750",
+      "archive_unchanged_after_reload": true
+    }
+  },
+  "status": "passed",
+  "cleanup": "isolated project and synthetic named volume removed",
+  "archive_swap": "both generations archived with SHA256; reloaded immutable image IDs verified; current tags restored; previous archives retained privately; no real data modified",
+  "immutable_image_ids_verified_after_reload": true,
+  "source_language_receipts": {
+    "upload": "en",
+    "learner_correction": "en-US",
+    "survives_volume_restart_and_current_return": true,
+    "original_sha256_unchanged": true
+  },
+  "script_sha256": "b1aee19adc7620580de29cb38a0b9af23ef626ec39ffdffa79c7fc7568290cdc",
+  "source_manifest_aggregate_sha256": "8a25999df45fed631c2df9199113723322256501b432dddd6f43df71094f3d1a",
+  "source_manifest_file_count": 369,
+  "source_manifest_note": "Captured image-build source snapshot, sanitized to exclude ignored private/generated records; post-build Next tsconfig changes are listed in operations-validation.json."
+}

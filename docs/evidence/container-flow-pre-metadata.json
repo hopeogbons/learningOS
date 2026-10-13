@@ -1,0 +1,33 @@
+{
+  "project": "learningos-release-check-6a2fdd94c8",
+  "mode": "synthetic offline demo",
+  "publication": "not performed",
+  "checks": [
+    {
+      "check": "migrate+seed, API readiness, worker heartbeat and standalone frontend same-origin proxy",
+      "status": "passed"
+    },
+    {
+      "check": "real multipart original, extraction/citation, frozen scope, cited turn, answer and persisted history",
+      "status": "passed",
+      "original_sha256": "1918b2716846d8b056b1c07d87281d1201eeb6ff14351a8b11712eb286ece2c8"
+    },
+    {
+      "check": "down/up named-volume persistence preserves private original, selected scope, session and one history event",
+      "status": "passed"
+    },
+    {
+      "check": "previous image rollback reads current additive schema, original, session and history without DB downgrade",
+      "status": "passed",
+      "backend_image_id": "sha256:7bbb0ad76f9b2e3f993b71d3f296542f8c646f972ae04781c62a8f3fb6c5a5af",
+      "frontend_image_id": null,
+      "frontend": "current standalone image; an older frontend image was unavailable"
+    },
+    {
+      "check": "forward return to current backend+worker images",
+      "status": "passed"
+    }
+  ],
+  "status": "passed",
+  "cleanup": "isolated project and synthetic named volume removed"
+}

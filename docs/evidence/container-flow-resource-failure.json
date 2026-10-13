@@ -1,0 +1,34 @@
+{
+  "project": "learningos-release-check-1b5c058888",
+  "mode": "synthetic offline demo",
+  "publication": "not performed",
+  "image_ids": {
+    "backend": "sha256:23ce5f326038e4b70ce8b6f2267893c2e211f9d2d63003e94ad6da45413a7c34",
+    "frontend": "sha256:c6aef39212a57f0a9e488e493ab6ba70de6e1033816e1c73211e4697293b93f1"
+  },
+  "source_manifest": "docs/evidence/container-source-manifest.json",
+  "checks": [
+    {
+      "check": "migrate+seed, API readiness, worker heartbeat and standalone frontend same-origin proxy",
+      "status": "passed"
+    },
+    {
+      "check": "standalone HTML, JavaScript/CSS chunks and Arabic/Chinese/Japanese local fonts served intact",
+      "status": "passed",
+      "static_asset_count": 13,
+      "font_families": 3
+    },
+    {
+      "check": "real multipart original, extraction/citation, frozen scope, cited turn, answer and persisted history",
+      "status": "passed",
+      "original_sha256": "1918b2716846d8b056b1c07d87281d1201eeb6ff14351a8b11712eb286ece2c8"
+    },
+    {
+      "check": "down/up named-volume persistence preserves private original, selected scope, session and one history event",
+      "status": "passed"
+    }
+  ],
+  "status": "failed",
+  "error_class": "CalledProcessError",
+  "cleanup": "isolated project and synthetic named volume removed"
+}

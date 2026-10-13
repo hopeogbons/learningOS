@@ -1,0 +1,71 @@
+{
+  "base": "http://127.0.0.1:3040",
+  "mode": "demo",
+  "results": [
+    {
+      "check": "database-backed health/readiness/dashboard/locale registry",
+      "status": "passed"
+    },
+    {
+      "check": "real multipart upload, worker extraction, original citations, scope denominator/duplicate guard",
+      "status": "passed"
+    },
+    {
+      "check": "cited turn, hidden answers, repeat-safe answer, automatic summary",
+      "status": "passed"
+    },
+    {
+      "check": "Home 360px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "Home 390px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "Home 768px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "Home 991px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "Home 992px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "Home 1440px layout/drawer/static chrome",
+      "status": "passed"
+    },
+    {
+      "check": "all functional routes render on mobile/desktop without overflow or page errors",
+      "status": "passed"
+    },
+    {
+      "check": "UI source-language intake and correction preserve original revision identity",
+      "status": "passed"
+    },
+    {
+      "check": "UI file upload at 1Mbps/300ms, lost-receipt retry dedup, extraction, keyboard reorder/reload, five-title Go, earlier session pinned",
+      "status": "passed"
+    },
+    {
+      "check": "UI link submission persists local descriptor; external retrieval remains separately unverified",
+      "status": "passed"
+    },
+    {
+      "check": "independent UI/study/speech preferences save/reload without changing progress",
+      "status": "passed"
+    },
+    {
+      "check": "200% text resize and half-sized desktop viewport reflow",
+      "status": "passed"
+    },
+    {
+      "check": "all ten locale home render/RTL/script layout (not live learning/speech proof)",
+      "status": "passed"
+    }
+  ],
+  "live_source_and_speech": "unrun; actual credentials/consent/microphone required"
+}

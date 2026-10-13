@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "database": "PostgreSQL isolated random schema",
+  "network": "loopback HTTP; local DB, no WAN/TLS edge",
+  "provider": "no live AI, Drive or speech",
+  "authentication": "real opaque DB sessions, synthetic preauthenticated learners; no OIDC exchange",
+  "dataset": {
+    "learners": 50,
+    "collections": 50,
+    "materials": 250,
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "api_workers": 2,
+  "clients": 50,
+  "duration_requested_seconds": 300,
+  "think_time_ms_per_user": 100,
+  "source_jobs_initial": 20,
+  "source_job_note": "20 actual text-ingestion jobs with two offline workers; initial concurrent queue, not maintained for five minutes",
+  "hardware": {
+    "cpu_count_visible": 5,
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14"
+  },
+  "thresholds": {
+    "p95_ms": 500,
+    "error_rate": 0.01
+  },
+  "seed_seconds": 4.98,
+  "seed_verified": {
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "fixture_auth_tenant_checks": 50,
+  "warmup_seconds": 5,
+  "elapsed_seconds": 300.51,
+  "maximum_in_flight_requests": 50,
+  "overall": {
+    "requests": 30710,
+    "errors": 0,
+    "error_rate": 0.0,
+    "p50_ms": 338.25,
+    "p95_ms": 839.3,
+    "p99_ms": 1119.04,
+    "requests_per_second": 102.19
+  },
+  "endpoints": {
+    "dashboard": {
+      "requests": 5143,
+      "errors": 0,
+      "p50_ms": 471.32,
+      "p95_ms": 948.26,
+      "p99_ms": 1235.89
+    },
+    "collections": {
+      "requests": 5131,
+      "errors": 0,
+      "p50_ms": 307.6,
+      "p95_ms": 753.7,
+      "p99_ms": 1018.02
+    },
+    "outline": {
+      "requests": 5123,
+      "errors": 0,
+      "p50_ms": 505.45,
+      "p95_ms": 999.64,
+      "p99_ms": 1283.94
+    },
+    "progress": {
+      "requests": 5111,
+      "errors": 0,
+      "p50_ms": 276.6,
+      "p95_ms": 710.32,
+      "p99_ms": 996.32
+    },
+    "review/due": {
+      "requests": 5104,
+      "errors": 0,
+      "p50_ms": 204.08,
+      "p95_ms": 625.13,
+      "p99_ms": 874.96
+    },
+    "search": {
+      "requests": 5098,
+      "errors": 0,
+      "p50_ms": 278.52,
+      "p95_ms": 702.65,
+      "p99_ms": 991.53
+    }
+  },
+  "source_jobs": {
+    "total": 20,
+    "succeeded": 20,
+    "failed_or_attention": 0,
+    "all_attempts_once": true,
+    "completion_observed_within_seconds": 301.78
+  },
+  "targets_passed": false,
+  "full_five_minute_target_run": true,
+  "cleanup": "Only owned random probe schema and temporary private files removed",
+  "implementation_note": "Before final material-revision batching; API started around 14:42 UTC. Per-file source hashes not captured in this first full run. Superseded by the final stable-source probe."
+}

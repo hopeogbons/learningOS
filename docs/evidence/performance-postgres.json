@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "database": "PostgreSQL isolated random schema",
+  "network": "loopback HTTP; local DB, no WAN/TLS edge",
+  "provider": "no live AI, Drive or speech",
+  "authentication": "real opaque DB sessions, synthetic preauthenticated learners; no OIDC exchange",
+  "dataset": {
+    "learners": 50,
+    "collections": 50,
+    "materials": 250,
+    "titles": 5000,
+    "concepts": 50000,
+    "initial_titles_per_collection": 100
+  },
+  "api_workers": 2,
+  "clients": 50,
+  "duration_requested_seconds": 300,
+  "think_time_ms_per_user": 100,
+  "source_jobs_initial": 20,
+  "source_job_note": "20 actual text-ingestion jobs with two offline workers; initial concurrent queue, not maintained for five minutes",
+  "hardware": {
+    "cpu_count_visible": 5,
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "shared_host_note": "Other development checks may share this cloud host; not a dedicated production benchmark host."
+  },
+  "thresholds": {
+    "p95_ms": 500,
+    "error_rate": 0.01
+  },
+  "source_sha256_at_start": {
+    "backend/app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/auth.py": "5cb70db56c61a309a6efb5f31f8bcf012ee5959902621a13bb4da0194391ee28",
+    "backend/app/core_api.py": "2afd61a21db0903b362d04afdfa1878c6f38dd699936f147697cca6594fc261b",
+    "backend/app/core_schemas.py": "f56895aa11f99ecc610ae256247993f64adbf13f64b59f690598cc4ff26b8767",
+    "backend/app/db.py": "b13b82552978e970f05ea5d8fd59ada3041e6ad41a0d88f7f73de71301419653",
+    "backend/app/ingest.py": "e5c62fba576e82520754ff49c1c5f8c88ff731b53eb037f54e77f723ba5d6dc7",
+    "backend/app/ingestion_api.py": "a5a51e3a48c9197ff2c5c45dd481dd16245b1d7b73744d0303865e1e2b2e019c",
+    "backend/app/jobs.py": "325a548b08d652aba5c521be528ca874aa339c14983d82220db75c9a281723b4",
+    "backend/app/learning_api.py": "dff3969430bcb9b0c97ffc9e48595f27150cd2698f7c99138e4e8ec8a298333e",
+    "backend/app/llm.py": "0988816fb74b416874fb3b866b0ba463401dcc4b70d9b77078e385058a36adac",
+    "backend/app/main.py": "8021ab61d9e08bc167eace262aa6f1338358a3f6c4d2ba6f5f1c93bae931ef6d",
+    "backend/app/models.py": "56ba35238b42ae24e5137bb635ece21e5277dc47e01426b14e82088ded696324",
+    "backend/app/review.py": "82cbe349fbf9815151f382d0b5fdba761e28cc243722916e49037d6e18bf1f02",
+    "backend/app/seed.py": "ebbbebb53a6e9b38896d384086c77b400ed61ae0374ca91ca9c9148e2ef6116a",
+    "backend/app/sessions.py": "7b418d0a5c35dd99ee91dcc2af3a5cd217854b051af6e691e38adb9ef273238f",
+    "backend/app/settings.py": "8189dd509cda805c844bb64ae00ba2d4c734199fad008c6f03c604353523f6df",
+    "backend/app/sources/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/app/sources/base.py": "670737d0128532cd696c31eded3c3205c7c581acf2b467b21850588dd5822733",
+    "backend/app/sources/captions.py": "97c9ebd6e586f359618d8d288928b714dd4fb53ed8d070feed3a1e07a472dc3c",
+    "backend/app/sources/drive.py": "21a4662931ad0274a812387563c79407454c4603f3f0fa55d9134906b49d8163",
+    "backend/app/sources/local.py": "38194fa50f211f8419b9933b35e557b2982cbbce468d1d4481853fffacb1b162",
+    "backend/app/sources/publicweb.py": "5bc344a09fbf7366f1beadf00f5d57d0acfd5437027017487d3f86de79f0639d",
+    "backend/app/speech.py": "c537f15ea17bcaa8bc2ea7f4322acb73a6f9f0f46931605d600b836ba4c3e579",
+    "backend/app/storage.py": "190d86b0c6ce4dc5420be2f292f0ca1d4d30141cef1e0556408ffcff906d52f8",
+    "backend/app/worker.py": "6d8c6f85dbbb54e30568f7de5747bff47b136873700eda857e6446de6c822d4f"
+  },
+  "git_head_at_start": "6189ede2ea4248e37aa603d19bfa699e9a7078d9",
+  "working_tree_note": "Source hashes identify the reviewed working-tree implementation; HEAD alone may predate uncommitted files.",
+  "seed_seconds": 3.25,
+  "seed_verified": {
+    "titles": 5000,
+    "concepts": 50000
+  },
+  "direct_query_profile": {
+    "note": "Single-user direct function profile excludes authentication, ASGI/thread serialization and pool acquisition",
+    "endpoints": {
+      "dashboard": {
+        "sql_count": 13,
+        "sql_ms": 7.52,
+        "direct_function_ms": 22.64,
+        "serialized_payload_bytes": 7507
+      },
+      "collections": {
+        "sql_count": 7,
+        "sql_ms": 3.38,
+        "direct_function_ms": 7.83,
+        "serialized_payload_bytes": 4766
+      },
+      "outline": {
+        "sql_count": 11,
+        "sql_ms": 5.91,
+        "direct_function_ms": 19.32,
+        "serialized_payload_bytes": 23505
+      },
+      "progress": {
+        "sql_count": 5,
+        "sql_ms": 2.08,
+        "direct_function_ms": 4.27,
+        "serialized_payload_bytes": 146
+      },
+      "search": {
+        "sql_count": 2,
+        "sql_ms": 16.39,
+        "direct_function_ms": 25.12,
+        "serialized_payload_bytes": 7692
+      }
+    }
+  },
+  "fixture_auth_tenant_checks": 50,
+  "warmup_seconds": 5,
+  "elapsed_seconds": 300.45,
+  "maximum_in_flight_requests": 50,
+  "overall": {
+    "requests": 35350,
+    "errors": 0,
+    "error_rate": 0.0,
+    "p50_ms": 280.94,
+    "p95_ms": 855.08,
+    "p99_ms": 1335.82,
+    "requests_per_second": 117.66
+  },
+  "endpoints": {
+    "dashboard": {
+      "requests": 5911,
+      "errors": 0,
+      "p50_ms": 343.54,
+      "p95_ms": 921.4,
+      "p99_ms": 1376.03
+    },
+    "collections": {
+      "requests": 5904,
+      "errors": 0,
+      "p50_ms": 288.45,
+      "p95_ms": 830.33,
+      "p99_ms": 1301.41
+    },
+    "outline": {
+      "requests": 5898,
+      "errors": 0,
+      "p50_ms": 371.15,
+      "p95_ms": 988.61,
+      "p99_ms": 1527.4
+    },
+    "progress": {
+      "requests": 5888,
+      "errors": 0,
+      "p50_ms": 262.96,
+      "p95_ms": 803.72,
+      "p99_ms": 1279.08
+    },
+    "review/due": {
+      "requests": 5881,
+      "errors": 0,
+      "p50_ms": 210.85,
+      "p95_ms": 727.34,
+      "p99_ms": 1169.88
+    },
+    "search": {
+      "requests": 5868,
+      "errors": 0,
+      "p50_ms": 255.55,
+      "p95_ms": 772.75,
+      "p99_ms": 1259.09
+    }
+  },
+  "source_jobs": {
+    "total": 20,
+    "succeeded": 20,
+    "failed_or_attention": 0,
+    "all_attempts_once": true,
+    "completion_observed_within_seconds": 301.56
+  },
+  "targets_passed": false,
+  "full_five_minute_target_run": true,
+  "cleanup": "Only owned random probe schema and temporary private files removed",
+  "source_files_changed_during_run": [
+    "backend/app/ingest.py"
+  ]
+}

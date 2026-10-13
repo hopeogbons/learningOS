@@ -1,0 +1,6 @@
+{
+  "check": "occupied API port fails before migration/worker/API/frontend launch",
+  "exit_code": 1,
+  "status": "passed_expected_failure",
+  "synthetic_bound_port": true
+}

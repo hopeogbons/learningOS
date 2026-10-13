@@ -1,0 +1,111 @@
+{
+  "check": "L01 catalog/ICU and local asset checks",
+  "status": "passed",
+  "locales": [
+    "en",
+    "zh-Hans",
+    "es",
+    "ar",
+    "pt",
+    "fr",
+    "ja",
+    "ru",
+    "de",
+    "id"
+  ],
+  "keys_per_locale": 261,
+  "runtime_formats_exercised": 23490,
+  "font_assets": 230,
+  "plural_examples": {
+    "en": [
+      "0 materials",
+      "1 material",
+      "2 materials",
+      "3 materials",
+      "11 materials",
+      "21 materials"
+    ],
+    "zh-Hans": [
+      "0 份资料",
+      "1 份资料",
+      "2 份资料",
+      "3 份资料",
+      "11 份资料",
+      "21 份资料"
+    ],
+    "es": [
+      "0 materiales",
+      "1 material",
+      "2 materiales",
+      "3 materiales",
+      "11 materiales",
+      "21 materiales"
+    ],
+    "ar": [
+      "لا مواد",
+      "مادة واحدة",
+      "مادتان",
+      "3 مواد",
+      "11 مادة",
+      "21 مادة"
+    ],
+    "pt": [
+      "0 material",
+      "1 material",
+      "2 materiais",
+      "3 materiais",
+      "11 materiais",
+      "21 materiais"
+    ],
+    "fr": [
+      "0 document",
+      "1 document",
+      "2 documents",
+      "3 documents",
+      "11 documents",
+      "21 documents"
+    ],
+    "ja": [
+      "教材 0 件",
+      "教材 1 件",
+      "教材 2 件",
+      "教材 3 件",
+      "教材 11 件",
+      "教材 21 件"
+    ],
+    "ru": [
+      "0 материалов",
+      "1 материал",
+      "2 материала",
+      "3 материала",
+      "11 материалов",
+      "21 материал"
+    ],
+    "de": [
+      "0 Materialien",
+      "1 Material",
+      "2 Materialien",
+      "3 Materialien",
+      "11 Materialien",
+      "21 Materialien"
+    ],
+    "id": [
+      "0 materi",
+      "1 materi",
+      "2 materi",
+      "3 materi",
+      "11 materi",
+      "21 materi"
+    ]
+  },
+  "pseudo_long_fixture": {
+    "nav.addMaterial": "⟦ Add Add Add Material Material Material ⟧",
+    "profile.preferences": "⟦ Language Language Language preferences preferences preferences ⟧"
+  },
+  "errors": [],
+  "limitations": [
+    "Translations are authored candidates; proficient/native linguistic approval is outstanding.",
+    "Catalog and asset checks do not establish RTL/mobile/zoom browser layout, live generated study-language quality, or STT/TTS support.",
+    "Synthetic long-label fixture requires browser injection/review; generating it alone is not a layout pass."
+  ]
+}

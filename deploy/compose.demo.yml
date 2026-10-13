@@ -1,0 +1,49 @@
+name: learningos-demo
+x-backend: &backend
+  image: learningos-backend:demo
+  build:
+    context: ..
+    dockerfile: deploy/backend.Dockerfile
+  environment: &demo-environment
+    APP_MODE: demo
+    APP_ORIGIN: http://127.0.0.1:3000
+    PUBLIC_URL: http://127.0.0.1:3000
+    FRONTEND_URL: http://127.0.0.1:3000
+    DATABASE_URL: sqlite:////data/learningos.db
+    PRIVATE_STORAGE_DIR: /data/private
+  volumes:
+    - demo-data:/data
+  security_opt: [no-new-privileges:true]
+services:
+  migrate:
+    <<: *backend
+    command: [sh, -c, 'alembic upgrade head && python -m app.seed']
+    healthcheck: {disable: true}
+  backend:
+    <<: *backend
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    ports: ['127.0.0.1:8000:8000']
+    restart: unless-stopped
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck: {disable: true}
+    restart: unless-stopped
+  frontend:
+    image: learningos-frontend:demo
+    build:
+      context: ..
+      dockerfile: deploy/frontend.Dockerfile
+    ports: ['127.0.0.1:3000:3000']
+    depends_on:
+      backend: {condition: service_healthy}
+    environment:
+      LEARNING_OS_BACKEND_URL: http://backend:8000
+      API_BASE_URL: http://backend:8000
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+volumes:
+  demo-data:

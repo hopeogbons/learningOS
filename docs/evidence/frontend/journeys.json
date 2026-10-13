@@ -1,0 +1,6 @@
+{
+  "checks": "UI create, actual file upload, worker extraction, title select, keyboard move/order persistence, scope Go, drawer focus and restore",
+  "status": "passed",
+  "collection_id": "6a0966db-70d4-475b-ae70-4e83c578b1c7",
+  "pageerrors": []
+}

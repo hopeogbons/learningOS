@@ -1,0 +1,16 @@
+# Isolated integration database only; never reuse this synthetic password for deployment.
+name: learningos-postgres-test
+services:
+  postgres:
+    image: postgres:16.15-bookworm@sha256:0ea6700a3b4f0ae6ce746519073558aed4d88a79d8d07622a9a644946c7319c4
+    environment:
+      POSTGRES_DB: learningos_test
+      POSTGRES_USER: learningos_test
+      POSTGRES_PASSWORD: synthetic-local-integration-only
+    ports: ['127.0.0.1:${POSTGRES_TEST_PORT:-55432}:5432']
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U learningos_test -d learningos_test]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    tmpfs: [/var/lib/postgresql/data:size=512m,uid=999,gid=999]

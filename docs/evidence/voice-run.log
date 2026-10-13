@@ -1,0 +1,1 @@
+{"status": "passed", "checks": "Mocked recorder cancels on leaving without submit; explicitstop posts owneditem; transcript editable; missing browser voice waits then owned server fallback; unavailable retains typing", "live_speech_verified": false, "errors": []}

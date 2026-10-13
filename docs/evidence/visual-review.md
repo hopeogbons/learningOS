@@ -1,0 +1,11 @@
+# Actual dashboard and route screenshot review
+
+Coordinator review, 13 October 2026. Original reference/screenshots/mobile.png and desktop.png were inspected alongside the actual application captures.
+
+Reviewed Home390/768/1440, mobile Arabic and desktop Arabic, Japanese/Chinese renders, AddMaterial mobile/desktop receipt/form, scopedStudy and all route captures. The supplied blue hero, original logo/Inter vocabulary, white rounded cards, 264px sidebar, six action colors/order and mobile bottom tabs remain recognizable. Arabic mirrors the shell; original source labels and citation excerpts remain unchanged. Local ready materials show separate Local/Ready labels, and the populated sample Collection reports2materials. Unknown source language and pending storage are explicit.
+
+Intentional changes: actual learner/count/scope/calibration data replaces mock content; an offline banner and language controls were added; source/voice/status actions use the existing shell. The banner moves the mobile action card down while preserving its style. Focus-visible and44px actions support keyboard/touch use. Receipt screenshots may capture a transient disabled save control during refetch; the browser tests independently verified the persisted values.
+
+Quantitative static chrome: desktop sidebar(0,0,264,900) and mobile topbar(0,0,390,70), with only the changing notification badge rectangle excluded, had0changed pixels at maximumRGBdifference threshold51/255. This passes the proposed1% target for those declared regions; it is not a full-page pixel-equivalence claim. Original baselines were never replaced. The first mobile comparison used a screenshot after Escape focus restoration and differed1.898% due to the visible menu focus ring. Re-capturing the unfocused closed-menu state matching the reference yielded0%, with the same region/mask/threshold. See visual-diff-*.json and tests/visual_capture.py.
+
+The actual browser suite passed16checks, including360/991/992breakpoints, drawer trap/restore, keyboard ordering, 200% text reflow, all routes mobile/desktop and all ten locale Home renders. Axe passed22route/viewport combinations with0violations. Native/proficient catalog wording, spoken-language output and live Drive placement remain separate unverified gates.

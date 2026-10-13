@@ -1,0 +1,328 @@
+{
+  "schema_version": 2,
+  "checks": [
+    {
+      "check": "bash -n scripts/*.sh and Python compilation",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "check": "python scripts/test_operations.py",
+      "status": "passed",
+      "exit_code": 0,
+      "tests": 6,
+      "coverage": [
+        "explicit quiescence",
+        "existing backup preserved",
+        "isolated restore/source preserved",
+        "object corruption rejection",
+        "manifest traversal rejection",
+        "object symlink rejection"
+      ],
+      "final_rerun": "exit0, six safety tests passed after container image builds"
+    },
+    {
+      "check": "6 JSON contract schemas/build state/ten-language registry",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "check": "Compose demo/PostgreSQL profile configuration syntax",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "check": "Production Compose required-name/mode/private-file/digest/HTTPS configuration syntax with explicit synthetic placeholders",
+      "status": "passed",
+      "exit_code": 0,
+      "live_connectivity": "unrun",
+      "publication": "not performed"
+    },
+    {
+      "check": "Missing production key fails closed",
+      "status": "passed_expected_failure",
+      "exit_code": 1
+    },
+    {
+      "check": "Caddy 2.11.7 validate with example.test configuration",
+      "status": "passed",
+      "exit_code": 0,
+      "real_DNS_ACME_HTTPS": "unrun"
+    },
+    {
+      "check": "pre-start occupied-port guard",
+      "status": "passed_expected_failure",
+      "exit_code": 1,
+      "evidence": "docs/evidence/dev-port-collision.json"
+    }
+  ],
+  "backup_restore": [
+    {
+      "fixture": "SQLite synthetic migration/seed and private originals",
+      "database": "sqlite",
+      "status": "passed",
+      "exit_code": 0,
+      "table_count": 23,
+      "table_row_counts": {
+        "alembic_version": 1,
+        "auth_sessions": 0,
+        "chunks": 10,
+        "citations": 30,
+        "collections": 1,
+        "concept_relations": 0,
+        "concepts": 30,
+        "jobs": 0,
+        "learners": 1,
+        "material_revisions": 2,
+        "materials": 2,
+        "notifications": 0,
+        "outbox_events": 0,
+        "progress_events": 0,
+        "provider_connections": 0,
+        "review_states": 0,
+        "scope_items": 5,
+        "scope_revisions": 1,
+        "session_items": 0,
+        "source_write_receipts": 0,
+        "study_sessions": 0,
+        "title_assessments": 0,
+        "worker_heartbeats": 1
+      },
+      "manifest_sha256": "700589af723e2d5c44113bcba40c4a48812dd02d312e6e556a7cd0a15a55511d",
+      "hashed_file_count": 3,
+      "object_mode": "private-local",
+      "verified": "all table content signatures and private-object hashes match; SQLite integrity/FK check; PostgreSQL isolated empty *_restore_check database",
+      "private_backup_content": "excluded from Git and this evidence; no real learner records or live S3 bucket modified"
+    },
+    {
+      "fixture": "PostgreSQL synthetic migration/seed and private originals",
+      "database": "postgresql",
+      "status": "passed",
+      "exit_code": 0,
+      "table_count": 23,
+      "table_row_counts": {
+        "alembic_version": 1,
+        "auth_sessions": 0,
+        "chunks": 10,
+        "citations": 40,
+        "collections": 1,
+        "concept_relations": 0,
+        "concepts": 30,
+        "jobs": 0,
+        "learners": 1,
+        "material_revisions": 2,
+        "materials": 2,
+        "notifications": 0,
+        "outbox_events": 0,
+        "progress_events": 0,
+        "provider_connections": 0,
+        "review_states": 0,
+        "scope_items": 5,
+        "scope_revisions": 1,
+        "session_items": 0,
+        "source_write_receipts": 0,
+        "study_sessions": 0,
+        "title_assessments": 0,
+        "worker_heartbeats": 0
+      },
+      "manifest_sha256": "db36fc5c5495fd0fb550f6570763fea1cb5fc86fb94cebda28b6669744653305",
+      "hashed_file_count": 3,
+      "object_mode": "private-local",
+      "verified": "all table content signatures and private-object hashes match; SQLite integrity/FK check; PostgreSQL isolated empty *_restore_check database",
+      "private_backup_content": "excluded from Git and this evidence; no real learner records or live S3 bucket modified"
+    },
+    {
+      "fixture": "PostgreSQL source plus one API-created ProgressEvent and one explicitly synthetic backup-only review schedule",
+      "database": "postgresql",
+      "status": "passed",
+      "exit_code": 0,
+      "table_count": 23,
+      "table_row_counts": {
+        "alembic_version": 1,
+        "auth_sessions": 0,
+        "chunks": 10,
+        "citations": 40,
+        "collections": 1,
+        "concept_relations": 0,
+        "concepts": 30,
+        "jobs": 5,
+        "learners": 1,
+        "material_revisions": 2,
+        "materials": 2,
+        "notifications": 0,
+        "outbox_events": 1,
+        "progress_events": 1,
+        "provider_connections": 0,
+        "review_states": 1,
+        "scope_items": 5,
+        "scope_revisions": 1,
+        "session_items": 1,
+        "source_write_receipts": 0,
+        "study_sessions": 1,
+        "title_assessments": 1,
+        "worker_heartbeats": 1
+      },
+      "manifest_sha256": "be0704ad34e7a5613f7144544fc048588c3cfebce5da0be6fe78b45eaf8752f5",
+      "hashed_file_count": 3,
+      "object_mode": "private-local",
+      "verified": "all table content signatures and private-object hashes match; SQLite integrity/FK check; PostgreSQL isolated empty *_restore_check database",
+      "private_backup_content": "excluded from Git and this evidence; no real learner records or live S3 bucket modified"
+    }
+  ],
+  "images": {
+    "node": "node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+    "python": "python:3.12.14-slim-bookworm@sha256:392307d22300de8b5986851a12d9176dfc0fc073e65bf6523ebd7dcbeb23564e",
+    "uv": "ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21",
+    "postgres": "postgres:16.15-bookworm@sha256:0ea6700a3b4f0ae6ce746519073558aed4d88a79d8d07622a9a644946c7319c4",
+    "caddy": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "ffmpeg": "7:5.1.9-0+deb12u1 installed from signed Debian repository with verified HTTPS"
+  },
+  "diagnosed_failures": [
+    {
+      "failure": "Docker build resolver could not resolve registry/proxy host",
+      "correction": "existing proxy build args, runtime-derived proxy hostname/IP mapping, optional platform CA as non-persisted BuildKit secret; TLS/package hashes kept enabled",
+      "status": "corrected_dependency_build_passed"
+    },
+    {
+      "failure": "APT lower-privilege fetch could not read the mounted public CA",
+      "correction": "public trust bundle mount mode 0444 for apt only; signed repository verification retained",
+      "status": "corrected"
+    },
+    {
+      "failure": "SQLite WAL/SHM sidecars vanished after initial backup manifest",
+      "correction": "explicit connections close, WAL checkpoint and standalone DELETE journal artifact",
+      "status": "corrected_restore_passed"
+    },
+    {
+      "failure": "Initial frontend snapshot had a TypeScript ReactNode error while UI implementation was in progress",
+      "correction": "owner fixed; final stable image verification pending",
+      "status": "superseded_snapshot"
+    },
+    {
+      "failure": "Shared overlay disk exhausted by disposable Docker build caches and old image snapshots",
+      "correction": "Pruned unused BuildKit cache and removed only two explicitly untagged unused Learning OS backend snapshots; all repository/private runtime/named persistent data and tagged rollback images preserved",
+      "status": "frontend_retry_and_isolated_container_flow_passed"
+    },
+    {
+      "failure": "Full-stack container replacement and subsequent cold startup hit ENOSPC despite final images being valid",
+      "cause": "Docker vfs driver copies parent filesystem trees for every image layer and container; keeping two generations loaded exceeded the shared32GB volume",
+      "failed_exits": [
+        1,
+        1
+      ],
+      "failure_evidence": [
+        "docs/evidence/container-flow-resource-failure.json",
+        "docs/evidence/container-flow-cold-resource-failure.json"
+      ],
+      "correction": "After root completed fresh checks and cleared only generated caches, export both owned image generations as private gzip archives, record SHA256, unload/load one generation at a time, stop/remove only isolated containers before swap, preserve synthetic DB volume, verify reloaded immutable image IDs, restore final current tags",
+      "status": "actual final six-check flow exit0; isolated data removed; archives unchanged after reload"
+    }
+  ],
+  "final_container_flow": {
+    "status": "passed",
+    "exit_code": 0,
+    "checks": 6,
+    "evidence": "docs/evidence/container-flow.json",
+    "mode": "synthetic offline demo",
+    "standalone_static_assets": 13,
+    "local_font_families": [
+      "Arabic",
+      "Chinese Simplified",
+      "Japanese"
+    ],
+    "source_language": "explicit en upload, learner-corrected en-US, persisted across restart and generation swap; original unchanged",
+    "cleanup": "isolated project and synthetic named volume removed"
+  },
+  "previous_image_rollback": {
+    "status": "passed",
+    "exit_code": 0,
+    "scope": "previous backend+worker+standalone frontend, current additive0002 schema and preserved synthetic named volume, then forward return to final images",
+    "evidence": "docs/evidence/container-flow.json",
+    "previous_backend_image_id": "sha256:915481f1c8081aa0c8ec534b9bcc00f5b0ed393bedb1f169fbc72eb609ae9aa7",
+    "previous_frontend_image_id": "sha256:e7561d9ef91083525a16b7cf6d30b4904fd1762674f19f829d358f34c8fff35d",
+    "database_downgrade": "not performed",
+    "method": "cold generation swap; SHA256-verified private gzip image archives and immutable image-ID verification; no concurrent real runtime touched",
+    "previous_artifacts": "retained in private gzip archive; final current demo tags restored"
+  },
+  "production_release": "blocked by live and remaining release gates in docs/build-state.json, including real model/ten-language study+STT/TTS, Drive OAuth/direct-drop, real OIDC, S3 and public DNS/HTTPS acceptance; no image registry push or publication performed",
+  "pre_metadata_container_flow": {
+    "status": "passed",
+    "exit_code": 0,
+    "evidence": "docs/evidence/container-flow-pre-metadata.json",
+    "source_manifest": "docs/evidence/container-source-pre-metadata.json",
+    "checks": 5,
+    "scope": "pre source-language-metadata snapshot; final rebuild pending"
+  },
+  "pre_metadata_builds": {
+    "backend": {
+      "exit_code": 0,
+      "image_id": "sha256:915481f1c8081aa0c8ec534b9bcc00f5b0ed393bedb1f169fbc72eb609ae9aa7",
+      "bytes": 718740194,
+      "ffmpeg_package_version": "7:5.1.9-0+deb12u1"
+    },
+    "frontend": {
+      "first_exit_code": 102,
+      "first_failure": "ENOSPC during COPY frontend",
+      "retry_exit_code": 0,
+      "image_id": "sha256:e7561d9ef91083525a16b7cf6d30b4904fd1762674f19f829d358f34c8fff35d",
+      "bytes": 293264746,
+      "runtime": "Next.js standalone node server.js; traced dependencies/static/public"
+    }
+  },
+  "final_builds": {
+    "combined_exit_code": 102,
+    "combined_failure": "ENOSPC during frontend compile-layer preparation after final backend succeeded",
+    "backend": {
+      "status": "passed",
+      "image_id": "sha256:23ce5f326038e4b70ce8b6f2267893c2e211f9d2d63003e94ad6da45413a7c34",
+      "bytes": 718757945,
+      "pinned_ffmpeg_package_version": "7:5.1.9-0+deb12u1"
+    },
+    "frontend": {
+      "status": "passed",
+      "retry_exit_code": 0,
+      "image_id": "sha256:c6aef39212a57f0a9e488e493ab6ba70de6e1033816e1c73211e4697293b93f1",
+      "bytes": 293272616,
+      "runtime": "Next standalone node server.js"
+    },
+    "source_manifest": "docs/evidence/container-source-manifest.json",
+    "source_file_count": 369,
+    "source_aggregate_sha256": "8a25999df45fed631c2df9199113723322256501b432dddd6f43df71094f3d1a",
+    "source_change_audit": {
+      "snapshot": "captured final image build inputs, preserving original hashes after private/generated record sanitization",
+      "post_build_differences": [
+        "frontend/next-env.d.ts",
+        "frontend/tsconfig.json"
+      ],
+      "interpretation": "Next development auto-updated frontend/next-env.d.ts and frontend/tsconfig.json type-cache discovery paths after the captured build. No claim that every current file still matches the earlier snapshot; image IDs unchanged.",
+      "ignored_records_removed": 3,
+      "evidence": "docs/evidence/container-source-manifest.json"
+    },
+    "trusted_transport": "HTTPS, signed Debian repositories, npm/uv frozen package lock integrity and pinned base digests kept enabled",
+    "image_push": "not performed"
+  },
+  "image_archives": {
+    "previous": {
+      "path": ".runtime/learningos-release-check-248120cfb9/previous-images.tar.gz",
+      "sha256": "b710bd9175690a48582484b0bbd07e83ed3196482a489dc0ae3b9900f9f1e1e3",
+      "bytes": 405603100,
+      "sha256_after_reload": "b710bd9175690a48582484b0bbd07e83ed3196482a489dc0ae3b9900f9f1e1e3",
+      "archive_unchanged_after_reload": true
+    },
+    "current": {
+      "path": ".runtime/learningos-release-check-248120cfb9/current-images.tar.gz",
+      "sha256": "1467a6d06ae2526ea51bd1b8ba99ac4438a29ef0fd7fcc7712b460867dd4f750",
+      "bytes": 405602408,
+      "sha256_after_reload": "1467a6d06ae2526ea51bd1b8ba99ac4438a29ef0fd7fcc7712b460867dd4f750",
+      "archive_unchanged_after_reload": true
+    }
+  },
+  "container_privacy": {
+    "status": "passed",
+    "exit_code": 0,
+    "evidence": "docs/evidence/container-privacy.json",
+    "docker_ignore": "**/.runtime, dependency/build caches, Git and environment files are excluded; non-secret *.example permitted",
+    "git_ignore": "nested .runtime/ and root .runtime/ excluded, including image archives; demonstrated git check-ignore",
+    "manifest": "historical snapshots sanitized without rehashing later development files"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "project": "learningos-release-check-ddd21e1ff7",
+  "mode": "synthetic offline demo",
+  "publication": "not performed",
+  "image_ids": {
+    "backend": "sha256:23ce5f326038e4b70ce8b6f2267893c2e211f9d2d63003e94ad6da45413a7c34",
+    "frontend": "sha256:c6aef39212a57f0a9e488e493ab6ba70de6e1033816e1c73211e4697293b93f1"
+  },
+  "source_manifest": "docs/evidence/container-source-manifest.json",
+  "checks": [],
+  "status": "failed",
+  "error_class": "CalledProcessError",
+  "cleanup": "isolated project and synthetic named volume removed"
+}
