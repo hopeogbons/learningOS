@@ -1,0 +1,68 @@
+{
+  "chunk_id": "fixture-chem-ch4-ionic-covalent",
+  "source_revision_id": "fixture-chem-ch4-ae4b84a467b253b4",
+  "questions": [
+    {
+      "id": "bonding-recall-1",
+      "kind": "recall",
+      "concept_ids": [
+        "ionic-attraction"
+      ],
+      "question": "What interaction constitutes an ionic bond?",
+      "expected_answer": "Electrostatic attraction between oppositely charged ions.",
+      "citation_ids": [
+        "fixture-ionic-citation"
+      ]
+    },
+    {
+      "id": "bonding-explain-2",
+      "kind": "explain",
+      "concept_ids": [
+        "ionic-transfer-versus-bond"
+      ],
+      "question": "Why is describing an ionic bond only as an electron-transfer event incomplete?",
+      "expected_answer": "Electron transfer can create the ions, but the bond itself is the electrostatic attraction between oppositely charged ions.",
+      "citation_ids": [
+        "fixture-ionic-citation"
+      ]
+    },
+    {
+      "id": "bonding-recall-3",
+      "kind": "recall",
+      "concept_ids": [
+        "covalent-shared-pair"
+      ],
+      "question": "What happens to electrons in a covalent bond?",
+      "expected_answer": "A pair of electrons is shared between atoms.",
+      "citation_ids": [
+        "fixture-covalent-citation"
+      ]
+    },
+    {
+      "id": "bonding-apply-4",
+      "kind": "apply",
+      "concept_ids": [
+        "covalent-shared-pair"
+      ],
+      "question": "A particle diagram shows two atoms associated with the same pair of electrons. Which bonding description fits this diagram, and why?",
+      "expected_answer": "Covalent bonding fits because the atoms share a pair of electrons.",
+      "citation_ids": [
+        "fixture-covalent-citation"
+      ]
+    },
+    {
+      "id": "bonding-apply-5",
+      "kind": "apply",
+      "concept_ids": [
+        "ionic-transfer-versus-bond",
+        "covalent-shared-pair"
+      ],
+      "question": "A student uses “sharing” and “transfer” interchangeably when labeling two bond diagrams. What distinction must they preserve to correct their labels?",
+      "expected_answer": "Sharing a pair describes covalent bonding. Electron transfer can create ions in an ionic example, but ionic bonding is the attraction between oppositely charged ions. Sharing and transfer must remain distinct.",
+      "citation_ids": [
+        "fixture-ionic-citation",
+        "fixture-covalent-citation"
+      ]
+    }
+  ]
+}

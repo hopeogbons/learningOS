@@ -1,0 +1,30 @@
+[
+  {
+    "id": "fixture-ionic-citation",
+    "material_revision_id": "fixture-chem-ch4-ae4b84a467b253b4",
+    "source": {
+      "kind": "text",
+      "locator": {
+        "heading": "Ionic bonding",
+        "line_start": 4,
+        "line_end": 4
+      }
+    },
+    "excerpt": "Ionic bonding is electrostatic attraction between oppositely charged ions. Electron transfer can create these ions, but attraction is the bond itself.",
+    "excerpt_hash": "b63d37eacbc74f82f49b286332d257891eff2c28ec3dc8de7fae8d620fb185da"
+  },
+  {
+    "id": "fixture-covalent-citation",
+    "material_revision_id": "fixture-chem-ch4-ae4b84a467b253b4",
+    "source": {
+      "kind": "text",
+      "locator": {
+        "heading": "Covalent bonding",
+        "line_start": 7,
+        "line_end": 7
+      }
+    },
+    "excerpt": "A covalent bond involves a shared pair of electrons between atoms. Sharing and transfer are distinct descriptions; neither should be substituted for the other.",
+    "excerpt_hash": "5e41ecceaaf22ef2f423b7fcf5b1bceb6193bd3a881875a008ad10426dfef0b0"
+  }
+]
