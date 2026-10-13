@@ -1,0 +1,72 @@
+{
+  "chunk_id": "fixture:chem_ch3:atomic-number",
+  "source_revision_id": "fixture:chem_ch3:sha256:b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34",
+  "questions": [
+    {
+      "id": "fixture:atomic-number:q1",
+      "kind": "recall",
+      "concept_ids": [
+        "fixture:chem_ch3:atomic-number:proton-count"
+      ],
+      "question": "What does an atom's atomic number tell you?",
+      "expected_answer": "It gives the number of protons in the atom's nucleus.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:proton-count"
+      ]
+    },
+    {
+      "id": "fixture:atomic-number:q2",
+      "kind": "explain",
+      "concept_ids": [
+        "fixture:chem_ch3:atomic-number:neutral-electrons"
+      ],
+      "question": "Why does knowing the proton count let you determine the electron count of a neutral atom?",
+      "expected_answer": "In a neutral atom, the number of electrons equals the number of protons.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:neutral-electrons"
+      ]
+    },
+    {
+      "id": "fixture:atomic-number:q3",
+      "kind": "apply",
+      "concept_ids": [
+        "fixture:chem_ch3:atomic-number:proton-count",
+        "fixture:chem_ch3:atomic-number:neutral-electrons"
+      ],
+      "question": "A neutral atom has atomic number 6. How many protons and electrons does it have? Explain both counts.",
+      "expected_answer": "It has 6 protons because atomic number equals proton count, and 6 electrons because the atom is neutral.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:proton-count",
+        "fixture:chem_ch3:line4:neutral-electrons"
+      ]
+    },
+    {
+      "id": "fixture:atomic-number:q4",
+      "kind": "apply",
+      "concept_ids": [
+        "fixture:chem_ch3:atomic-number:proton-count",
+        "fixture:chem_ch3:atomic-number:neutral-electrons"
+      ],
+      "question": "A neutral atom has 10 electrons. What atomic number follows from the source, and why?",
+      "expected_answer": "Its atomic number is 10: neutrality means it has 10 protons, and atomic number equals the proton count.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:proton-count",
+        "fixture:chem_ch3:line4:neutral-electrons"
+      ]
+    },
+    {
+      "id": "fixture:atomic-number:q5",
+      "kind": "explain",
+      "concept_ids": [
+        "fixture:chem_ch3:atomic-number:proton-count",
+        "fixture:chem_ch3:atomic-number:neutral-electrons"
+      ],
+      "question": "A student describes an atom with 12 protons as having atomic number 12 and says it is neutral with 10 electrons. Which part of that description is inconsistent with the source?",
+      "expected_answer": "The atomic number 12 is consistent with 12 protons. The neutral-atom claim is inconsistent: a neutral atom with 12 protons must have 12 electrons, not 10.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:proton-count",
+        "fixture:chem_ch3:line4:neutral-electrons"
+      ]
+    }
+  ]
+}

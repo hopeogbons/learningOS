@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "synthetic_fixture": true,
+  "skill": ".agents/skills/retrieval-practice/SKILL.md",
+  "source_path": "fixtures/chem_ch3.md",
+  "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34",
+  "source_revision_id": "fixture:chem_ch3:sha256:b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34",
+  "chunk_id": "fixture:chem_ch3:atomic-number",
+  "chunk_title": "Atomic number",
+  "source_language": "en",
+  "study_locale": "en",
+  "source_uncertainty": [],
+  "answer_visibility": "expected_answer is private server-side fixture data; exclude from pre-answer public DTOs",
+  "concepts": [
+    {
+      "id": "fixture:chem_ch3:atomic-number:proton-count",
+      "critical": true,
+      "text": "The atomic number equals the number of protons in an atom's nucleus.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:proton-count"
+      ]
+    },
+    {
+      "id": "fixture:chem_ch3:atomic-number:neutral-electrons",
+      "critical": true,
+      "text": "A neutral atom has the same number of electrons as protons.",
+      "citation_ids": [
+        "fixture:chem_ch3:line4:neutral-electrons"
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "id": "fixture:chem_ch3:line4:proton-count",
+      "source_revision_id": "fixture:chem_ch3:sha256:b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34",
+      "locator_kind": "text",
+      "locator": {
+        "heading": "Atomic number",
+        "line_start": 4,
+        "line_end": 4
+      },
+      "excerpt": "The atomic number equals the number of protons in an atom's nucleus."
+    },
+    {
+      "id": "fixture:chem_ch3:line4:neutral-electrons",
+      "source_revision_id": "fixture:chem_ch3:sha256:b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34",
+      "locator_kind": "text",
+      "locator": {
+        "heading": "Atomic number",
+        "line_start": 4,
+        "line_end": 4
+      },
+      "excerpt": "A neutral atom has the same number of electrons as protons."
+    }
+  ]
+}
