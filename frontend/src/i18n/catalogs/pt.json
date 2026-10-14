@@ -306,8 +306,11 @@
   "study.liveSend": "Enviar mensagem",
   "study.conversationDescription": "Aprenda com seu material. Escreva, envie uma nota de voz ou converse com seu professor.",
   "study.liveIntro": "Escolha sua coleção e inicie uma conversa. Permita o microfone para falar.",
-  "study.noteIntro": "Grave, revise o texto, indique sua confiança e envie. Você também pode ouvir o professor.",
+  "study.noteIntro": "Ouça o professor, grave sua resposta e escolha sua confiança.",
   "study.noteTurns": "Notas de voz: {count}",
-  "study.liveHelp": "Fale, interrompa ou digite. Verifique sua resposta para registrar seu progresso.",
-  "study.livePlaceholder": "Digite enquanto conversa…"
+  "study.liveHelp": "Vá com calma. Responda por voz e escolha sua confiança. Digitar é opcional.",
+  "study.livePlaceholder": "Digite enquanto conversa…",
+  "study.transcript": "Transcrição (opcional)",
+  "study.spokenAnswerReady": "Sua resposta falada foi capturada. Escolha sua confiança para receber feedback.",
+  "study.voiceAnswerHelp": "Responda por voz. Não é necessário digitar."
 }

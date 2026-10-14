@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = Path(os.getenv("VOICE_EVIDENCE_PATH", ROOT / "docs/evidence/frontend/voice.json"))
@@ -36,7 +36,7 @@ with sync_playwright() as playwright:
         class FixturePeer {
           addTrack(){} createDataChannel(){this.channel={readyState:'connecting',send:()=>{},close:()=>{}};return this.channel;}
           async createOffer(){return {sdp:'synthetic-offer'};} async setLocalDescription(){}
-          async setRemoteDescription(){this.channel.readyState='open';this.channel.onopen?.();this.channel.onmessage?.({data:JSON.stringify({type:'response.output_audio_transcript.done',item_id:'teacher-live',transcript:'Synthetic live teacher message.'})});}
+          async setRemoteDescription(){window.emitLive=(message)=>this.channel.onmessage?.({data:JSON.stringify(message)});this.channel.readyState='open';this.channel.onopen?.();this.channel.onmessage?.({data:JSON.stringify({type:'response.output_audio_transcript.done',item_id:'teacher-live',transcript:'Synthetic live teacher message.'})});}
           close(){window.fixturePeerClosed++;}
         }
         window.RTCPeerConnection=FixturePeer;
@@ -212,26 +212,51 @@ with sync_playwright() as playwright:
     page.route("**/api/v1/**", api_fixture)
     page.route("https://api.openai.com/v1/realtime/calls**", lambda route: route.fulfill(status=200, content_type="application/sdp", body="synthetic-answer"))
     page.goto(BASE + "/study?session=voice-fixture&mode=text")
-    page.get_by_role("button", name="Text", exact=True).wait_for()
-    assert page.get_by_role("button", name="Text", exact=True).get_attribute("aria-pressed") == "true"
+    page.get_by_role("tab", name="Text", exact=True).wait_for()
+    assert page.get_by_role("tab", name="Text", exact=True).get_attribute("aria-selected") == "true"
     answer_box = page.get_by_label("Your answer", exact=True)
     answer_box.fill("Keep this draft across modes.")
-    page.get_by_role("button", name="Voice note", exact=True).click()
+    page.get_by_role("tab", name="Text", exact=True).focus()
+    page.keyboard.press("ArrowRight")
+    assert page.get_by_role("tab",name="Voice note",exact=True).get_attribute("aria-selected")=="true"
     page.get_by_role("button", name="Record an answer", exact=True).wait_for()
-    assert answer_box.input_value() == "Keep this draft across modes."
-    page.get_by_role("button", name="Live voice", exact=True).click()
+    assert answer_box.input_value() == ""
+    page.get_by_role("tab", name="Voice note", exact=True).focus()
+    page.keyboard.press("End")
     page.get_by_role("button", name="Start conversation", exact=True).click()
     page.get_by_text("Your teacher is listening", exact=True).wait_for()
     page.get_by_text("Synthetic live teacher message.", exact=True).wait_for()
+    page.evaluate("""() => {
+      window.emitLive({type:'input_audio_buffer.committed',item_id:'learner-late',previous_item_id:'teacher-live'});
+      window.emitLive({type:'response.output_item.added',item:{id:'teacher-reply',role:'assistant'}});
+      window.emitLive({type:'response.output_audio_transcript.done',item_id:'teacher-reply',transcript:'Take your time with your answer.'});
+      window.emitLive({type:'conversation.item.input_audio_transcription.completed',item_id:'learner-late',transcript:'A neutral atom has equal protons and electrons.'});
+    }""")
+    page.locator(".study-conversation").get_by_text("A neutral atom has equal protons and electrons.", exact=True).wait_for()
+    assert page.locator('.study-message').evaluate_all("nodes=>nodes.map(n=>n.dataset.speaker)") == ['teacher','learner','teacher']
+    assert page.get_by_text("Atoms contain protons and electrons.", exact=True).count() == 0
+    assert page.get_by_label("Your answer",exact=True).get_attribute("required") is None
+    assert page.locator('.study-conversation').evaluate("n=>getComputedStyle(n).overflowY") == 'auto'
+    page.set_viewport_size({"width":1440,"height":900})
+    page.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+    assert not page.evaluate("document.documentElement.scrollWidth>innerWidth")
+    page.locator(".study-workspace").evaluate("n=>n.scrollIntoView({block:'start'})")
+    page.screenshot(path=str(EVIDENCE.with_name("patient-desktop.png")))
+    page.set_viewport_size({"width":390,"height":844})
+    page.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+    assert not page.evaluate("document.documentElement.scrollWidth>innerWidth")
+    page.locator('.study-workspace').evaluate("n=>n.scrollIntoView({block:'start'})")
+    page.evaluate("window.scrollBy(0,-96)")
+    page.screenshot(path=str(EVIDENCE.with_name("patient-live.png")))
     page.get_by_role("button", name="Mute", exact=True).click()
     page.get_by_role("button", name="Unmute", exact=True).wait_for()
-    page.get_by_role("button", name="Text", exact=True).click()
+    page.get_by_role("tab", name="Text", exact=True).click()
     assert page.evaluate("window.fixtureStops > 0 && window.fixturePeerClosed > 0")
-    assert answer_box.input_value() == "Keep this draft across modes."
-    assert page.get_by_text("Synthetic live teacher message.", exact=True).is_visible()
+    assert answer_box.input_value() == ""
+    assert page.get_by_text("Synthetic live teacher message.", exact=True).count() == 0
     page.goto(BASE + "/study?session=voice-fixture&mode=voice")
     page.get_by_role("button", name="Start conversation", exact=True).wait_for()
-    assert page.get_by_role("button", name="Live voice", exact=True).get_attribute("aria-pressed") == "true"
+    assert page.get_by_role("tab", name="Live voice", exact=True).get_attribute("aria-selected") == "true"
     fixture["realtime_failed"] = True
     page.get_by_role("button", name="Start conversation", exact=True).click()
     page.get_by_role("alert").filter(has_text="Live voice is unavailable on this installation").wait_for()
@@ -239,13 +264,13 @@ with sync_playwright() as playwright:
     fixture["realtime_failed"] = False
 
     page.goto(BASE + "/study?session=voice-fixture&mode=voice-note")
-    page.get_by_role("button", name="Listen: Check your understanding").wait_for()
+    page.get_by_role("button", name="Listen: Your teacher").wait_for()
     for _ in range(20):
-        if any(item.get("message_id") == "question" for item in speech_requests):
+        if any(item.get("message_id") == "lesson" for item in speech_requests):
             break
         page.wait_for_timeout(100)
-    assert any(item.get("message_id") == "question" for item in speech_requests), speech_requests
-    page.get_by_role("button", name="Listen: Teach").click()
+    assert any(item.get("message_id") == "lesson" for item in speech_requests), speech_requests
+    page.get_by_role("button", name="Listen: Your teacher").click()
     page.get_by_role("button", name="Record an answer", exact=True).click()
     page.get_by_role("button", name="Stop recording", exact=True).wait_for()
     page.goto(BASE + "/collections")
@@ -256,12 +281,13 @@ with sync_playwright() as playwright:
     page.get_by_role("button", name="Record an answer", exact=True).click()
     page.get_by_role("button", name="Stop recording", exact=True).click()
     answer_box = page.get_by_label("Your answer", exact=True)
-    answer_box.wait_for()
-    answer_box.fill("Edited spoken answer: equal protons and electrons.")
+    expect(answer_box).to_have_value("A neutral atom has equal protons and electrons.")
+    assert not answer_box.is_visible(), "Voice answers must not require opening an editor"
     assert len(transcripts) == 1
-    page.locator('input[name="confidence"][value="4"]').check(force=True)
     transcript_before_submit = answer_box.input_value()
-    page.get_by_role("button", name="Check answer", exact=True).click()
+    page.locator('input[name="confidence"][value="4"]').locator("..").click()
+    # Selecting confidence submits the captured voice answer without typing.
+    page.locator('.study-message[data-message-id$=":feedback"]').get_by_text("Transcript (optional)",exact=True).click()
     page.get_by_text("A neutral atom has equal numbers of protons and electrons.", exact=True).wait_for()
     page.get_by_role("button", name="Listen: Your teacher").wait_for()
     for _ in range(25):
@@ -271,12 +297,13 @@ with sync_playwright() as playwright:
 
     spoken_ids = [item.get("message_id") for item in speech_requests]
     assert answer_requests and answer_requests[0]["voice"] is True
-    assert {"question", "teaching", "feedback"} <= set(spoken_ids), spoken_ids
-    assert "Selected-language speech is unavailable" in page.locator("body").inner_text()
+    assert {"lesson", "feedback"} <= set(spoken_ids), spoken_ids
+    page.get_by_text("Selected-language speech is unavailable",exact=False).wait_for()
     assert not errors, errors
 
-    page.locator("main h1").last.click()
-    page.screenshot(path=str(EVIDENCE.with_suffix(".png")), full_page=True)
+    page.locator(".study-workspace").evaluate("n=>n.scrollIntoView({block:'start'})")
+    page.evaluate("window.scrollBy(0,-96)")
+    page.screenshot(path=str(EVIDENCE.with_suffix(".png")), full_page=False)
     result = {
         "status": "passed",
         "command": os.getenv("EVIDENCE_COMMAND", "python3 tests/frontend_voice.py"),
@@ -285,12 +312,14 @@ with sync_playwright() as playwright:
         "fixture": "synthetic session; STT/TTS and WebRTC responses intercepted",
         "checks": [
             "Text, Voice note and Live voice entries select the correct mode",
-            "Mode switching preserves draft and conversation transcript",
+            "Connected tabs clear transient mode messages and draft while retaining the session",
+            "Live events retain teacher/learner/teacher order despite late learner transcription",
+            "Live mode excludes duplicate static teaching; trail is bounded and scrollable",
             "Live start/mute and mode-exit close the peer and stop microphone tracks",
             "Provider failure is shown honestly and typing remains enabled",
-            "Tutor question is spoken and teaching can be replayed",
+            "Voice note presents one combined lesson and can replay its teacher note",
             "Recording is cancelled on navigation without submitting audio",
-            "Transcribed answer remains editable and requires confidence",
+            "Recorded answer submits from captured speech and confidence without opening or typing in an editor",
             "Voice response uses the ordinary answer endpoint with voice=true",
             "Reviewer feedback is spoken after a voice answer with replay available",
             "Unavailable speech preserves visible text and typing fallback",

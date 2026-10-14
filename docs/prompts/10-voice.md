@@ -25,7 +25,7 @@ Dashboard-specific UI: original red Mic tile launches voice mode within same she
 
 ## Done when
 
-The Done when gates in docs/CONVERSATION_EXPERIENCE.md pass: one shared conversation; entry-selected Text, Voice note and genuine Live voice; switching retains session, scope, draft and transcript; explicit start/mute/stop with media cleanup; confidence precedes server assessment. Verify actual note STT/TTS and realtime provider connection separately from synthetic browser tests, recording precise limitations. Keep only key mode, ownership, grounding and media lifecycle regressions.
+The Done when gates in docs/CONVERSATION_EXPERIENCE.md pass: one shared conversation; entry-selected Text, Voice note and genuine Live voice; switching retains session, scope and saved progress while clearing transient mode messages and drafts; explicit start/mute/stop with media cleanup; confidence precedes server assessment. Verify actual note STT/TTS and realtime provider connection separately from synthetic browser tests, recording precise limitations. Keep only key mode, ownership, grounding and media lifecycle regressions.
 
 ## Useful delegation
 
@@ -37,4 +37,6 @@ Implement ten-language recognition/synthesis capability matrix, explicit selecte
 
 ## Latest core-demo acceptance — supersedes older communication scope
 
-Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope, transcript and draft when switching. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.
+Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope and saved progress when switching; clear transient messages and drafts per the latest mode-specific contract. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.
+
+Latest conversation Done when: apply docs/CONVERSATION_EXPERIENCE.md patient, mode-specific chat revision. Connected tabs, chronological bounded transcript, fresh visible chat on mode switch, no static/live teaching duplicates and no mandatory typing for voice answers supersede previous cross-mode draft preservation. Saved scope/session/progress and confidence-before-assessment remain authoritative.

@@ -306,8 +306,11 @@
   "study.liveSend": "Envoyer le message",
   "study.conversationDescription": "Apprenez avec vos documents. Écrivez, envoyez une note vocale ou parlez avec votre enseignant.",
   "study.liveIntro": "Choisissez une collection et commencez. Autorisez le microphone pour parler.",
-  "study.noteIntro": "Enregistrez, vérifiez le texte, indiquez votre confiance et envoyez. Vous pouvez aussi écouter.",
+  "study.noteIntro": "Écoutez le professeur, enregistrez votre réponse, puis choisissez votre confiance.",
   "study.noteTurns": "Notes vocales : {count}",
-  "study.liveHelp": "Parlez, interrompez ou écrivez. Vérifiez votre réponse pour enregistrer votre progression.",
-  "study.livePlaceholder": "Écrivez tout en parlant…"
+  "study.liveHelp": "Prenez votre temps. Répondez à voix haute, puis choisissez votre confiance. Écrire est facultatif.",
+  "study.livePlaceholder": "Écrivez tout en parlant…",
+  "study.transcript": "Transcription (facultative)",
+  "study.spokenAnswerReady": "Votre réponse orale est prête. Choisissez votre confiance pour recevoir un retour.",
+  "study.voiceAnswerHelp": "Répondez à voix haute. Aucun texte à saisir."
 }

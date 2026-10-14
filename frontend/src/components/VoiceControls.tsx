@@ -21,7 +21,7 @@ type SpeechWindow = Window & {
   webkitSpeechRecognition?: new () => Recognition;
 };
 export type VoiceMessage = {
-  id: "teaching" | "question" | "feedback";
+  id: "teaching" | "question" | "feedback" | "lesson";
   label: string;
   text: string;
 };
@@ -50,6 +50,7 @@ export default function VoiceControls({
   turns,
   onTranscript,
   onTyping,
+  playbackRef,
 }: {
   sessionId: string;
   itemId: string;
@@ -59,6 +60,7 @@ export default function VoiceControls({
   turns: number;
   onTranscript: (text: string) => void;
   onTyping: () => void;
+  playbackRef?: React.RefObject<((id: VoiceMessage["id"]) => Promise<void>) | null>;
 }) {
   const { t, preferences } = useI18n(),
     [recording, setRecording] = useState(false),
@@ -262,63 +264,41 @@ export default function VoiceControls({
     }
   }
   const speak = useCallback(async (message: VoiceMessage) => {
-    stopSpeech();
-    setNotice(null);
-    setBusy(true);
-    const voices = await browserVoices();
-    if (!active.current) return;
-    const target = preferences.speech_locale.toLowerCase(),
-      voice =
-        voices.find((value) => value.lang.toLowerCase() === target) ??
-        voices.find(
-          (value) =>
-            value.lang.toLowerCase().split("-")[0] === target.split("-")[0],
-        );
-    if (voice) {
-      const utterance = new SpeechSynthesisUtterance(message.text);
-      utterance.lang = voice.lang;
-      utterance.voice = voice;
-      utterance.onend = () => {
-        if (active.current) setSpeakingId(null);
-      };
-      utterance.onerror = () => {
-        if (active.current) {
-          setSpeakingId(null);
-          setNotice(t("study.voiceUnavailable"));
-        }
-      };
-      window.speechSynthesis.speak(utterance);
-      setSpeakingId(message.id);
-      setBusy(false);
-      return;
-    }
-    setNotice(t("study.speechFallback"));
-    const abort = new AbortController();
-    request.current = abort;
+    stopSpeech(); setNotice(null); setBusy(true);
+    const abort = new AbortController(); request.current = abort;
     try {
-      const blob = await apiBlob(
-        `/sessions/${sessionId}/speech/synthesize`,
-        { item_id: itemId, message_id: message.id },
-        abort.signal,
-      );
+      // Prefer the configured patient teacher voice; browser speech is fallback.
+      const blob = await apiBlob(`/sessions/${sessionId}/speech/synthesize`, { item_id: itemId, message_id: message.id }, abort.signal);
       if (!active.current || abort.signal.aborted) return;
       if (audioUrl.current) URL.revokeObjectURL(audioUrl.current);
-      audioUrl.current = URL.createObjectURL(blob);
-      audio.current = new Audio(audioUrl.current);
-      audio.current.onended = () => {
-        if (active.current) setSpeakingId(null);
-      };
+      audioUrl.current = URL.createObjectURL(blob); audio.current = new Audio(audioUrl.current);
+      audio.current.onended = () => { if (active.current) setSpeakingId(null); };
       await audio.current.play();
       if (!active.current || abort.signal.aborted) return;
-      setSpeakingId(message.id);
-      setNotice(t("study.serverSpeech"));
+      setSpeakingId(message.id); setNotice(t("study.serverSpeech"));
     } catch {
-      if (active.current && !abort.signal.aborted)
-        setNotice(t("study.voiceUnavailable"));
-    } finally {
-      if (active.current && !abort.signal.aborted) setBusy(false);
-    }
+      if (!active.current || abort.signal.aborted) return;
+      const voices = await browserVoices();
+      if (!active.current || abort.signal.aborted) return;
+      const target = preferences.speech_locale.toLowerCase();
+      const voice = voices.find((value) => value.lang.toLowerCase() === target) ?? voices.find((value) => value.lang.toLowerCase().split("-")[0] === target.split("-")[0]);
+      if (!voice) { setNotice(t("study.voiceUnavailable")); return; }
+      const utterance = new SpeechSynthesisUtterance(message.text);
+      utterance.lang = voice.lang; utterance.voice = voice; utterance.rate = 0.85;
+      utterance.onend = () => { if (active.current) setSpeakingId(null); };
+      utterance.onerror = () => { if (active.current) { setSpeakingId(null); setNotice(t("study.voiceUnavailable")); } };
+      window.speechSynthesis.speak(utterance); setSpeakingId(message.id); setNotice(t("study.browserSpeech"));
+    } finally { if (active.current && !abort.signal.aborted) setBusy(false); }
   }, [itemId, preferences.speech_locale, sessionId, stopSpeech, t]);
+  useEffect(() => {
+    if (!playbackRef) return;
+    playbackRef.current = async (id) => {
+      if (speakingId === id) { stopSpeech(); return; }
+      const message = messagesRef.current.find((entry) => entry.id === id);
+      if (message) await speak(message);
+    };
+    return () => { playbackRef.current = null; };
+  }, [playbackRef, speak, speakingId, stopSpeech]);
   useEffect(() => {
     speakRef.current = speak;
   }, [speak]);
@@ -365,7 +345,7 @@ export default function VoiceControls({
           {recording ? <Square size={16} /> : <Mic size={16} />}{" "}
           {t(recording ? "study.stopRecording" : "study.microphone")}
         </button>
-        {messages.map((message) => {
+        {!playbackRef && messages.map((message) => {
           const speaking = speakingId === message.id;
           return (
             <button
@@ -382,6 +362,7 @@ export default function VoiceControls({
             </button>
           );
         })}
+        {playbackRef && speakingId && <button type="button" className="btn btn-outline-primary btn-sm" onClick={stopSpeech}><Square size={16} />{t("study.stopSpeech")}</button>}
         <button
           type="button"
           className="btn btn-light border btn-sm d-flex align-items-center gap-2"

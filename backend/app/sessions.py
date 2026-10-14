@@ -161,7 +161,7 @@ def generate_turn(db, job):
     else:
         item = SessionItem(learner_id=session.learner_id, session_id=session.id, concept_id=concept_id,
             chunk_id=chunk_id, question_json_private={**result, "_metadata": {
-                "prompt_version": "quizzer-v4", "provider": provider.name,
+                "prompt_version": "quizzer-v5", "provider": provider.name,
                 "source_revision_id": context['source_revision_id'], "source_language": context['source_language'],
                 "study_locale": context['study_locale'], "speech_locale": context['speech_locale']}}, public_question=result["question"],
             teaching=result["teaching"], citation_ids=result["citation_ids"], position=session.turn_count,
@@ -223,7 +223,7 @@ def assess_answer(db, job):
     complete = complete and set(evidence["evidence_event_ids"]) <= set(verdict["evidence_event_ids"])
     verdict = {**verdict, "title_complete": bool(complete), "critical_coverage": evidence,
                "demo": provider.name == "offline-fixture", "provider_version": provider.version,
-               "prompt_version": "reviewer-v3", "voice": job.payload.get("voice", False),
+               "prompt_version": "reviewer-v4", "voice": job.payload.get("voice", False),
                "source_revision_id": context['source_revision_id'], "source_language": context['source_language'],
                "study_locale": item.generation_locale, "speech_locale": context['speech_locale']}
     event.reviewer_json = verdict

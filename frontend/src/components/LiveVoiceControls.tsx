@@ -3,9 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Phone, PhoneOff, Send, Volume2 } from "lucide-react";
 import { api, json, ApiError } from "@/lib/api";
 import { useI18n } from "@/i18n";
-type LiveEvent = { type?: string; transcript?: string; text?: string; delta?: string; item_id?: string; response_id?: string; error?: { message?: string } };
+type LiveEvent = { type?: string; transcript?: string; text?: string; delta?: string; item_id?: string; response_id?: string; previous_item_id?: string; item?: { id: string; role?: string }; error?: { message?: string } };
 type Connection = { client_secret: string; model: string; webrtc_url: string; max_duration_seconds: number };
-export type LiveMessage = { id: string; role: "teacher" | "learner"; text: string };
+export type LiveMessage = { id: string; role: "teacher" | "learner"; text: string; previousId?: string };
 export default function LiveVoiceControls({ sessionId, itemId, onTranscript, onMessage, draft, onDraft, disabled = false }: {
   sessionId: string; itemId: string; onTranscript: (text: string) => void;
   onMessage: (message: LiveMessage) => void; draft: string; onDraft: (text: string) => void; disabled?: boolean;
@@ -56,10 +56,17 @@ export default function LiveVoiceControls({ sessionId, itemId, onTranscript, onM
       dc.onmessage = (event) => {
         let message: LiveEvent; try { message = JSON.parse(event.data); } catch { return; }
         if (generation.current !== current) return;
-        const id = message.item_id || message.response_id || "teacher-response";
+        const id = message.item_id || message.item?.id || message.response_id || "teacher-response";
+        if (message.type === "input_audio_buffer.committed" || ((message.type === "conversation.item.created" || message.type === "conversation.item.added") && message.item?.role === "user")) {
+          callbacks.current.onMessage({ id, role: "learner", text: "", previousId: message.previous_item_id });
+          return;
+        }
+        if (message.type === "response.output_item.added" && message.item?.role === "assistant") {
+          callbacks.current.onMessage({ id, role: "teacher", text: "" }); return;
+        }
         if (message.type === "conversation.item.input_audio_transcription.completed" && message.transcript?.trim()) {
+          callbacks.current.onMessage({ id, role: "learner", text: message.transcript, previousId: message.previous_item_id });
           callbacks.current.onTranscript(message.transcript);
-          callbacks.current.onMessage({ id, role: "learner", text: message.transcript });
         } else if (message.type === "response.output_audio_transcript.delta" || message.type === "response.audio_transcript.delta") {
           const text = (transcripts.get(id) || "") + (message.delta || ""); transcripts.set(id, text);
           callbacks.current.onMessage({ id, role: "teacher", text });
@@ -97,10 +104,10 @@ export default function LiveVoiceControls({ sessionId, itemId, onTranscript, onM
   function toggleMic() { media.current?.getAudioTracks().forEach((track) => { track.enabled = muted; }); setMuted(!muted); }
   function sendText(e: React.FormEvent) {
     e.preventDefault(); if (!draft.trim() || channel.current?.readyState !== "open") return;
-    const text = draft.trim();
-    channel.current.send(JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "user", content: [{ type: "input_text", text }] } }));
+    const text = draft.trim(), id = `msg_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`;
+    channel.current.send(JSON.stringify({ type: "conversation.item.create", item: { id, type: "message", role: "user", content: [{ type: "input_text", text }] } }));
     channel.current.send(JSON.stringify({ type: "response.create" }));
-    callbacks.current.onMessage({ id: crypto.randomUUID(), role: "learner", text }); onDraft("");
+    callbacks.current.onMessage({ id, role: "learner", text }); onDraft("");
   }
   return <section className="live-voice-panel" aria-label={t("study.modeLive")}>
     <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -111,6 +118,6 @@ export default function LiveVoiceControls({ sessionId, itemId, onTranscript, onM
       </div>
     </div>
     {error && <p role="alert" className="small mt-3 mb-0">{error}</p>}
-    {status === "connected" && <form onSubmit={sendText} className="d-flex gap-2 mt-3"><input className="form-control" aria-label={t("study.liveMessage")} placeholder={t("study.livePlaceholder")} value={draft} onChange={(e) => onDraft(e.target.value)} maxLength={10000} /><button className="btn btn-primary" disabled={!draft.trim()} aria-label={t("study.liveSend")}><Send size={18} /></button></form>}
+    {status === "connected" && <details className="mt-2"><summary>{t("study.liveMessage")}</summary><form onSubmit={sendText} className="d-flex gap-2 mt-3"><input className="form-control" aria-label={t("study.liveMessage")} placeholder={t("study.livePlaceholder")} value={draft} onChange={(e) => onDraft(e.target.value)} maxLength={10000} /><button className="btn btn-primary" disabled={!draft.trim()} aria-label={t("study.liveSend")}><Send size={18} /></button></form></details>}
   </section>;
 }

@@ -96,3 +96,9 @@ Voice mode is explicitly two-way. Before starting, tell the learner the tutor ca
 ## Latest core-demo conversation interface
 
 Use the single conversational screen specified in CONVERSATION_EXPERIENCE.md for Text, Voice note and Live voice. Entry context chooses its active mode, with typed fallback in all modes. Teacher/learner/feedback messages, composer and concise confidence controls are uniform; source evidence is an optional Source/View original disclosure. Do not label serial recording as realtime or expose expected answers/internal citation IDs as chat text. Its Done when criteria supersede old separate Voice card instructions.
+
+Latest conversation Done when: apply docs/CONVERSATION_EXPERIENCE.md patient, mode-specific chat revision. Connected tabs, chronological bounded transcript, fresh visible chat on mode switch, no static/live teaching duplicates and no mandatory typing for voice answers supersede previous cross-mode draft preservation. Saved scope/session/progress and confidence-before-assessment remain authoritative.
+
+Active Study conversations use a compact navigation header and omit the redundant greeting/route introduction, reserving viewport space for the bounded chat and speech controls. Other pages keep their existing greetings. Controls may scroll on very small screens instead of being clipped.
+
+The active chat height reserves space for the offline demo notice as well as navigation, so confidence/send controls remain accessible in both demo and connected modes.

@@ -1,0 +1,31 @@
+{
+  "status": "passed_with_provider_audibility_limitation",
+  "date": "2026-10-14",
+  "contract": "docs/CONVERSATION_EXPERIENCE.md",
+  "focused_backend_tests": {
+    "passed": 40,
+    "skipped": 0,
+    "exit_code": 0
+  },
+  "browser_checks": 12,
+  "frontend": "lint, TypeScript, frozen production build and locale checks passed",
+  "api_contracts": "actual OpenAPI and generated TypeScript match",
+  "actual_provider": {
+    "shimmer_tts": "passed",
+    "realtime_shimmer_speed_085_semantic_low_mint": "passed",
+    "human_audibility_of_new_settings": "unverified"
+  },
+  "deployment": {
+    "target": "existing cloud Docker demo",
+    "services": "healthy",
+    "provider_mode": "offline demo; connected installation required for actual speech"
+  },
+  "verification_scope": "synthetic owned sources and intercepted browser media; no raw recordings/credentials retained",
+  "mode_switch": "clears transient visible chat/draft; preserves session/scope/saved progress",
+  "spoken_confidence": "English confidence one\u2013five phrase optional; all modes retain explicit confidence buttons",
+  "limitations": [
+    "Human perception of the new pace/tone has not been certified here.",
+    "Full live chat reconstruction after reload remains unimplemented.",
+    "Browser microphone/autoplay can require explicit Start/Listen gesture."
+  ]
+}

@@ -3,279 +3,184 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { BookOpenCheck, ArrowRight, Mic, Volume2, MessageSquare, Radio, Send } from "lucide-react";
 import { useI18n } from "@/i18n";
-import {
-  api,
-  json,
-  list,
-  useApi,
-  usePagedApi,
-  type Collection,
-  type Session,
-  type SessionItem,
-  type Citation,
-  type Reviewer,
-} from "@/lib/api";
+import { api, json, list, useApi, usePagedApi, type Collection, type Session, type SessionItem, type Citation, type Reviewer } from "@/lib/api";
 import { useApp } from "../AppState";
-import {
-  Card,
-  PageTitle,
-  Status,
-  Empty,
-  CollectionPicker,
-  CitationList,
-} from "../Shared";
+import { PageTitle, Status, Empty, CollectionPicker, CitationList } from "../Shared";
 import VoiceControls, { type VoiceMessage } from "../VoiceControls";
 import LiveVoiceControls, { type LiveMessage } from "../LiveVoiceControls";
 type StudyMode = "text" | "note" | "live";
-const PENDING_TURNS = [
-  "pending", "generating", "reviewing", "pending_generation",
-  "pending_review", "assessing", "finishing",
-];
-export default function StudyScreen({
-  initialCollection = "",
-  initialScope = "",
-  initialSession = "",
-  review = "",
-  voice = false,
-  initialMode = "",
-}: {
-  initialCollection?: string;
-  initialScope?: string;
-  initialSession?: string;
-  review?: string;
-  voice?: boolean;
-  initialMode?: string;
+type ChatMessage = LiveMessage & { itemId?: string; feedback?: Reviewer; citations?: string[]; noteId?: VoiceMessage["id"] };
+const PENDING_TURNS = ["pending", "generating", "reviewing", "pending_generation", "pending_review", "assessing", "finishing"];
+const MODES = [["text", MessageSquare, "study.modeText"], ["note", Mic, "study.modeNote"], ["live", Radio, "study.modeLive"]] as const;
+function entryMode(value: string, voice = false): StudyMode { return voice || value === "voice" ? "live" : ["voice-note", "note"].includes(value) ? "note" : "text"; }
+function putMessage(messages: ChatMessage[], message: ChatMessage): ChatMessage[] {
+  const index = messages.findIndex((entry) => entry.id === message.id);
+  if (index >= 0) return messages.map((entry, i) => i === index ? { ...entry, ...message, text: message.text || entry.text } : entry);
+  const previous = message.previousId ? messages.findIndex((entry) => entry.id === message.previousId) : -1;
+  if (previous >= 0) return [...messages.slice(0, previous + 1), message, ...messages.slice(previous + 1)];
+  return [...messages, message];
+}
+export default function StudyScreen({ initialCollection = "", initialScope = "", initialSession = "", review = "", voice = false, initialMode = "" }: {
+  initialCollection?: string; initialScope?: string; initialSession?: string; review?: string; voice?: boolean; initialMode?: string;
 }) {
-  const { t, preferences } = useI18n(),
-    { data: dashboard, reload } = useApp(),
-    collections = usePagedApi<Collection>("/collections"),
-    [collectionId, setCollection] = useState(initialCollection),
-    [sessionId, setSessionId] = useState(initialSession),
-    [item, setItem] = useState<SessionItem | null>(null),
-    [answer, setAnswer] = useState(""),
-    [confidence, setConfidence] = useState<number | null>(null),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState<string | null>(null),
-    [mode, setMode] = useState<StudyMode>(voice || initialMode === "voice" ? "live" : ["voice-note", "note"].includes(initialMode) ? "note" : "text"),
-    [history, setHistory] = useState<{ item: SessionItem; answer: string }[]>([]),
-    [liveMessages, setLiveMessages] = useState<LiveMessage[]>([]),
-    [liveDraft, setLiveDraft] = useState(""),
-    [submittedAnswer, setSubmittedAnswer] = useState(""),
-    [transcribed, setTranscribed] = useState(false),
-    [turns, setTurns] = useState(0),
-    lastItem = useRef<string | null>(null),
-    turnRequest = useRef<AbortController | null>(null),
-    currentItem = useRef<SessionItem | null>(null),
-    submitted = useRef<Record<string, string>>({});
-  const collection = list(collections.data).find((c) => c.id === collectionId),
-    scope = initialScope || collection?.active_scope?.id;
+  const { t, preferences } = useI18n(), { data: dashboard, reload } = useApp(), collections = usePagedApi<Collection>("/collections");
+  const [collectionId, setCollection] = useState(initialCollection), [sessionId, setSessionId] = useState(initialSession);
+  const [item, setItem] = useState<SessionItem | null>(null), [answer, setAnswer] = useState(""), [confidence, setConfidence] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null), [mode, setMode] = useState<StudyMode>(entryMode(initialMode, voice));
+  const [messages, setMessages] = useState<ChatMessage[]>([]), [liveDraft, setLiveDraft] = useState(""), [transcribed, setTranscribed] = useState(false), [turns, setTurns] = useState(0);
+  const modeRef = useRef(mode), lastItem = useRef<string | null>(null), turnRequest = useRef<AbortController | null>(null), currentItem = useRef<SessionItem | null>(null), sending = useRef(false);
+  const workspace = useRef<HTMLElement | null>(null);
+  const trail = useRef<HTMLDivElement | null>(null), followLatest = useRef(true), notePlayback = useRef<((id: VoiceMessage["id"]) => Promise<void>) | null>(null);
+  const collection = list(collections.data).find((c) => c.id === collectionId), scope = initialScope || collection?.active_scope?.id;
+  const syncMessages = useCallback((next: SessionItem, fresh = false) => {
+    const selected = modeRef.current;
+    if (selected === "live" && !next.feedback) { if (fresh) setMessages([]); return; }
+    setMessages((oldMessages) => {
+      let result = fresh ? [] : oldMessages;
+      if (next.item_id && selected !== "live" && (!fresh || !next.feedback)) {
+        const text = [!review ? next.teaching : "", next.question].filter(Boolean).join("\n\n");
+        if (text) result = putMessage(result, { id: `${next.item_id}:teacher`, role: "teacher", text, itemId: next.item_id, citations: next.citation_ids, noteId: selected === "note" ? "lesson" : undefined });
+      }
+      if (next.item_id && next.feedback?.feedback) result = putMessage(result, { id: `${next.item_id}:feedback`, role: "teacher", text: String(next.feedback.feedback), itemId: next.item_id, feedback: next.feedback, citations: next.feedback.citation_ids, noteId: selected === "note" ? "feedback" : undefined });
+      return result;
+    });
+  }, [review]);
+  const selectMode = useCallback((next: StudyMode) => {
+    if (next === modeRef.current) return;
+    modeRef.current = next; setMode(next); setAnswer(""); setConfidence(null); setTranscribed(false); setLiveDraft(""); followLatest.current = true;
+    if (currentItem.current) syncMessages(currentItem.current, true); else setMessages([]);
+  }, [syncMessages]);
+  useEffect(() => { const timer = setTimeout(() => selectMode(entryMode(initialMode, voice)), 0); return () => clearTimeout(timer); }, [initialMode, voice, selectMode]);
   const unavailableMessage = t("common.notAvailable");
-  useEffect(() => {
-    const update = setTimeout(() => setMode(voice || initialMode === "voice" ? "live" : ["voice-note", "note"].includes(initialMode) ? "note" : "text"), 0);
-    return () => clearTimeout(update);
-  }, [initialMode, voice]);
   const fetchTurn = useCallback(async (replace = false) => {
     if (!sessionId) return;
-    if (turnRequest.current) {
-      if (!replace) return;
-      turnRequest.current.abort();
-    }
-    const request = new AbortController();
-    turnRequest.current = request;
+    if (turnRequest.current) { if (!replace) return; turnRequest.current.abort(); }
+    const request = new AbortController(); turnRequest.current = request;
     try {
       const next = await api<SessionItem>(`/sessions/${sessionId}/next`, { signal: request.signal });
       if (request.signal.aborted) return;
-      if (lastItem.current !== next.item_id) {
-        const previous = currentItem.current;
-        if (previous?.item_id && previous.question) setHistory((entries) => entries.some((entry) => entry.item.item_id === previous.item_id) ? entries : [...entries, { item: previous, answer: submitted.current[previous.item_id!] || "" }]);
-        lastItem.current = next.item_id;
-        setSubmittedAnswer("");
-        setAnswer("");
-        setConfidence(null);
-        setTranscribed(false);
-      }
-      currentItem.current = next;
-      setItem(next);
+      if (lastItem.current !== next.item_id) { lastItem.current = next.item_id; setAnswer(""); setConfidence(null); setTranscribed(false); }
+      currentItem.current = next; setItem(next); syncMessages(next);
       if (next.voice_turn_count !== undefined) setTurns(next.voice_turn_count);
-      setError(
-        next.status === "needs_attention" || next.status === "needs-attention"
-          ? unavailableMessage
-          : null,
-      );
-    } catch (e) {
-      if (!request.signal.aborted) setError((e as Error).message);
-    } finally {
-      if (turnRequest.current === request) turnRequest.current = null;
-    }
-  }, [sessionId, unavailableMessage]);
+      setError(["needs_attention", "needs-attention"].includes(next.status) ? unavailableMessage : null);
+    } catch (e) { if (!request.signal.aborted) setError((e as Error).message); }
+    finally { if (turnRequest.current === request) turnRequest.current = null; }
+  }, [sessionId, syncMessages, unavailableMessage]);
   const pending = Boolean(sessionId) && !error && (!item || PENDING_TURNS.includes(item.status));
   useEffect(() => {
     if (!pending) return;
-    const initial = setTimeout(() => void fetchTurn(), 0);
-    const interval = setInterval(() => void fetchTurn(), 1300);
-    return () => {
-      clearTimeout(initial);
-      clearInterval(interval);
-      turnRequest.current?.abort();
-    };
+    const timer = setTimeout(() => void fetchTurn(), 0), interval = setInterval(() => void fetchTurn(), 1300);
+    return () => { clearTimeout(timer); clearInterval(interval); turnRequest.current?.abort(); };
   }, [pending, fetchTurn]);
   useEffect(() => () => turnRequest.current?.abort(), [sessionId, fetchTurn]);
+  useEffect(() => {
+    if (!sessionId) return;
+    const timer = setTimeout(() => {
+      const node = workspace.current;
+      if (node) window.scrollTo({ top: window.scrollY + node.getBoundingClientRect().top - 96, behavior: "auto" });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [sessionId]);
+  useEffect(() => { if (followLatest.current && trail.current) trail.current.scrollTop = trail.current.scrollHeight; }, [messages, pending]);
   async function start() {
     if (!collectionId || !scope) return;
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
-      const s = await api<Session>("/sessions", {
-        method: "POST",
-        body: json({
-          collection_id: collectionId,
-          scope_revision_id: scope,
-          mode: review ? "review" : "study",
-        }),
-      });
-      setSessionId(s.id);
-      window.history.replaceState(
-        null,
-        "",
-        `/study?session=${s.id}&mode=${mode === "live" ? "voice" : mode === "note" ? "voice-note" : "text"}`,
-      );
-      reload();
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
+      const s = await api<Session>("/sessions", { method: "POST", body: json({ collection_id: collectionId, scope_revision_id: scope, mode: review ? "review" : "study" }) });
+      setSessionId(s.id); window.history.replaceState(null, "", `/study?session=${s.id}&mode=${mode === "live" ? "voice" : mode === "note" ? "voice-note" : "text"}`); reload();
+    } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!item?.item_id || !answer.trim() || confidence === null) return;
-    setBusy(true);
-    setError(null);
+  async function submitAnswer(text = answer, level = confidence, spoken = transcribed) {
+    if (!item?.item_id || !text.trim() || level === null || sending.current || item.feedback) return;
+    sending.current = true; setBusy(true); setError(null);
+    const selected = modeRef.current;
+    if (selected === "text") setMessages((entries) => putMessage(entries, { id: `${item.item_id}:answer`, role: "learner", text: text.trim(), itemId: item.item_id ?? undefined }));
     try {
-      await api(`/sessions/${sessionId}/answer`, {
-        method: "POST",
-        body: json({
-          item_id: item.item_id,
-          answer: answer.trim(),
-          confidence,
-          expected_version: item.version,
-          voice: mode !== "text" && transcribed,
-        }),
-      });
-      submitted.current[item.item_id] = answer.trim();
-      setSubmittedAnswer(answer.trim());
-      if (mode !== "text" && transcribed) setTurns((v) => v + 1);
-      await fetchTurn(true);
-      reload();
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
+      await api(`/sessions/${sessionId}/answer`, { method: "POST", body: json({ item_id: item.item_id, answer: text.trim(), confidence: level, expected_version: item.version, voice: selected !== "text" && spoken }) });
+      if (selected !== "text" && spoken) setTurns((v) => v + 1);
+      await fetchTurn(true); reload();
+    } catch (e) { setError((e as Error).message); } finally { sending.current = false; setBusy(false); }
+  }
+  function receiveSpeech(text: string) {
+    if (modeRef.current === "text" || !text.trim()) return;
+    const match = text.match(/\bconfidence\s*(?:is\s*)?([1-5]|one|two|three|four|five)\b/i);
+    const levels: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5 };
+    const level = match ? levels[match[1].toLowerCase()] || Number(match[1]) : confidence;
+    const spokenAnswer = match ? text.replace(match[0], "").trim().replace(/^[,.\s]+|[,.\s]+$/g, "") || answer : text;
+    setAnswer(spokenAnswer); setTranscribed(true); if (match) setConfidence(level);
+    if (modeRef.current === "note") setMessages((entries) => putMessage(entries, { id: crypto.randomUUID(), role: "learner", text: spokenAnswer, itemId: item?.item_id ?? undefined }));
+    if (level !== null && (modeRef.current === "note" || match)) void submitAnswer(spokenAnswer, level, true);
+  }
+  function chooseConfidence(level: number) {
+    setConfidence(level);
+    if (mode !== "text" && transcribed && answer.trim()) void submitAnswer(answer, level, true);
   }
   async function action(kind: "advance" | "finish") {
     if (!item) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await api(`/sessions/${sessionId}/${kind}`, {
-        method: "POST",
-        body: json({ expected_version: item.version }),
-      });
-      await fetchTurn(true);
-      reload();
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
+    setBusy(true); setError(null);
+    try { await api(`/sessions/${sessionId}/${kind}`, { method: "POST", body: json({ expected_version: item.version }) }); await fetchTurn(true); reload(); }
+    catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
-  const blocked =
-    item?.status === "needs_attention" || item?.status === "needs-attention";
   async function retryTurn() {
-    if (item?.job_id && blocked) {
-      setBusy(true);
-      try {
-        await api(`/jobs/${item.job_id}/retry`, { method: "POST" });
-        await fetchTurn(true);
-      } catch (e) {
-        setError((e as Error).message);
-      } finally {
-        setBusy(false);
-      }
+    if (item?.job_id && ["needs_attention", "needs-attention"].includes(item.status)) {
+      setBusy(true); try { await api(`/jobs/${item.job_id}/retry`, { method: "POST" }); await fetchTurn(true); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
     } else await fetchTurn(true);
   }
-  const finished = item?.status === "finished" || item?.status === "completed";
-  const feedback = item?.feedback;
+  const finished = ["finished", "completed"].includes(item?.status ?? ""), blocked = ["needs_attention", "needs-attention"].includes(item?.status ?? ""), feedback = item?.feedback;
   const speechMessages = useMemo<VoiceMessage[]>(() => {
-    const messages: VoiceMessage[] = [];
-    if (item?.teaching && !review)
-      messages.push({ id: "teaching", label: t("study.teach"), text: item.teaching });
-    if (item?.question)
-      messages.push({ id: "question", label: t("study.check"), text: item.question });
-    if (item?.feedback?.feedback)
-      messages.push({ id: "feedback", label: t("study.teacher"), text: String(item.feedback.feedback) });
-    return messages;
-  }, [item, review, t]);
-  const autoSpeakMessageId: VoiceMessage["id"] | null =
-    mode !== "note" ? null : feedback?.voice === true ? "feedback" : feedback ? null : "question";
+    const result: VoiceMessage[] = [];
+    if (item && !feedback) result.push({ id: "lesson", label: t("study.teacher"), text: [!review ? item.teaching : "", item.question].filter(Boolean).join("\n\n") });
+    if (feedback?.feedback) result.push({ id: "feedback", label: t("study.teacher"), text: String(feedback.feedback) });
+    return result;
+  }, [item, feedback, review, t]);
   function changeMode(next: StudyMode) {
-    setMode(next);
-    const url = new URL(window.location.href);
-    url.searchParams.set("mode", next === "live" ? "voice" : next === "note" ? "voice-note" : "text");
-    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    selectMode(next); const url = new URL(window.location.href); url.searchParams.set("mode", next === "live" ? "voice" : next === "note" ? "voice-note" : "text"); window.history.replaceState(null, "", `${url.pathname}${url.search}`);
   }
-  function addLiveMessage(message: LiveMessage) {
-    if (!message.text) return;
-    setLiveMessages((messages) => {
-      const index = messages.findIndex((entry) => entry.id === message.id && entry.role === message.role);
-      if (index < 0) return [...messages, message];
-      return messages.map((entry, i) => i === index ? message : entry);
-    });
+  function tabKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault(); const direction = document.documentElement.dir === "rtl" ? -1 : 1;
+    const next = event.key === "Home" ? 0 : event.key === "End" ? 2 : (index + (event.key === "ArrowRight" ? direction : -direction) + 3) % 3;
+    changeMode(MODES[next][0]); document.getElementById(`study-tab-${MODES[next][0]}`)?.focus();
   }
-  return (
-    <>
-      <PageTitle title={t("study.title")} description={t("study.conversationDescription")} />
-      <div className="study-mode-tabs mb-3" role="group" aria-label={t("study.modeLabel")}>
-        {([ ["text", MessageSquare, "study.modeText"], ["note", Mic, "study.modeNote"], ["live", Radio, "study.modeLive"] ] as const).map(([value, Icon, label]) => <button type="button" key={value} className={`btn ${mode === value ? "btn-primary" : "btn-outline-primary"}`} aria-pressed={mode === value} onClick={() => changeMode(value)}><Icon size={17} />{t(label)}</button>)}
+  return <>
+    <PageTitle title={t("study.title")} description={t("study.conversationDescription")} />
+    <Status error={error} retry={retryTurn} />
+    <section ref={workspace} className="study-workspace">
+      <div className="study-mode-tabs" role="tablist" aria-label={t("study.modeLabel")}>
+        {MODES.map(([value, Icon, label], index) => <button type="button" role="tab" id={`study-tab-${value}`} aria-controls="study-mode-panel" aria-selected={mode === value} tabIndex={mode === value ? 0 : -1} onKeyDown={(event) => tabKey(event, index)} key={value} onClick={() => changeMode(value)}><Icon size={17} />{t(label)}</button>)}
       </div>
-      <Status error={error} retry={retryTurn} />
-      {!sessionId && <Card>
-        {mode !== "text" && <div className="voice-conversation-intro rounded-3 p-3 mb-4" role="note"><div className="d-flex align-items-center gap-2 mb-2"><Volume2 size={18} /><h2 className="h6 fw-bold mb-0">{t(mode === "live" ? "study.modeLive" : "study.modeNote")}</h2></div><p className="small mb-2">{t(mode === "live" ? "study.liveIntro" : "study.noteIntro")}</p><p className="small text-body-secondary mb-0">{t("study.speechLanguage")}: <bdi>{preferences.speech_locale}</bdi></p></div>}
-        <CollectionPicker hasMore={collections.hasMore} onLoadMore={collections.loadMore} moreLoading={collections.moreLoading} items={list(collections.data)} value={collectionId} onChange={setCollection} />
-        <Status error={collections.error} loading={collections.loading} retry={collections.reload} />
-        <p className="small text-body-secondary">{t("study.studyLanguage")}: <bdi>{preferences.study_locale}</bdi></p>
-        {!scope && <Empty href={collectionId ? `/collections/${collectionId}/outline` : "/outline"} label={t("nav.outline")}>{t("study.chooseScope")}</Empty>}
-        <div className="d-flex flex-wrap gap-2"><button disabled={!scope || busy} onClick={start} className="btn btn-primary"><BookOpenCheck size={18} />{t(busy ? "common.working" : "study.start")}</button>{dashboard?.resume?.session_id && <button className="btn btn-outline-primary" onClick={() => setSessionId(dashboard.resume?.session_id ?? "")}>{t("study.resume")}</button>}</div>
-      </Card>}
-      {sessionId && <Card>
-        <div className="study-conversation" aria-label={t("study.conversationLabel")}>
-          {history.map((entry) => <div key={entry.item.item_id} className="study-past-turn"><TeacherMessage item={entry.item} review={Boolean(review)} />{entry.answer && <div className="study-message study-message--learner"><span className="study-speaker">{t("study.you")}</span><p dir="auto">{entry.answer}</p></div>}{entry.item.feedback && <Feedback value={entry.item.feedback} />}<Citations ids={[...new Set([...(entry.item.citation_ids ?? []), ...(entry.item.feedback?.citation_ids ?? [])])]} /></div>)}
-          {item && !blocked && !finished && <TeacherMessage item={item} review={Boolean(review)} />}
-          {liveMessages.map((message) => <div className={`study-message study-message--${message.role}`} key={`${message.role}:${message.id}`}><span className="study-speaker">{t(message.role === "teacher" ? "study.teacher" : "study.you")}</span><p dir="auto">{message.text}</p></div>)}
-          {pending && <Status loading />}
-          {item && !pending && !blocked && !finished && <>
-            {feedback && <>{(submittedAnswer || answer) && <div className="study-message study-message--learner"><span className="study-speaker">{t("study.you")}</span><p dir="auto">{submittedAnswer || answer}</p></div>}<Feedback value={feedback} /></>}
-            <Citations ids={[...new Set([...(item.citation_ids ?? []), ...(feedback?.citation_ids ?? [])])]} />
-          </>}
-        </div>
-        {item && !pending && !blocked && !finished && <>
-          {mode === "live" && <LiveVoiceControls key={`${sessionId}:${item.item_id}`} sessionId={sessionId} itemId={item.item_id ?? ""} onMessage={addLiveMessage} draft={liveDraft} onDraft={setLiveDraft} onTranscript={(text) => { setAnswer(text); setTranscribed(true); }} disabled={busy} />}
-          {mode === "note" && <VoiceControls key={`${sessionId}:${item.item_id}:${feedback ? "feedback" : "question"}`} sessionId={sessionId} itemId={item.item_id ?? ""} messages={speechMessages} canRecord={!feedback} autoSpeakMessageId={autoSpeakMessageId} turns={turns} onTranscript={(text) => { setAnswer(text); setTranscribed(true); }} onTyping={() => changeMode("text")} />}
-          {feedback ? <div className="d-flex flex-wrap gap-2 mt-4"><button className="btn btn-primary" onClick={() => action("advance")} disabled={busy}>{t(busy ? "common.working" : "study.next")}<ArrowRight size={18} /></button><button className="btn btn-outline-secondary" onClick={() => action("finish")} disabled={busy}>{t("study.finish")}</button></div> : <form onSubmit={submit} className="study-composer">
-            <label className="d-block mb-3"><span className="form-label fw-semibold">{t("study.answer")}</span><textarea aria-label={t("study.answer")} className="form-control" rows={3} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={t("study.answerPlaceholder")} required dir="auto" disabled={busy} autoFocus={mode === "text"} /></label>
-            <fieldset className="confidence-fieldset"><legend className="form-label fw-semibold small">{t("study.confidence")}</legend><div className="confidence-options">{[1, 2, 3, 4, 5].map((n) => <label key={n} className={`confidence-option${confidence === n ? " selected" : ""}`}><input type="radio" name="confidence" value={n} checked={confidence === n} onChange={() => setConfidence(n)} required /><span>{n}</span><small>{n === 1 ? t("study.lowConfidence") : n === 5 ? t("study.highConfidence") : ""}</small></label>)}</div></fieldset>
-            <button className="btn btn-primary mt-3" disabled={busy || confidence === null || !answer.trim()}><Send size={17} />{t(busy ? "common.working" : "study.submit")}</button>
-          </form>}
+      <div id="study-mode-panel" role="tabpanel" aria-labelledby={`study-tab-${mode}`} className="study-mode-panel">
+        {!sessionId && <div className="study-setup">
+          {mode !== "text" && <p>{t(mode === "live" ? "study.liveIntro" : "study.noteIntro")}</p>}
+          <CollectionPicker hasMore={collections.hasMore} onLoadMore={collections.loadMore} moreLoading={collections.moreLoading} items={list(collections.data)} value={collectionId} onChange={setCollection} />
+          <Status error={collections.error} loading={collections.loading} retry={collections.reload} />
+          <p className="small text-body-secondary">{t("study.studyLanguage")}: <bdi>{preferences.study_locale}</bdi></p>
+          {!scope && <Empty href={collectionId ? `/collections/${collectionId}/outline` : "/outline"} label={t("nav.outline")}>{t("study.chooseScope")}</Empty>}
+          <div className="d-flex flex-wrap gap-2"><button disabled={!scope || busy} onClick={start} className="btn btn-primary"><BookOpenCheck size={18} />{t(busy ? "common.working" : "study.start")}</button>{dashboard?.resume?.session_id && <button className="btn btn-outline-primary" onClick={() => setSessionId(dashboard.resume?.session_id ?? "")}>{t("study.resume")}</button>}</div>
+        </div>}
+        {sessionId && <>
+          <div ref={trail} className="study-conversation" role="log" aria-live="polite" aria-relevant="additions text" aria-label={t("study.conversationLabel")} tabIndex={0} onScroll={() => { const node = trail.current; if (node) followLatest.current = node.scrollHeight - node.scrollTop - node.clientHeight < 80; }}>
+            {messages.map((message) => <div className={`study-message study-message--${message.role}`} key={message.id} data-message-id={message.id} data-speaker={message.role}>
+              <span className="study-speaker">{t(message.role === "teacher" ? "study.teacher" : "study.you")}</span>
+              {message.noteId ? <><div className="study-note"><Volume2 size={20} /><span>{t("study.modeNote")}</span>{message.itemId === item?.item_id && speechMessages.some((entry) => entry.id === message.noteId) && <button className="btn btn-outline-primary btn-sm" aria-label={`${t("study.listen")}: ${t("study.teacher")}`} onClick={() => void notePlayback.current?.(message.noteId!)}><Volume2 size={16} />{t("study.listen")}</button>}</div><details><summary>{t("study.transcript")}</summary><p dir="auto">{message.text}</p></details></> : message.feedback ? <Feedback value={message.feedback} /> : <p dir="auto">{message.text || "…"}</p>}
+              {message.citations?.length ? <Citations ids={message.citations} /> : null}
+            </div>)}
+            {pending && <Status loading />}
+            {mode === "live" && !messages.length && !pending && <p className="study-trail-empty">{t("study.liveReady")}</p>}
+          </div>
+          {item && !blocked && !finished && <div className="study-controls">
+            {mode === "live" && <LiveVoiceControls key={`${sessionId}:${item.item_id}`} sessionId={sessionId} itemId={item.item_id ?? ""} onMessage={(message) => setMessages((entries) => putMessage(entries, message))} draft={liveDraft} onDraft={setLiveDraft} onTranscript={receiveSpeech} disabled={busy || pending} />}
+            {mode === "note" && <VoiceControls key={`${sessionId}:${item.item_id}:${feedback ? "feedback" : "question"}`} sessionId={sessionId} itemId={item.item_id ?? ""} messages={speechMessages} canRecord={!feedback && !busy && !pending} autoSpeakMessageId={feedback ? "feedback" : "lesson"} turns={turns} onTranscript={receiveSpeech} onTyping={() => changeMode("text")} playbackRef={notePlayback} />}
+            {feedback ? <div className="d-flex flex-wrap gap-2"><button className="btn btn-primary" onClick={() => action("advance")} disabled={busy}>{t(busy ? "common.working" : "study.next")}<ArrowRight size={18} /></button><button className="btn btn-outline-secondary" onClick={() => action("finish")} disabled={busy}>{t("study.finish")}</button></div> : <form onSubmit={(event) => { event.preventDefault(); void submitAnswer(); }} className="study-composer">
+              {mode === "text" ? <label className="d-block mb-2"><span className="form-label fw-semibold">{t("study.answer")}</span><textarea aria-label={t("study.answer")} className="form-control" rows={2} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={t("study.answerPlaceholder")} required dir="auto" disabled={busy || pending} autoFocus /></label> : <><p className="small mb-2" role="status">{t(transcribed ? "study.spokenAnswerReady" : "study.voiceAnswerHelp")}</p><details className="study-transcript-edit"><summary>{t("study.transcript")}</summary><label><span className="form-label">{t("study.answer")}</span><textarea aria-label={t("study.answer")} className="form-control" rows={2} value={answer} onChange={(e) => setAnswer(e.target.value)} dir="auto" disabled={busy || pending} /></label></details></>}
+              <div className="study-send-row"><fieldset className="confidence-fieldset"><legend className="form-label fw-semibold small">{t("study.confidence")}</legend><div className="confidence-options">{[1, 2, 3, 4, 5].map((n) => <label key={n} className={`confidence-option${confidence === n ? " selected" : ""}`}><input type="radio" name="confidence" value={n} checked={confidence === n} onChange={() => chooseConfidence(n)} disabled={busy || pending} /><span>{n}</span><small>{n === 1 ? t("study.lowConfidence") : n === 5 ? t("study.highConfidence") : ""}</small></label>)}</div></fieldset><button className="btn btn-primary" disabled={busy || pending || confidence === null || !answer.trim()}><Send size={17} />{t(busy ? "common.working" : "study.submit")}</button></div>
+            </form>}
+          </div>}
+          {finished && <div className="study-controls"><h2 className="h4 fw-bold">{t("study.sessionFinished")}</h2><SessionSummary sessionId={sessionId} /><Link className="btn btn-primary mt-3" href="/progress">{t("nav.progress")}</Link></div>}
         </>}
-        {finished && <><h2 className="h4 fw-bold">{t("study.sessionFinished")}</h2><SessionSummary sessionId={sessionId} /><Link className="btn btn-primary mt-3" href="/progress">{t("nav.progress")}</Link></>}
-      </Card>}
-    </>
-  );
-}
-function TeacherMessage({ item, review }: { item: SessionItem; review: boolean }) {
-  const { t } = useI18n();
-  return <div className="study-message study-message--teacher"><span className="study-speaker">{t("study.teacher")}</span>{item.teaching && !review && <p className="teach-paragraph" dir="auto">{item.teaching}</p>}{review && <p className="badge text-bg-light border py-2">{t("study.coldReview")}</p>}<p className="fw-medium question-text mb-0" dir="auto">{item.question}</p></div>;
+      </div>
+    </section>
+  </>;
 }
 function Citations({ ids }: { ids: string[] }) {
   const { t } = useI18n();
@@ -313,8 +218,7 @@ function Citations({ ids }: { ids: string[] }) {
 function Feedback({ value }: { value: Reviewer }) {
   const { t } = useI18n();
   return (
-    <div className="reviewer-feedback study-message study-message--teacher" role="status">
-      <h3 className="study-speaker">{t("study.teacher")}</h3>
+    <div className="reviewer-feedback" role="status">
       <p className="mb-2" dir="auto">
         {String(value.feedback ?? "")}
       </p>

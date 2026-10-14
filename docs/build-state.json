@@ -737,6 +737,23 @@
       ],
       "frontend_lint": "passed",
       "frontend_build": "passed"
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "patient teacher and mode-specific chronological tabbed conversation; no mandatory typing for spoken answers",
+      "status": "implemented; focused backend/browser/provider payload gates passed; new human audibility/tone remains unverified",
+      "evidence": [
+        "docs/CONVERSATION_EXPERIENCE.md",
+        "docs/evidence/patient-conversation/verification.json"
+      ],
+      "backend": {
+        "passed": 40,
+        "skipped": 0,
+        "exit_code": 0
+      },
+      "frontend_lint": "passed",
+      "frontend_build": "passed; frozen production image and TypeScript",
+      "browser_visual_smoke": "passed; mobile/desktop and live-mode captures inspected; 12 focused interaction checks"
     }
   ]
 }

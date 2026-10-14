@@ -306,8 +306,11 @@
   "study.liveSend": "メッセージを送信",
   "study.conversationDescription": "資料から学びましょう。入力、音声メッセージ、または先生との会話ができます。",
   "study.liveIntro": "コレクションを選んで会話を始めましょう。マイクを許可してください。",
-  "study.noteIntro": "録音して文字起こしを確認し、自信を選んで送信します。先生の説明も聞けます。",
+  "study.noteIntro": "先生の話を聞き、回答を録音してから自信度を選んでください。",
   "study.noteTurns": "音声メッセージ：{count}",
-  "study.liveHelp": "話す、割り込む、入力することができます。回答を確認して進捗を記録しましょう。",
-  "study.livePlaceholder": "会話中に入力…"
+  "study.liveHelp": "ゆっくりで大丈夫です。声で答え、自信度を選んでください。入力は任意です。",
+  "study.livePlaceholder": "会話中に入力…",
+  "study.transcript": "文字起こし（任意）",
+  "study.spokenAnswerReady": "音声回答を受け取りました。自信度を選ぶとフィードバックを受けられます。",
+  "study.voiceAnswerHelp": "声で答えてください。入力は不要です。"
 }

@@ -2051,7 +2051,7 @@ export interface components {
              * Message Id
              * @enum {string}
              */
-            message_id: "teaching" | "question" | "feedback";
+            message_id: "teaching" | "question" | "feedback" | "lesson";
         };
         /** SpeechLanguageDTO */
         SpeechLanguageDTO: {

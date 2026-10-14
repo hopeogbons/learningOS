@@ -306,8 +306,11 @@
   "study.liveSend": "Kirim pesan",
   "study.conversationDescription": "Belajar dari materi Anda. Ketik, kirim pesan suara, atau bicara dengan guru.",
   "study.liveIntro": "Pilih koleksi dan mulai percakapan. Izinkan mikrofon untuk berbicara.",
-  "study.noteIntro": "Rekam, periksa teks, pilih keyakinan, lalu kirim. Anda juga dapat mendengarkan guru.",
+  "study.noteIntro": "Dengarkan pengajar, rekam jawabanmu, lalu pilih keyakinanmu.",
   "study.noteTurns": "Pesan suara: {count}",
-  "study.liveHelp": "Bicara, sela, atau ketik. Periksa jawaban untuk mencatat kemajuan.",
-  "study.livePlaceholder": "Ketik sambil berbicara…"
+  "study.liveHelp": "Tidak perlu terburu-buru. Jawab dengan suara dan pilih keyakinanmu. Mengetik bersifat opsional.",
+  "study.livePlaceholder": "Ketik sambil berbicara…",
+  "study.transcript": "Transkrip (opsional)",
+  "study.spokenAnswerReady": "Jawaban lisan sudah diterima. Pilih keyakinanmu untuk mendapat umpan balik.",
+  "study.voiceAnswerHelp": "Jawab dengan suara. Tidak perlu mengetik."
 }

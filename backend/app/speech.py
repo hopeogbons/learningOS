@@ -126,8 +126,10 @@ def finalize_budget(db, learner_id, reservation_id, succeeded):
     db.commit()
 
 
-def trusted_text(item, message_id):
-    if message_id == 'teaching':
+def trusted_text(item, message_id, include_teaching=True):
+    if message_id == 'lesson':
+        text = '\n\n'.join(part for part in (item.teaching if include_teaching else '', item.public_question) if part)
+    elif message_id == 'teaching':
         text = item.teaching
     elif message_id == 'question':
         text = item.public_question
@@ -162,7 +164,7 @@ class SpeechCapabilitiesDTO(BaseModel):
 
 @router.get('/speech/capabilities', response_model=SpeechCapabilitiesDTO)
 def capabilities(learner=Depends(get_learner)):
-    configured = bool(os.getenv('LEARNING_OS_API_KEY') and (os.getenv('LLM_MODEL') or os.getenv('LEARNING_OS_MODEL')) and os.getenv('STT_MODEL') and os.getenv('TTS_MODEL') and os.getenv('TTS_VOICE'))
+    configured = bool(os.getenv('LEARNING_OS_API_KEY') and (os.getenv('LLM_MODEL') or os.getenv('LEARNING_OS_MODEL')) and os.getenv('STT_MODEL') and os.getenv('TTS_MODEL'))
     return {'provider': 'openai-configured-unverified' if configured else 'unavailable', 'raw_audio_retained': False, 'languages': [{'locale': locale, 'stt': 'configured-unverified' if configured else 'unavailable', 'tts': 'configured-unverified' if configured else 'unavailable', 'verified': False, 'fallback': 'typing'} for locale in LOCALES], 'max_audio_bytes': MAX_AUDIO_BYTES, 'max_audio_seconds': MAX_AUDIO_SECONDS, 'max_voice_turns': None, 'live_gate': 'requires-real-provider-and-browser-audio-proof'}
 
 
@@ -208,7 +210,7 @@ async def transcribe(session_id: str, item_id: str = Form(...), audio: UploadFil
 class SpeechInput(BaseModel):
     model_config = ConfigDict(extra='forbid')
     item_id: str
-    message_id: Literal['teaching', 'question', 'feedback']
+    message_id: Literal['teaching', 'question', 'feedback', 'lesson']
 
 
 @router.post('/sessions/{session_id}/speech/synthesize', response_class=Response,
@@ -219,7 +221,7 @@ def synthesize(session_id: str, body: SpeechInput, db=Depends(get_db), learner=D
     locale_for(locale)
     if locale_for(locale) != locale_for(item.generation_locale):
         raise HTTPException(409, 'speech_language_mismatch_typing_available')
-    text = trusted_text(item, body.message_id)
+    text = trusted_text(item, body.message_id, include_teaching=session.mode != "review")
     reservation = reserve_budget(db, learner.id, session.id, item.id, 'tts', len(text))
     learner_id = learner.id
     try:

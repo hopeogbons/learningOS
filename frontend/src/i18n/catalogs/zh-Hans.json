@@ -306,8 +306,11 @@
   "study.liveSend": "发送消息",
   "study.conversationDescription": "根据你的材料学习。打字、发送语音留言或与老师交谈。",
   "study.liveIntro": "选择资料集并开始对话。允许使用麦克风与老师交谈。",
-  "study.noteIntro": "录制留言，检查文字，选择信心程度后发送。也可以听老师讲解。",
+  "study.noteIntro": "听老师讲解，录制回答，然后选择信心程度。",
   "study.noteTurns": "语音留言：{count}",
-  "study.liveHelp": "自然说话、打断或打字。检查答案以记录进度。",
-  "study.livePlaceholder": "交谈时也可以打字…"
+  "study.liveHelp": "慢慢来。说出回答，然后选择信心程度。打字是可选的。",
+  "study.livePlaceholder": "交谈时也可以打字…",
+  "study.transcript": "文字记录（可选）",
+  "study.spokenAnswerReady": "已收到你的语音回答。请选择信心程度以获得反馈。",
+  "study.voiceAnswerHelp": "用语音回答，无需打字。"
 }

@@ -306,8 +306,11 @@
   "study.liveSend": "Send message",
   "study.conversationDescription": "Learn from your material. Reply in text, send a voice note, or talk with your teacher.",
   "study.liveIntro": "Choose your collection, then start a conversation. Allow microphone access to talk with your teacher.",
-  "study.noteIntro": "Record a message, review the transcript, then choose your confidence and send. You can also listen to your teacher.",
+  "study.noteIntro": "Listen to your teacher, record your reply, then choose your confidence.",
   "study.noteTurns": "Voice notes: {count}",
-  "study.liveHelp": "Speak naturally, interrupt, or type. Use Check answer below to record your progress.",
-  "study.livePlaceholder": "Type a message while talking…"
+  "study.liveHelp": "Take your time. Speak your answer, then choose your confidence. Typing is optional.",
+  "study.livePlaceholder": "Type a message while talking…",
+  "study.transcript": "Transcript (optional)",
+  "study.spokenAnswerReady": "Your spoken answer is captured. Choose your confidence for feedback.",
+  "study.voiceAnswerHelp": "Reply by voice. No typing is needed."
 }

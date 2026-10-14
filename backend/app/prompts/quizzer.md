@@ -11,3 +11,5 @@ When prior_attempts for this same concept are supplied, inspect the owned learne
 Revision 2: accept study_locale, source_language and speech_locale as separate owned session context. Respond/ask/grade by conceptual meaning in the selected study language; preserve original quote/citation IDs and formula/code tokens. Uncertain translation or speech recognition leads to targeted clarification, never unsupported completion. Locale change applies at next turn and preserves scope/history.
 
 Done when: the Text, Voice note and Live voice modes share the owned conversation and confidence-controlled assessment defined in docs/CONVERSATION_EXPERIENCE.md; switching input method does not restart learning.
+
+Teacher manner: follow docs/CONVERSATION_EXPERIENCE.md shared teacher manner. Be professional, calm, patient and approachable. Use brief plain explanations and gentle specific feedback. Spoken turns may occasionally acknowledge listening with “mm-hmm” or “take your time”; never repeat filler mechanically, rush/interrupt the learner or signal correctness before confidence and assessment. Text does not need spoken filler.

@@ -272,3 +272,37 @@ def test_realtime_provider_contract_no_private_data_or_permanent_secret(monkeypa
     monkeypatch.setattr(provider, '_request', lambda *a, **k: {'value': provider.key, 'expires_at': 1234567890})
     with pytest.raises(InvalidModelOutput):
         provider.realtime(context)
+
+
+def test_patient_teacher_voice_payload_and_combined_owned_lesson(monkeypatch, speech_env):
+    """Protect the chosen pace/voice and avoid two separate lesson audio messages."""
+    from app.llm import OpenAIProvider, ProviderUnavailable
+    client, factory, app, sid, turn, calls = speech_env
+    result = client.post(f'/api/v1/sessions/{sid}/speech/synthesize', json={'item_id': turn['item_id'], 'message_id': 'lesson'})
+    assert result.status_code == 200
+    with factory() as db:
+        item = db.get(SessionItem, turn['item_id'])
+        assert calls[-1] == ('tts', '\n\n'.join(x for x in (item.teaching, item.public_question) if x), 'en-GB')
+    monkeypatch.setenv('LEARNING_OS_API_KEY', 'synthetic-openai')
+    monkeypatch.setenv('LLM_MODEL', 'synthetic-model')
+    monkeypatch.setenv('TTS_MODEL', 'synthetic-tts')
+    monkeypatch.setenv('VERIFIED_SPEECH_LOCALES', 'en')
+    for name in ['TEACHER_VOICE', 'REALTIME_VOICE', 'TTS_SPEED', 'REALTIME_SPEED']:
+        monkeypatch.delenv(name, raising=False)
+    captured = []
+    def request(self, path, **kwargs):
+        captured.append((path, kwargs['json']))
+        return {'value': 'ek_fixture', 'expires_at': 2000000000} if path.endswith('client_secrets') else b'synthetic-audio'
+    monkeypatch.setattr(OpenAIProvider, '_request', request)
+    provider = OpenAIProvider()
+    provider.tts('Take your time.', 'en-GB')
+    assert captured[-1][1]['voice'] == 'shimmer' and captured[-1][1]['speed'] == 0.85
+    provider.realtime({'locale': 'en', 'sources': [{'excerpt': 'An atom contains protons.', 'locator': 'Synthetic page 1'}]})
+    session = captured[-1][1]['session']
+    assert session['audio']['output'] == {'voice': 'shimmer', 'speed': 0.85}
+    assert session['audio']['input']['turn_detection']['type'] == 'semantic_vad'
+    assert session['audio']['input']['turn_detection']['eagerness'] == 'low'
+    assert 'mm-hmm' in session['instructions'] and 'Allow the learner time to finish' in session['instructions']
+    monkeypatch.setenv('TTS_SPEED', 'nan')
+    with pytest.raises(ProviderUnavailable):
+        provider.tts('Take your time.', 'en-GB')

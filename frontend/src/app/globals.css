@@ -910,3 +910,67 @@ body:has(.offcanvas.show) .bottom-nav {
   .live-voice-panel { padding: 14px; }
   .study-mode-tabs .btn { font-size: 0.83rem; padding-inline: 10px; }
 }
+
+/* Patient conversation workspace: attached tabs, bounded trail, fixed controls. */
+.study-workspace { border: 1px solid #dbe9e4; border-radius: 20px; background: #fff; overflow: hidden; box-shadow: 0 4px 18px #173b3f08; }
+.study-workspace .study-mode-tabs { display: flex; gap: 0; padding: 8px 8px 0; background: #edf5f2; flex-wrap: nowrap; border-bottom: 1px solid #dbe9e4; }
+.study-mode-tabs [role="tab"] { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 12px 12px 0 0; padding: 13px 10px; color: #446760; background: transparent; position: relative; font-weight: 600; }
+.study-mode-tabs [role="tab"][aria-selected="true"] { background: #fff; color: #173b3f; border-color: #dbe9e4; border-bottom-color: #fff; margin-bottom: -1px; }
+.study-mode-tabs [role="tab"]:focus-visible { outline: 3px solid #40c15f; outline-offset: -4px; }
+.study-mode-panel { display: flex; flex-direction: column; height: min(780px, calc(100dvh - 150px)); min-height: 420px; }
+.study-setup { padding: 24px; overflow: auto; }
+.study-workspace .study-conversation { flex: 1 1 0; min-height: 140px; overflow-y: auto; overscroll-behavior: contain; padding: 24px; gap: 16px; scrollbar-gutter: stable; background: #fafcfb; }
+.study-workspace .study-message { flex: 0 0 auto; max-width: 88%; }
+.study-message--teacher { width: auto; }
+.study-workspace .study-message details { font-size: .83rem; color: #446760; margin-top: 10px; }
+.study-message summary { cursor: pointer; }
+.study-note { display: flex; align-items: center; gap: 12px; min-width: 180px; }
+.study-note .btn { margin-inline-start: auto; }
+.study-trail-empty { margin: auto; text-align: center; color: #59736c; }
+.study-controls { flex: 0 0 auto; border-top: 1px solid #e1ede8; padding: 16px 20px; background: #fff; }
+.study-controls .live-voice-panel, .study-controls .voice-controls { margin: 0 0 10px !important; padding: 12px; border-radius: 12px; }
+.study-controls .live-voice-panel p, .study-controls .voice-controls p { margin-bottom: 6px; }
+.study-workspace .study-composer { margin: 0; padding: 0; border: 0; }
+.study-send-row { display: flex; gap: 16px; align-items: flex-end; }
+.study-send-row fieldset { flex: 1; min-width: 0; margin: 0; }
+.study-send-row .btn { flex: 0 0 auto; margin-bottom: 2px; }
+.study-transcript-edit { margin-bottom: 8px; font-size: .85rem; }
+.study-transcript-edit label { display: block; margin-top: 6px; }
+@media (max-width: 575.98px) {
+  .study-mode-panel { height: calc(100dvh - 135px); min-height: 420px; }
+  .study-workspace .study-conversation { padding: 14px; gap: 12px; }
+  .study-workspace .study-message { max-width: 94%; }
+  .study-controls { padding: 12px; }
+  .study-mode-tabs [role="tab"] { font-size: .8rem; gap: 5px; padding: 12px 5px; }
+  .study-send-row { gap: 8px; }
+  .study-send-row > .btn { font-size: .8rem; padding: 10px; }
+  .study-controls .voice-controls > p:not([role]), .study-controls .voice-controls > div:first-child > span { display: none; }
+}
+
+@media (max-width: 575.98px) {
+  .study-send-row { flex-wrap: wrap; }
+  .study-send-row fieldset { flex-basis: 100%; }
+  .study-send-row > .btn { margin-inline-start: auto; }
+}
+
+/* Active conversations reserve viewport space for learning, keeping navigation. */
+body:has(.study-conversation) .desktop-greeting { display: none !important; }
+body:has(.study-conversation) .hero { position: sticky; top: 0; z-index: 1020; padding-bottom: 18px; }
+body:has(.study-conversation) .hero-greeting { display: none; }
+body:has(.study-conversation) .hero-bar { margin-bottom: 0; }
+body:has(.study-conversation) .route-heading { display: none; }
+body:has(.study-conversation) .app-content { margin: 0 auto; padding-top: 12px; }
+.study-mode-panel { height: min(780px, calc(100dvh - 170px)); min-height: 300px; }
+.study-controls { max-height: calc(100% - 140px); overflow-y: auto; }
+@media (max-width: 991.98px) {
+  .study-mode-panel { height: calc(100dvh - 230px); }
+}
+
+body:has(.study-conversation):has(.demo-notice) .study-mode-panel { height: min(780px, calc(100dvh - 214px)); }
+@media (max-width: 991.98px) {
+  body:has(.study-conversation):has(.demo-notice) .study-mode-panel { height: calc(100dvh - 274px); }
+}
+
+@media (max-width: 575.98px) {
+  .study-controls .live-voice-panel p:not([role]) { display: none; }
+}
