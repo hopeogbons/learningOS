@@ -25,7 +25,7 @@ These are implementation tests to create/run, not checks already passed. Tests m
 | F17 | Clear photo matches visible source; blurry photo needs retake; image usage proven only after real vision call | B8 connected |
 | F18 | Fixed-clock +0/+3 due behavior; success ladder 1→3→7→14→30→30; failure→1; stage stable on retry | B9 |
 | F19 | Weak spots/calibration survive API+worker restart; IANA timezone/DST/Africa-Lagos boundaries correct | B9 |
-| F20 | Two-way Voice Study: tutor speaks cited teaching/question/Reviewer feedback; learner transcript is editable and graded through the text path with confidence; targeted cited follow-up is speakable; three-voice-turn cap; mic denial/unavailable locale → typing | B10 connected |
+| F20 | One conversation with entry-selected Text, Voice note and genuine Live voice; switching preserves draft/session/transcript; tutor speech and source disclosure; learner transcript is editable and graded through the text path with confidence; targeted cited follow-up is speakable; no artificial answer-count cap; mic denial/unavailable locale → typing | B10 connected |
 | F21 | No production debug completion/date override/demo principal/fake provider; every template affordance works or clearly disabled | B11 |
 | F22 | Fresh staged/release checkout frozen install, migrations, documented startup and meaningful full suite pass | B11 |
 | F23 | Confirmed material deletion removes its revisions/chunks/concepts/citations and material-linked progress/review data; refreshes the active scope from surviving titles; deletes only provider-confirmed files in the bound Drive folder; preserves data and offers retry on Drive failure; foreign material IDs are indistinguishable 404 | B2/B7 |
@@ -59,3 +59,5 @@ Offline demo can validate synthetic Drive adapter logic and catalogs/layout, but
 F01 migration-readiness regression: upgrade a new SQLite database using actual Alembic files, insert a fresh synthetic worker heartbeat and require readiness 200 in test mode. Verify prior/unknown revisions and partial multi-head state return 503. Startup timeout must abort the browser stage; frontend-routed `/api/v1/ready` must succeed before E2E starts.
 
 F05 browser fixtures: locate move controls using the actual extracted hierarchical fixture title; activate by keyboard, reload, and assert persisted chunk-ID order. Keep the five-title scope denominator and earlier-session scope snapshot assertions.
+
+Current core-demo Done when and key regression scope: docs/CONVERSATION_EXPERIENCE.md. Synthetic browser/media checks prove interaction and cleanup, never human audibility.

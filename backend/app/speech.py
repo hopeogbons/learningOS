@@ -17,8 +17,8 @@ from starlette.concurrency import run_in_threadpool
 from .auth import get_learner
 from .db import get_db, utcnow, as_utc
 from .llm import get_provider, ProviderUnavailable, InvalidModelOutput
-from .models import Learner, StudySession, SessionItem, ProgressEvent, Job
-from .sessions import owned
+from .models import Learner, StudySession, SessionItem, ProgressEvent, Job, Concept
+from .sessions import owned, source_context
 
 router = APIRouter()
 LOCALES = ['en','zh-Hans','es','ar','pt','fr','ja','ru','de','id']
@@ -50,8 +50,6 @@ def speech_turn(db, learner_id, session_id, item_id, transcribe=False):
     if transcribe and (session.status != 'awaiting_answer' or item.answer_state != 'pending'):
         raise HTTPException(409, 'speech_answer_already_submitted')
     count = voice_count(db, session)
-    if transcribe and count >= 3:
-        raise HTTPException(409, 'speech_turn_limit_typing_available')
     return session, item, count
 
 
@@ -158,14 +156,14 @@ class SpeechCapabilitiesDTO(BaseModel):
     languages: list[SpeechLanguageDTO]
     max_audio_bytes: int
     max_audio_seconds: int
-    max_voice_turns: int
+    max_voice_turns: int | None
     live_gate: str
 
 
 @router.get('/speech/capabilities', response_model=SpeechCapabilitiesDTO)
 def capabilities(learner=Depends(get_learner)):
     configured = bool(os.getenv('LEARNING_OS_API_KEY') and os.getenv('LLM_MODEL') and os.getenv('STT_MODEL') and os.getenv('TTS_MODEL') and os.getenv('TTS_VOICE'))
-    return {'provider': 'openai-configured-unverified' if configured else 'unavailable', 'raw_audio_retained': False, 'languages': [{'locale': locale, 'stt': 'configured-unverified' if configured else 'unavailable', 'tts': 'configured-unverified' if configured else 'unavailable', 'verified': False, 'fallback': 'typing'} for locale in LOCALES], 'max_audio_bytes': MAX_AUDIO_BYTES, 'max_audio_seconds': MAX_AUDIO_SECONDS, 'max_voice_turns': 3, 'live_gate': 'L04-blocked-until-real-three-turn-proof'}
+    return {'provider': 'openai-configured-unverified' if configured else 'unavailable', 'raw_audio_retained': False, 'languages': [{'locale': locale, 'stt': 'configured-unverified' if configured else 'unavailable', 'tts': 'configured-unverified' if configured else 'unavailable', 'verified': False, 'fallback': 'typing'} for locale in LOCALES], 'max_audio_bytes': MAX_AUDIO_BYTES, 'max_audio_seconds': MAX_AUDIO_SECONDS, 'max_voice_turns': None, 'live_gate': 'requires-real-provider-and-browser-audio-proof'}
 
 
 class TranscriptDTO(BaseModel):
@@ -231,3 +229,56 @@ def synthesize(session_id: str, body: SpeechInput, db=Depends(get_db), learner=D
         raise HTTPException(503, {'code': 'speech_unavailable', 'fallback': 'typing'}) from None
     finalize_budget(db, learner_id, reservation, True)
     return Response(data, media_type='audio/mpeg', headers={'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff', 'X-Voice-Turn-Count': str(count)})
+
+
+class RealtimeInput(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    item_id: str
+
+
+class RealtimeDTO(BaseModel):
+    client_secret: str
+    expires_at: int
+    model: str
+    session_id: str
+    item_id: str
+    locale: str
+    provider: Literal['openai']
+    webrtc_url: Literal['https://api.openai.com/v1/realtime/calls']
+    max_duration_seconds: Literal[300]
+    raw_audio_retained: Literal[False]
+
+
+@router.post('/sessions/{session_id}/speech/realtime', response_model=RealtimeDTO)
+def realtime(session_id: str, body: RealtimeInput, response: Response, db=Depends(get_db), learner=Depends(get_learner)):
+    session, item, _ = speech_turn(db, learner.id, session_id, body.item_id)
+    locale = locale_for(learner.speech_locale)
+    if locale != locale_for(item.generation_locale):
+        raise HTTPException(409, 'speech_language_mismatch_typing_available')
+    concept = owned(db, Concept, item.concept_id, learner.id)
+    try:
+        context = source_context(db, session, concept)
+        # Pass only source excerpts and public teaching; never expected answers or assessment histories.
+        public = {'locale': locale, 'section': context['chunk_title'],
+            'teaching': item.teaching, 'question': item.public_question,
+            'sources': [{'excerpt': c['excerpt'], 'locator': c['locator']} for c in context['citations']]}
+    except InvalidModelOutput:
+        raise HTTPException(409, 'realtime_source_unavailable') from None
+    try:
+        provider = get_provider()
+    except ProviderUnavailable:
+        raise HTTPException(503, {'code': 'realtime_unavailable', 'fallback': 'typing'}) from None
+    if not hasattr(provider, 'realtime'):
+        raise HTTPException(503, {'code': 'realtime_unavailable', 'fallback': 'typing'})
+    reservation = reserve_budget(db, learner.id, session.id, item.id, 'stt', 300)
+    try:
+        result = provider.realtime(public)
+    except (ProviderUnavailable, InvalidModelOutput):
+        finalize_budget(db, learner.id, reservation, False)
+        raise HTTPException(503, {'code': 'realtime_unavailable', 'fallback': 'typing'}) from None
+    finalize_budget(db, learner.id, reservation, True)
+    response.headers['Cache-Control'] = 'private, no-store'
+    response.headers['Pragma'] = 'no-cache'
+    return {**result, 'session_id': session.id, 'item_id': item.id, 'locale': locale,
+        'provider': 'openai', 'webrtc_url': 'https://api.openai.com/v1/realtime/calls',
+        'max_duration_seconds': 300, 'raw_audio_retained': False}

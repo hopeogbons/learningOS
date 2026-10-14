@@ -1,4 +1,4 @@
-# Batch 10: Turn-based voice teach-back in the existing Study card
+# Batch 10: One conversation with Text, Voice note and Live voice
 
 
 ## Standing instructions for this batch
@@ -16,7 +16,7 @@ Read docs/INTERNATIONALIZATION.md and docs/DRIVE_INGESTION.md. Ten screenshot la
 ## Execute
 
 
-Implement Voice shortcut to /study?mode=voice as a visible two-way tutor conversation, not only a voice-input control. The tutor must offer speech replay for cited teaching, the current question and Reviewer feedback/targeted follow-up. The learner can answer by microphone; show the transcript in the existing editable answer field, require confidence before verdict and submit through exactly the text answer/grading path. Keep a listen-again and stop-speech control for each tutor message, a record/stop control for the learner, selected speech locale, processing state and a short Voice Conversation guide before a session starts. Three spoken learner turns maximum per exchange. Do not infer guessing from hesitation. Mic permission denial, unsupported browser/language, or provider outage shows a clear typing fallback. Stop recording/speech on route/session changes; do not retain raw audio by default; disclose browser vendor processing.
+Implement Voice shortcut to /study?mode=voice as a visible two-way tutor conversation, not only a voice-input control. The tutor must offer speech replay for cited teaching, the current question and Reviewer feedback/targeted follow-up. The learner can answer by microphone; show the transcript in the existing editable answer field, require confidence before verdict and submit through exactly the text answer/grading path. Keep a listen-again and stop-speech control for each tutor message, a record/stop control for the learner, selected speech locale, processing state and a short Voice Conversation guide before a session starts. Allow ongoing spoken exchanges subject to disclosed audio duration and usage budgets; do not impose an arbitrary three-answer cap. Do not infer guessing from hesitation. Mic permission denial, unsupported browser/language, or provider outage shows a clear typing fallback. Stop recording/speech on route/session changes; do not retain raw audio by default; disclose browser vendor processing.
 
 Native Codex Voice may be a developer-client capability but does not make browser voice native. Exercise a native client only if actually available and record separately; app voice remains labeled browser/runtime. A verified server speech adapter supplies missing browser-language capabilities when needed to satisfy the ten-language spoken target; typing still works independently of speech access.
 
@@ -25,7 +25,7 @@ Dashboard-specific UI: original red Mic tile launches voice mode within same she
 
 ## Done when
 
-F20 typing and state tests pass; real voice proof recorded or precisely blocked; UI/persistence consistent with text.
+The Done when gates in docs/CONVERSATION_EXPERIENCE.md pass: one shared conversation; entry-selected Text, Voice note and genuine Live voice; switching retains session, scope, draft and transcript; explicit start/mute/stop with media cleanup; confidence precedes server assessment. Verify actual note STT/TTS and realtime provider connection separately from synthetic browser tests, recording precise limitations. Keep only key mode, ownership, grounding and media lifecycle regressions.
 
 ## Useful delegation
 
@@ -33,4 +33,8 @@ Browser speech/UI contributor; role follow-up evaluation and independent accessi
 
 ## Revision 2 batch work
 
-Implement ten-language recognition/synthesis capability matrix, explicit selected locale/voice, browser inventory discovery and real server STT/TTS fallback when browser lacks target language. Add session-owned transient /speech/transcribe and /speech/synthesize endpoints through app/llm.py. No English audio mislabeled another locale. Verify transcription/meaning, transcript edits and three-turn cited spoken exchange per advertised language; typing on mic denial/outage. Add Arabic/multiscript screen/status review.
+Implement ten-language recognition/synthesis capability matrix, explicit selected locale/voice, browser inventory discovery and real server STT/TTS fallback when browser lacks target language. Add session-owned transient /speech/transcribe and /speech/synthesize endpoints through app/llm.py. No English audio mislabeled another locale. Verify transcription/meaning, transcript edits and source-grounded spoken exchange per advertised language; typing on mic denial/outage. Add Arabic/multiscript screen/status review.
+
+## Latest core-demo acceptance — supersedes older communication scope
+
+Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope, transcript and draft when switching. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.

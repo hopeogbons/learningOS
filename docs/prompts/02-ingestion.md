@@ -25,7 +25,7 @@ Dashboard-specific UI: Add Material route uses existing white cards, source icon
 
 ## Done when
 
-F02/F03 and source-resolution checks pass; original licensed fixtures ingested; actual errors stay truthful; Add Material fits template.
+F02/F03 and source-resolution checks pass; original licensed fixtures ingested; actual errors stay truthful; Add Material fits template. PDF finalization must retain a durable completion marker after temporary batch cleanup: replay after a worker restart, including a crash before the queue records success, returns ready without re-extracting, duplicating teaching rows or losing original bytes. Verify this in the real-PDF multipart integration gate. Material deletion must likewise retain its durable database-deleted marker after cleanup in both completion paths; replay after worker restart must succeed without looking up removed rows or repeating remote deletes. Extend the existing comprehensive deletion gate rather than adding redundant tests.
 
 ## Useful delegation
 
@@ -38,3 +38,7 @@ Add source_language and storage-origin state. UI uploads queue an owned Drive-wr
 ## Source chunk preparation update (2026-10-14)
 
 The prior `source-excerpts-v2` behavior remains immutable for existing revisions. New `source-excerpts-v3` uses 160-token sentence-aware teaching windows with 20-token context overlap beneath actual source titles. The 20-token overlap supports context only; it does not create a second selected title or duplicate progress requirement. Preserve original page/heading/line/sheet/cell/key-path locators and exact excerpt hashes. Reprocessing is an explicit new revision/scope action; never rewrite old citations/history. Original bytes remain privately retained and owner-authorized citation downloads return the original, not a chunk substitute. Preparation precedes Study; no fine-tuning or measured latency claim is implied.
+
+## Latest core-demo acceptance — supersedes older communication scope
+
+Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope, transcript and draft when switching. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.

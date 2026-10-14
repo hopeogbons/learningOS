@@ -843,6 +843,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sessions/{session_id}/speech/realtime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Realtime */
+        post: operations["realtime_api_v1_sessions__session_id__speech_realtime_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sessions/{session_id}/speech/synthesize": {
         parameters: {
             query?: never;
@@ -1825,6 +1842,46 @@ export interface components {
              */
             status: "ready" | "not-ready";
         };
+        /** RealtimeDTO */
+        RealtimeDTO: {
+            /** Client Secret */
+            client_secret: string;
+            /** Expires At */
+            expires_at: number;
+            /** Item Id */
+            item_id: string;
+            /** Locale */
+            locale: string;
+            /**
+             * Max Duration Seconds
+             * @constant
+             */
+            max_duration_seconds: 300;
+            /** Model */
+            model: string;
+            /**
+             * Provider
+             * @constant
+             */
+            provider: "openai";
+            /**
+             * Raw Audio Retained
+             * @constant
+             */
+            raw_audio_retained: false;
+            /** Session Id */
+            session_id: string;
+            /**
+             * Webrtc Url
+             * @constant
+             */
+            webrtc_url: "https://api.openai.com/v1/realtime/calls";
+        };
+        /** RealtimeInput */
+        RealtimeInput: {
+            /** Item Id */
+            item_id: string;
+        };
         /** ReorderBody */
         ReorderBody: {
             /** Expected Version */
@@ -1977,7 +2034,7 @@ export interface components {
             /** Max Audio Seconds */
             max_audio_seconds: number;
             /** Max Voice Turns */
-            max_voice_turns: number;
+            max_voice_turns: number | null;
             /** Provider */
             provider: string;
             /**
@@ -7808,6 +7865,113 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicTurnDTO"] | components["schemas"]["PendingTurnDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Request Entity Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelopeDTO"];
+                };
+            };
+        };
+    };
+    realtime_api_v1_sessions__session_id__speech_realtime_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RealtimeInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RealtimeDTO"];
                 };
             };
             /** @description Bad Request */

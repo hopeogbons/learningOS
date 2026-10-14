@@ -132,7 +132,7 @@ def test_targeted_followup_context_is_owned_and_same_concept(env, monkeypatch):
     assert next_turn['citation_ids'] == turn['citation_ids']
 
 
-def test_speech_cannot_bypass_three_answer_turn_cap(speech_env):
+def test_recording_remains_available_after_three_answers(speech_env):
     client, factory, app, sid, turn, calls = speech_env
     with factory() as db:
         for n in range(3):
@@ -141,7 +141,7 @@ def test_speech_cannot_bypass_three_answer_turn_cap(speech_env):
                 answer='synthetic', reviewer_json={'voice': True}, idempotency_key=f'voice-fixture-{n}'))
         db.commit()
     response = client.post(f'/api/v1/sessions/{sid}/speech/transcribe', data={'item_id': turn['item_id']}, files={'audio': ('one.wav', wav_bytes(), 'audio/wav')})
-    assert response.status_code == 409 and not calls
+    assert response.status_code == 200 and calls[-1][0] == 'stt'
 
 
 def test_actual_webm_duration_and_explicit_missing_verifier(tmp_path, monkeypatch):
@@ -207,3 +207,68 @@ def test_public_openapi_responses_are_typed_without_private_answers(speech_env):
                  '/api/v1/speech/capabilities', '/api/v1/sessions/{session_id}/speech/transcribe']:
         method = 'post' if path.endswith('transcribe') else 'get'
         assert schema['paths'][path][method]['responses']['200']['content']['application/json']['schema']
+
+
+def test_realtime_owned_source_only_ephemeral_response(speech_env, monkeypatch):
+    client, factory, app, sid, turn, _ = speech_env
+    captured = []
+    class RealtimeFixture:
+        def realtime(self, context):
+            captured.append(context)
+            return {'client_secret': 'ephemeral-fixture', 'expires_at': 9999999999, 'model': 'fixture'}
+    monkeypatch.setattr('app.speech.get_provider', lambda: RealtimeFixture())
+    with factory() as db:
+        item = db.get(SessionItem, turn['item_id'])
+        item.question_json_private = {**item.question_json_private, 'expected_answer': 'PRIVATE_EXPECTED_SENTINEL'}
+        db.commit()
+    path = f'/api/v1/sessions/{sid}/speech/realtime'
+    response = client.post(path, json={'item_id': turn['item_id']})
+    assert response.status_code == 200 and response.headers['cache-control'] == 'private, no-store'
+    assert response.json()['client_secret'] == 'ephemeral-fixture'
+    assert response.json()['max_duration_seconds'] == 300
+    assert captured[0]['sources'][0]['excerpt'] in 'Retrieval practice strengthens recall. Spacing practice reduces forgetting.'
+    import json
+    assert 'PRIVATE_EXPECTED_SENTINEL' not in json.dumps(captured) + response.text
+    assert set(captured[0]) == {'locale', 'section', 'teaching', 'question', 'sources'}
+    assert client.post(path, json={'item_id': 'foreign-item'}).status_code == 404
+    assert client.post(path, json={'item_id': turn['item_id'], 'instructions': 'override'}).status_code == 422
+    app.dependency_overrides[get_learner] = lambda: SimpleNamespace(id='foreign')
+    assert client.post(path, json={'item_id': turn['item_id']}).status_code == 404
+    assert len(captured) == 1
+
+
+def test_realtime_requires_intact_source_and_explicit_provider(speech_env, monkeypatch):
+    client, factory, app, sid, turn, _ = speech_env
+    from app.llm import DemoProvider
+    from app.models import Citation
+    path = f'/api/v1/sessions/{sid}/speech/realtime'
+    monkeypatch.setattr('app.speech.get_provider', lambda: DemoProvider())
+    assert client.post(path, json={'item_id': turn['item_id']}).status_code == 503
+    with factory() as db:
+        db.get(Citation, turn['citation_ids'][0]).excerpt = 'Tampered unsupported excerpt'
+        db.commit()
+    assert client.post(path, json={'item_id': turn['item_id']}).status_code == 409
+
+
+def test_realtime_provider_contract_no_private_data_or_permanent_secret(monkeypatch):
+    from app.llm import OpenAIProvider, InvalidModelOutput
+    monkeypatch.setenv('LEARNING_OS_API_KEY', 'permanent-fixture-key')
+    monkeypatch.setenv('LLM_MODEL', 'fixture')
+    provider = OpenAIProvider()
+    calls = []
+    def request(path, **kwargs):
+        calls.append((path, kwargs))
+        return {'value': 'ephemeral-test', 'expires_at': 1234567890}
+    monkeypatch.setattr(provider, '_request', request)
+    context = {'locale': 'en', 'sources': [{'excerpt': 'The sky appears blue.', 'locator': {'page': 2}}],
+        'question': 'What color is the sky?', 'expected_answer': 'PRIVATE_SENTINEL', 'rubric': 'PRIVATE_RUBRIC'}
+    assert provider.realtime(context)['client_secret'] == 'ephemeral-test'
+    import json
+    body = json.dumps(calls)
+    assert 'PRIVATE_SENTINEL' not in body and 'PRIVATE_RUBRIC' not in body and provider.key not in body
+    assert calls[0][0] == 'realtime/client_secrets'
+    assert calls[0][1]['json']['expires_after']['seconds'] == 60
+    assert 'do not invent facts' in calls[0][1]['json']['session']['instructions']
+    monkeypatch.setattr(provider, '_request', lambda *a, **k: {'value': provider.key, 'expires_at': 1234567890})
+    with pytest.raises(InvalidModelOutput):
+        provider.realtime(context)

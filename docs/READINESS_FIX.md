@@ -32,3 +32,7 @@ Cloud demo deployment: rebuilt backend/frontend, applied the additive forward mi
 The connected-UI mock also needed the new `/ingestion/limits` response; an empty mock response correctly left uploads disabled. Its fixture now supplies a synthetic positive limit and includes a negative case proving upload submission stays disabled when the limits request fails. No production guard was removed to make a test pass. Local full E2E passed all 16 recorded checks, and consent UI passed 14 checks.
 
 Final local browser gates passed: 16 full E2E checks, 10 connected-UI synthetic cases (including unavailable upload limits), 14 consent checks, and six translated collection/control cases plus six form widths. Full backend: 200 passed/3 PostgreSQL-fixture skips. Evidence summary: docs/evidence/readiness-fix/verification.json. Historical tracked screenshots are preserved; this run’s synthetic captures remain in work/readiness-browser-artifacts.
+
+## Reproducible tokenizer dependency in fresh images
+
+The core-demo Done when now requires backend/app/tokenizer_cache.py to provision the exact public cl100k_base asset during the frozen Docker build. The permitted public GitHub distribution is checked against tiktoken's SHA-256 above, bounded to 2 MiB and loaded using the real encoding before the build succeeds. Runtime inherits the prepared readable cache. No credentials, learner source or live network call is required to tokenize after container creation. This replaces manual cache-copy deployment steps; corrupted/unavailable build data fails explicitly.

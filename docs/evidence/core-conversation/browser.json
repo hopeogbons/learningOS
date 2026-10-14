@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "command": "python3 tests/frontend_voice.py",
+  "cwd": "/workspace/learningOS",
+  "exit_code": 0,
+  "fixture": "synthetic session; STT/TTS and WebRTC responses intercepted",
+  "checks": [
+    "Text, Voice note and Live voice entries select the correct mode",
+    "Mode switching preserves draft and conversation transcript",
+    "Live start/mute and mode-exit close the peer and stop microphone tracks",
+    "Provider failure is shown honestly and typing remains enabled",
+    "Tutor question is spoken and teaching can be replayed",
+    "Recording is cancelled on navigation without submitting audio",
+    "Transcribed answer remains editable and requires confidence",
+    "Voice response uses the ordinary answer endpoint with voice=true",
+    "Reviewer feedback is spoken after a voice answer with replay available",
+    "Unavailable speech preserves visible text and typing fallback"
+  ],
+  "voice_answer_posts": 1,
+  "voice_flag": true,
+  "editable_transcript_before_submit": "Edited spoken answer: equal protons and electrons.",
+  "speech_message_ids": [
+    "question",
+    "teaching",
+    "feedback"
+  ],
+  "live_speech_verified": false,
+  "page_errors": [],
+  "limitations": [
+    "No real microphone capture, transcription quality or audible provider output was exercised."
+  ]
+}

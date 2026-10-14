@@ -53,6 +53,7 @@ jobs:
             exit 1
           fi
           python tests/e2e_smoke.py
+          python tests/frontend_voice.py
           python tests/local_connected_frontend.py
           python tests/local_consent_frontend.py
           python tests/control_layout.py

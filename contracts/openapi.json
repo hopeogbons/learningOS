@@ -2758,6 +2758,82 @@
         "title": "ReadinessDTO",
         "type": "object"
       },
+      "RealtimeDTO": {
+        "properties": {
+          "client_secret": {
+            "title": "Client Secret",
+            "type": "string"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "integer"
+          },
+          "item_id": {
+            "title": "Item Id",
+            "type": "string"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "max_duration_seconds": {
+            "const": 300,
+            "title": "Max Duration Seconds",
+            "type": "integer"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "provider": {
+            "const": "openai",
+            "title": "Provider",
+            "type": "string"
+          },
+          "raw_audio_retained": {
+            "const": false,
+            "title": "Raw Audio Retained",
+            "type": "boolean"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "webrtc_url": {
+            "const": "https://api.openai.com/v1/realtime/calls",
+            "title": "Webrtc Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_secret",
+          "expires_at",
+          "model",
+          "session_id",
+          "item_id",
+          "locale",
+          "provider",
+          "webrtc_url",
+          "max_duration_seconds",
+          "raw_audio_retained"
+        ],
+        "title": "RealtimeDTO",
+        "type": "object"
+      },
+      "RealtimeInput": {
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "title": "Item Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id"
+        ],
+        "title": "RealtimeInput",
+        "type": "object"
+      },
       "ReorderBody": {
         "additionalProperties": false,
         "properties": {
@@ -3195,8 +3271,15 @@
             "type": "integer"
           },
           "max_voice_turns": {
-            "title": "Max Voice Turns",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Voice Turns"
           },
           "provider": {
             "title": "Provider",
@@ -10514,6 +10597,135 @@
           }
         },
         "summary": "Next Turn"
+      }
+    },
+    "/api/v1/sessions/{session_id}/speech/realtime": {
+      "post": {
+        "operationId": "realtime_api_v1_sessions__session_id__speech_realtime_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RealtimeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RealtimeDTO"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelopeDTO"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Realtime"
       }
     },
     "/api/v1/sessions/{session_id}/speech/synthesize": {

@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "provider_calls": 2,
+  "source_quotes_validated": true,
+  "confidence_preserved": true,
+  "correct_answer_assessed": true,
+  "private_content_retained": false
+}

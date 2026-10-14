@@ -344,11 +344,11 @@ export default function VoiceControls({
   return (
     <div className="voice-controls rounded-3 p-3 mb-3">
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-        <strong className="small">{t("study.voice")}</strong>
-        <span className="small">{t("study.voiceTurns", { count: turns })}</span>
+        <strong className="small">{t("study.modeNote")}</strong>
+        <span className="small">{t("study.noteTurns", { count: turns })}</span>
       </div>
       <p className="small text-body-secondary mb-3">
-        {t("study.voiceDescription")}
+        {t("study.noteIntro")}
       </p>
       <p className="small text-body-secondary">
         {t("study.speechLanguage")}: <bdi>{preferences.speech_locale}</bdi>
@@ -359,7 +359,7 @@ export default function VoiceControls({
           className="btn btn-danger btn-sm d-flex align-items-center gap-2"
           onClick={recording ? stopRecording : record}
           disabled={
-            !recording && (turns >= 3 || busy || !canRecord)
+            !recording && (busy || !canRecord)
           }
         >
           {recording ? <Square size={16} /> : <Mic size={16} />}{" "}
@@ -395,7 +395,6 @@ export default function VoiceControls({
           {t("study.typing")}
         </button>
       </div>
-      {turns >= 3 && <p className="small mt-2 mb-0">{t("study.turnLimit")}</p>}
       {notice && (
         <p role="status" className="small mt-2 mb-0">
           {notice}

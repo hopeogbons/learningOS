@@ -230,7 +230,7 @@ def test_immutable_locale_turn_and_next_turn_selection(env):
         assert db.query(ProgressEvent).count() == 1
 
 
-def test_three_voice_turns_server_cap_and_typing_fallback(env):
+def test_voice_answers_continue_after_three_with_server_assessment(env):
     client, factory, _ = env
     sid = start(env)
     for index in range(3):
@@ -245,11 +245,12 @@ def test_three_voice_turns_server_cap_and_typing_fallback(env):
         run_job(factory, response.json()["job_id"])
     turn = client.get(f"/api/v1/sessions/{sid}/next").json()
     payload = {"item_id": turn["item_id"], "answer": "typed", "confidence": 2, "voice": True, "expected_version": turn["version"]}
-    assert client.post(f"/api/v1/sessions/{sid}/answer", json=payload, headers={"Idempotency-Key": "fourth"}).status_code == 409
-    payload["voice"] = False
-    assert client.post(f"/api/v1/sessions/{sid}/answer", json=payload, headers={"Idempotency-Key": "typing"}).status_code == 202
+    response = client.post(f"/api/v1/sessions/{sid}/answer", json=payload, headers={"Idempotency-Key": "fourth"})
+    assert response.status_code == 202
+    run_job(factory, response.json()["job_id"])
     with factory() as db:
-        assert db.query(ProgressEvent).count() == 3
+        assert db.query(ProgressEvent).count() == 4
+        assert all(e.reviewer_json.get("voice") for e in db.scalars(select(ProgressEvent)))
 
 
 @pytest.mark.parametrize("locale,answer", [("en", "Recall improves"), ("zh-Hans", "主动回忆"), ("es", "recuperación"),

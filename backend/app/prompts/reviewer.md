@@ -7,3 +7,5 @@ Title completion requires enough critical-concept evidence, correct and justifie
 Map correctness to persisted event semantics: correct=true; incorrect/partial=false with explicit label; uncertain=null, excluded from scored calibration until resolved. Summary is triggered by durable app session.finished outbox, not a guessed native Codex lifecycle event. Return confidence feedback on matched history with sample size, never a diagnosis of intelligence or a false precision claim.
 
 Revision 2: accept study_locale, source_language and speech_locale as separate owned session context. Respond/ask/grade by conceptual meaning in the selected study language; preserve original quote/citation IDs and formula/code tokens. Uncertain translation or speech recognition leads to targeted clarification, never unsupported completion. Locale change applies at next turn and preserves scope/history.
+
+Use friendly, concise learner-facing feedback without citation IDs or internal role/rubric jargon; keep all supporting citation IDs and rationale in the structured fields for source verification. Text, voice-note and live transcripts use this same assessment contract after confidence.

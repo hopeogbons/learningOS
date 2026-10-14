@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "target": "existing cloud Docker demo",
+  "pdf_bytes": 9216,
+  "pdf_intake_and_durable_worker": "passed",
+  "titled_sections": 2,
+  "original_byte_roundtrip": "passed",
+  "pdf_page_evidence": "passed",
+  "explicit_material_delete": "passed",
+  "outline_original_and_evidence_purged": "passed",
+  "fresh_image_manual_cache_copy_required": false,
+  "live_drive_delete": "unverified; local synthetic source only",
+  "user_data": "preserved; verification used only a newly created synthetic collection"
+}

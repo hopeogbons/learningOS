@@ -863,6 +863,14 @@ def test_confirmed_material_deletion_removes_only_owned_history_and_rebuilds_sco
     assert db.scalar(select(func.count(ReviewState.id)).where(ReviewState.chunk_id==deleted_chunk_id))==0
     assert LocalStorage(settings.private_storage_dir).get('owner',retained_blob)=='Retained source fact.'.encode()
     assert not (__import__('pathlib').Path(settings.private_storage_dir)/deleted_blob).exists()
+    # Crash after cleanup commit, before queue success: both completion paths replay.
+    deletion_job_id=job.id
+    db.expunge_all()
+    assert delete_material(db,db.get(Job,deletion_job_id))=={'deleted':True}
+    db.expunge_all()
+    assert delete_material(db,db.get(Job,deletion_job_id))=={'deleted':True}
+    assert db.get(Job,deletion_job_id).payload=={'database_deleted':True}
+    assert LocalStorage(settings.private_storage_dir).get('owner',retained_blob)==b'Retained source fact.'
 
 
 def test_drive_delete_failure_keeps_material_and_learning_history(db,monkeypatch):
@@ -1089,3 +1097,99 @@ def test_drive_consent_failure_returns_to_ui_consumes_state_and_never_leaks_toke
     assert connection.error_code==expected and not connection.encrypted_credentials
     assert not any(key.startswith('oauth_') for key in connection.checkpoint)
     assert client.get('/api/v1/connections/drive/callback',params=params,follow_redirects=False).status_code==400
+
+
+def _real_text_pdf(page_count):
+    """Portable synthetic source with actual PDF font/content streams, no reader mocks."""
+    from pypdf import PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+
+    writer=PdfWriter()
+    font=writer._add_object(DictionaryObject({
+        NameObject('/Type'):NameObject('/Font'),
+        NameObject('/Subtype'):NameObject('/Type1'),
+        NameObject('/BaseFont'):NameObject('/Helvetica'),
+    }))
+    for number in range(1,page_count+1):
+        page=writer.add_blank_page(width=612,height=792)
+        page[NameObject('/Resources')]=DictionaryObject({
+            NameObject('/Font'):DictionaryObject({NameObject('/F1'):font}),
+        })
+        stream=DecodedStreamObject()
+        stream.set_data((
+            f'BT /F1 14 Tf 50 740 Td (LESSON {number}) Tj '
+            f'0 -25 Td (Page {number} establishes that ATP carries cellular energy.) Tj ET'
+        ).encode('ascii'))
+        page[NameObject('/Contents')]=writer._add_object(stream)
+    output=io.BytesIO();writer.write(output)
+    return output.getvalue()
+
+
+@pytest.mark.parametrize('page_count',[2,41])
+def test_real_pdf_multipart_batches_resume_and_ground_original_pages(db,client,page_count):
+    """Demo gate: actual PDF bytes survive intake, batch replay, finalize and source viewing."""
+    from app.ingest import ingest_pdf_batch,finalize_pdf_material
+    from pypdf import PdfReader
+
+    db.add(Collection(id='real-pdf',learner_id='owner',name='Energy lessons'))
+    db.add(Collection(id='foreign-pdf',learner_id='other',name='Other learner'))
+    db.commit()
+    raw=_real_text_pdf(page_count)
+    arguments={'files':{'file':('energy.pdf',raw,'application/pdf')},
+               'data':{'idempotency_key':f'real-pdf-{page_count}'}}
+    response=client.post('/api/v1/collections/real-pdf/materials/upload',**arguments)
+    assert response.status_code==202,response.text
+    intake=response.json()
+    assert client.post('/api/v1/collections/real-pdf/materials/upload',**arguments).json()==intake
+    assert client.post('/api/v1/collections/foreign-pdf/materials/upload',**arguments).status_code==404
+    started=ingest_material(db,db.get(Job,intake['job_id']))
+    assert started['status']=='processing'
+    revision=db.get(MaterialRevision,intake['revision_id'])
+    assert revision.content_hash==hashlib.sha256(raw).hexdigest()
+    assert client.get(f"/api/v1/material-revisions/{revision.id}/original").content==raw
+
+    # Commit/reload the DB state between every batch, as after a worker restart.
+    # Replay the first committed batch: extraction must not create duplicate jobs/results.
+    while True:
+        db.commit();db.expunge_all()
+        revision=db.get(MaterialRevision,intake['revision_id'])
+        manifest=revision.metadata_json['ingestion_manifest']
+        pending=next((batch for batch in manifest['batches'] if batch['state']!='completed'),None)
+        if pending is None:
+            break
+        job=db.get(Job,pending['job_id'])
+        result=ingest_pdf_batch(db,job)
+        assert result['review_required_count']==0
+        job_count=db.scalar(select(func.count(Job.id)))
+        replay=ingest_pdf_batch(db,job)
+        assert replay['status']=='completed'
+        assert db.scalar(select(func.count(Job.id)))==job_count
+    assert manifest['processed_pages']==page_count
+    assert [page['page_number'] for page in manifest['pages']]==list(range(1,page_count+1))
+    assert all(page['method']=='text' for page in manifest['pages'])
+    finalize_id=manifest['finalize_job_id']
+    assert finalize_pdf_material(db,db.get(Job,finalize_id))['status']=='ready'
+    db.expunge_all()
+    assert client.get(f"/api/v1/materials/{intake['material_id']}").json()['status']=='ready'
+    outline=client.get('/api/v1/collections/real-pdf/outline')
+    assert outline.status_code==200,outline.text
+    chunks=db.scalars(select(Chunk).where(Chunk.material_revision_id==intake['revision_id'])).all()
+    assert len(chunks)==page_count
+    assert {chunk.title for chunk in chunks}=={f'LESSON {number}' for number in range(1,page_count+1)}
+    concepts=db.scalars(select(Concept).where(Concept.chunk_id.in_([chunk.id for chunk in chunks]))).all()
+    assert concepts
+    pages=PdfReader(io.BytesIO(raw)).pages
+    for concept in concepts:
+        citation=db.get(Citation,concept.citation_ids[0])
+        resolved=client.get(f'/api/v1/citations/{citation.id}')
+        assert resolved.status_code==200,resolved.text
+        source=resolved.json()
+        assert source['revision_id']==intake['revision_id']
+        assert source['excerpt'] in pages[source['locator']['page']-1].extract_text()
+        assert concept.text in source['excerpt']
+        assert client.get(source['viewer_url']).content==raw
+    # Crash after cleanup commit, before queue success: restart/replay is safe.
+    db.expunge_all()
+    assert finalize_pdf_material(db,db.get(Job,finalize_id))['status']=='ready'
+    assert db.scalar(select(func.count(Chunk.id)))==page_count
+    assert client.get(f"/api/v1/material-revisions/{intake['revision_id']}/original").content==raw

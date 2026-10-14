@@ -492,7 +492,9 @@ def _purge_pdf_batch_results(db,job,learner_id):
         db.commit()
         if job.lease_owner is not None:
             assert_lease(db,job)
-    job.payload={}
+    # Cleanup commits before run_once records success. Retain a non-sensitive
+    # completion marker so a crash in that interval can replay safely.
+    job.payload={'finalized':True}
     job.entity_id=None
     job.idempotency_key=None
     db.commit()
@@ -744,7 +746,7 @@ def delete_material(db,job):
 
     if payload.get('database_deleted'):
         purge_private_blobs()
-        job.payload={}
+        job.payload={'database_deleted':True}
         job.entity_id=None
         job.idempotency_key=None
         db.commit()
@@ -1001,7 +1003,7 @@ def delete_material(db,job):
     db.commit()
 
     purge_private_blobs()
-    job.payload={}
+    job.payload={'database_deleted':True}
     db.commit()
     return {'deleted':True,'drive_files_deleted':len(drive_file_ids)}
 

@@ -17,7 +17,7 @@ export default async function Page({
       initialScope={q.scope}
       initialSession={q.session}
       review={q.review}
-      voice={q.mode === "voice"}
+      initialMode={q.mode}
     />
   );
 }

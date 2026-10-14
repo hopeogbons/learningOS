@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-14",
+  "contract": "docs/CONVERSATION_EXPERIENCE.md",
+  "pdf": {
+    "status": "passed",
+    "real_extractor": true,
+    "pages": [
+      2,
+      41
+    ],
+    "worker_finalization_replay": true,
+    "original_bytes_and_page_evidence": true,
+    "source_suite_passed": 78,
+    "tokenizer_dependency": "checksum-verified exact asset included and loaded during fresh backend image build"
+  },
+  "learning_speech": {
+    "status": "passed",
+    "tests_passed": 34,
+    "ongoing_fourth_voice_answer": true
+  },
+  "browser": {
+    "status": "passed",
+    "key_checks": 10,
+    "artifact": "browser.json",
+    "actual_media": false
+  },
+  "typed_provider": {
+    "status": "passed",
+    "calls": 2,
+    "artifact": "typed-provider.json"
+  },
+  "voice_note_provider": {
+    "status": "passed",
+    "calls": 2,
+    "verification": "app.llm OpenAIProvider actual synthetic English TTS to STT; en-GB provider locale normalization; audio/transcript not retained"
+  },
+  "realtime_provider": {
+    "credential_mint": "passed",
+    "sdp_answer_http": 200,
+    "browser_media": "blocked",
+    "artifact": "provider-webrtc.json",
+    "human_audibility": "unverified"
+  },
+  "frontend": {
+    "lint": "passed",
+    "typescript": "passed",
+    "catalogs": 10,
+    "keys_per_catalog": 311,
+    "frozen_docker_build": "passed"
+  },
+  "limitations": [
+    "Cloud egress did not establish the real WebRTC media/data channel; human microphone and audible two-way exchange remain unverified.",
+    "Existing cloud app is explicitly offline demo mode; configured connected/live installation is required for actual provider teaching and voice.",
+    "Full live transcript reconstruction after reload is not implemented.",
+    "Optional original-PDF page images were deferred to prioritize intake and communication."
+  ],
+  "material_deletion": {
+    "local_purge": "passed",
+    "revisions_chunks_evidence_and_related_history_removed": true,
+    "retained_material_preserved": true,
+    "completed_job_restart_replay": "passed",
+    "drive_behavior": "waits for confirmed deletion of bound remote files; actual connected Google deletion/readback unverified"
+  },
+  "deployment": {
+    "status": "deployed_verified",
+    "target": "existing cloud Docker demo",
+    "services": "backend/worker/frontend healthy",
+    "data_volume": "preserved",
+    "pdf_and_delete": "deployed-pdf-delete.json",
+    "public_production": "unconfigured",
+    "live_provider_in_deployed_demo": false
+  }
+}

@@ -698,6 +698,20 @@
         "data_volume": "preserved",
         "public_production": "unconfigured"
       }
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "docs-first core demo: genuine PDF intake and unified Text/Voice note/Live voice conversation",
+      "status": "implemented; key PDF/browser/safety and actual typed/note provider gates passed; live browser media remains blocked",
+      "evidence": [
+        "docs/CONVERSATION_EXPERIENCE.md",
+        "docs/evidence/core-conversation/verification.json"
+      ],
+      "backend": {
+        "passed": 112,
+        "skipped": 0,
+        "exit_code": 0
+      }
     }
   ]
 }

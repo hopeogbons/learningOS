@@ -12,6 +12,8 @@ This repository builds the attached Learning OS design, using the supplied dashb
 
 ## Product rules
 
+- Latest core-demo authority: read docs/CONVERSATION_EXPERIENCE.md and apply its Done when gates for one Text/Voice note/Live voice interface. Update governing Markdown before implementation; add only meaningful demo-protecting tests. Earlier three-turn/separate-voice scope is superseded.
+
 - User branding update (2026-10-14): general theme uses the Andela green palette in UI_CONTRACT; use the standalone transparent brain/circuit SVG for logo and favicon, preserving all existing dashboard quick-action button colors. The historical blue/book reference cannot override this update.
 - Preserve the actual source components and CSS described in UI_CONTRACT. Add screens using the same shell, tokens and responsive behavior. No new design system or generic dashboard substitution.
 - Learner-selected titled sections define progress. Scope revisions are immutable snapshots; adding material cannot silently change the denominator. Completion is the Reviewer assessment with evidence, not one correct answer or a fixed streak.

@@ -25,7 +25,7 @@ Dashboard-specific UI: Study page is the same white card shell, Study blue icon,
 
 ## Done when
 
-F07–F10 pass; evidence-based completion/progress correct; answers private; native-vs-runtime distinction recorded.
+The shared conversation criteria in docs/CONVERSATION_EXPERIENCE.md pass for Text, Voice note and Live voice, including entry selection and state preservation. F07–F10 remain meaningful safeguards: confidence precedes assessment, completion/progress are server-authoritative and hidden answers remain private. Source disclosure is friendly and unobtrusive. Realtime dialogue cannot independently grade or complete learning.
 
 ## Useful delegation
 
@@ -34,3 +34,7 @@ Native developer Planner/Quizzer/Reviewer exercised if supported; implementation
 ## Revision 2 batch work
 
 Runtime Planner/Quizzer/Reviewer receive study_locale/source_language and preserve source citations; semantically assess cross-language answers instead of English keyword matching. Keep formula/code tokens and original quotations intact. Freeze language for a pending item and apply changes at next turn without losing answer/history. Build per-language evaluation fixture gates and uncertainty behavior.
+
+## Latest core-demo acceptance — supersedes older communication scope
+
+Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope, transcript and draft when switching. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.

@@ -252,10 +252,6 @@ def answer(session_id: str, body: Answer, db=Depends(get_db), learner=Depends(ge
         raise HTTPException(404, "Not found")
     if not body.answer.strip():
         raise HTTPException(422, "Answer cannot be blank")
-    if body.voice:
-        events = db.scalars(select(ProgressEvent).where(ProgressEvent.learner_id == learner.id, ProgressEvent.session_id == session.id))
-        if sum(bool(e.reviewer_json.get("voice")) for e in events) >= 3:
-            raise HTTPException(409, "Three voice turns reached; continue by typing")
     if item.answer_state != "pending":
         raise HTTPException(409, "This item already has an answer")
     claim(db, session, body.expected_version, ["awaiting_answer"], "reviewing")

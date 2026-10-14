@@ -1,0 +1,9 @@
+{
+  "status": "incomplete",
+  "data_channel": false,
+  "remote_audio_track": true,
+  "teacher_transcript": false,
+  "real_human_audibility_verified": false,
+  "sdp_http_status": 200,
+  "verification": "Actual provider SDP answer; proxy-forwarded negotiation and synthetic browser microphone. ICE/data channel did not connect in this restricted cloud environment. Remote track event is not audible audio proof."
+}
