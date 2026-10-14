@@ -1,0 +1,5 @@
+# The default application is connected, authenticated and unseeded.
+# Offline sample mode is opt-in via deploy/compose.demo.yml.
+name: learningos-connected-local
+include:
+  - deploy/compose.connected-local.yml

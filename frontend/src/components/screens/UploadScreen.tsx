@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FilePlus2, Camera, Link2, Sheet } from "lucide-react";
 import { useI18n } from "@/i18n";
 import {
@@ -30,6 +30,7 @@ type Receipt = {
   storage_state: string;
   drive_file_id?: string | null;
 };
+const TERMINAL_JOBS = ["succeeded", "failed", "needs_attention", "needs-attention", "cancelled"];
 export default function UploadScreen({
   initialCollection = "",
 }: {
@@ -43,6 +44,7 @@ export default function UploadScreen({
     [error, setError] = useState<string | null>(null),
     [notice, setNotice] = useState(false),
     [receipts, setReceipts] = useState<Receipt[]>([]),
+    [jobStatuses, setJobStatuses] = useState<Record<string, string>>({}),
     collections = usePagedApi<Collection>("/collections"),
     materials = usePagedApi<Material>(
       collectionId ? `/collections/${collectionId}/materials` : null,
@@ -93,14 +95,26 @@ export default function UploadScreen({
     }
   }
   const refreshMaterials = materials.reload;
+  const onJobStatus = useCallback((jobId: string, status: string) => {
+    setJobStatuses((previous) => previous[jobId] === status
+      ? previous
+      : { ...previous, [jobId]: status });
+    if (TERMINAL_JOBS.includes(status)) {
+      refreshMaterials();
+      reload();
+    }
+  }, [refreshMaterials, reload]);
+  const pendingReceipts = receipts.some(
+    (receipt) => !TERMINAL_JOBS.includes(jobStatuses[receipt.job_id] ?? receipt.status),
+  );
   useEffect(() => {
-    if (!receipts.length) return;
+    if (!pendingReceipts) return;
     const poll = setInterval(() => {
       refreshMaterials();
       reload();
     }, 2500);
     return () => clearInterval(poll);
-  }, [receipts.length, refreshMaterials, reload]);
+  }, [pendingReceipts, refreshMaterials, reload]);
   return (
     <>
       <PageTitle
@@ -255,7 +269,7 @@ export default function UploadScreen({
       <Card className="mt-4">
         <h2 className="h5 fw-bold mb-3">{t("upload.jobs")}</h2>
         {receipts.map((r) => (
-          <JobRow key={r.job_id} receipt={r} />
+          <JobRow key={r.job_id} receipt={r} onStatus={onJobStatus} />
         ))}
         <Status
           error={materials.error}
@@ -297,14 +311,17 @@ export default function UploadScreen({
     </>
   );
 }
-function JobRow({ receipt: r }: { receipt: Receipt }) {
+function JobRow({ receipt: r, onStatus }: {
+  receipt: Receipt;
+  onStatus: (jobId: string, status: string) => void;
+}) {
   const { t } = useI18n(),
     query = useApi<Job>(`/jobs/${r.job_id}`),
     [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (
       query.data &&
-      ["succeeded", "failed", "needs_attention", "needs-attention"].includes(
+      TERMINAL_JOBS.includes(
         query.data.status,
       )
     )
@@ -312,13 +329,19 @@ function JobRow({ receipt: r }: { receipt: Receipt }) {
     const interval = setInterval(query.reload, 1200);
     return () => clearInterval(interval);
   }, [query.data, query.reload]);
+  useEffect(() => {
+    if (query.data?.status) onStatus(r.job_id, query.data.status);
+  }, [query.data?.status, r.job_id, onStatus]);
+  const storageState = typeof query.data?.result?.storage_state === "string"
+    ? query.data.result.storage_state
+    : r.storage_state;
   return (
     <div className="event-row py-3">
       <div className="d-flex gap-2 align-items-center flex-wrap">
         <span className="small fw-semibold flex-grow-1">
           <bdi>{r.material_id}</bdi>
         </span>
-        <StorageBadge state={query.data?.storage_state ?? r.storage_state} />
+        <StorageBadge state={storageState} />
         <StorageBadge state={query.data?.status ?? r.status} />
       </div>
       {r.drive_file_id && (
@@ -335,7 +358,7 @@ function JobRow({ receipt: r }: { receipt: Receipt }) {
           </bdi>
         </p>
       )}
-      {query.data?.status === "failed" && (
+      {query.data && ["failed", "needs_attention", "needs-attention"].includes(query.data.status) && (
         <button
           className="btn btn-outline-primary btn-sm mt-2"
           onClick={async () => {

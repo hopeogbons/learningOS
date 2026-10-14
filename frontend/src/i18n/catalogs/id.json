@@ -264,5 +264,9 @@
   "auth.signIn": "Masuk",
   "connections.demoDrive": "Google Drive tidak tersedia dalam demo offline. Jalankan versi terhubung dan masuk untuk menghubungkan akun Anda.",
   "connections.setupNeeded": "Google Drive perlu disiapkan sebelum dihubungkan. Siapkan koneksi Google untuk instalasi ini, lalu muat ulang halaman.",
-  "connections.setupRequired": "Penyiapan diperlukan"
+  "connections.setupRequired": "Penyiapan diperlukan",
+  "connections.consentDenied": "Google Drive tidak terhubung karena persetujuan ditolak. Pilih Hubungkan untuk mencoba lagi.",
+  "connections.consentScopes": "Google tidak memberikan semua izin Drive yang diperlukan. Pilih Hubungkan dan berikan izin yang diminta.",
+  "connections.consentRetry": "Koneksi Google Drive tidak dapat diselesaikan. Pilih Hubungkan untuk mencoba lagi; jika masalah berlanjut, periksa pengaturan klien Google.",
+  "common.cancelled": "Dibatalkan"
 }

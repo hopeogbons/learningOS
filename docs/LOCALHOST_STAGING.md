@@ -2,6 +2,18 @@
 
 The selected review target is localhost: the browser and Docker run on your own computer. The offline `compose.demo.yml` target cannot connect Drive; its Connect action must show unavailable. For real Google sign-in and Drive use the separate connected target below. It keeps connected user data in a different named volume from the synthetic demo.
 
+## Diagnose the existing installation
+
+The normal root `docker compose` command now uses connected mode, not the demo. Its project name and connected volume match the explicit connected target, so switching command style does not create another database. The older `deploy/compose.demo.yml` always forces demo mode and ignores Google credentials.
+
+```text
+docker compose --profile diagnose run --build --rm --no-deps diagnose
+```
+
+The report lists `mode`, missing/invalid configuration **names**, safe expected callbacks and `database_seed_required: false`. An incomplete report exits nonzero. It does not print keys, client secrets or tokens and does not establish that Google has accepted the credentials. Check `docker compose ps -a` for API/worker/frontend health. Health/readiness must show `live`, not `demo`.
+
+Your actual private configuration is `.runtime/localhost/localhost.env`; a project-root `.env` is not the application's configuration file here. Setting endpoints in Google Console registers callbacks but does not populate this file. Rebuild/recreate after changing it. Do not seed or delete the connected database: the first successful Google sign-in creates your learner and you create your own Collections and content.
+
 ## Docker Desktop setup (Windows, macOS, or Linux)
 
 Download the latest source from [GitHub](https://github.com/hopeogbons/learningOS) or update your existing checkout without discarding private settings. Open PowerShell or a terminal in the folder containing `README.md`. Install/start Docker Desktop (Linux containers on Windows), or Docker Engine with Compose on Linux. Docker provides Node and Python; host Node, Python, WSL terminal tools, and uv are not required for this path. Run `docker compose version`: version **2.30 or newer** is required because the private env file is read literally using `format: raw`.
@@ -24,7 +36,7 @@ On **Linux**, run the helper as your host user so its private file is owned/edit
 docker compose -f deploy/compose.connected-local.yml --profile init run --build --rm --no-deps --user "$(id -u):$(id -g)" init
 ```
 
-The helper creates `.runtime/localhost/localhost.env`, generates real random local session/encryption keys, and uses `/data` container paths. It creates the file with mode `0600` on Unix; Docker Desktop Windows file protection follows the host's ACLs, so keep the project in your private user directory. The init container has no network access after the image build. Running init again preserves the entire existing file and all keys. Do not regenerate the encryption key after connecting Drive; keep it with your private backups. No cloud secret is copied.
+The helper creates `.runtime/localhost/localhost.env`, generates real random local session/encryption keys, and uses `/data` container paths. It creates the file with mode `0600` on Unix; Docker Desktop Windows file protection follows the host's ACLs, so keep the project in your private user directory. The init container has no network access after the image build. Running init again preserves existing nonblank values and keys, completes missing defaults, and generates only missing local keys. Empty/partial settings are repaired; provider credentials must still be entered privately. Do not regenerate the encryption key after connecting Drive; keep it with your private backups. No cloud secret is copied.
 
 In Windows PowerShell open the file with:
 
@@ -58,7 +70,7 @@ http://127.0.0.1:3000/api/v1/auth/callback
 http://127.0.0.1:3000/api/v1/connections/drive/callback
 ```
 
-`127.0.0.1` is the loopback address for this localhost workflow. Use it consistently; `localhost` is a different OAuth redirect hostname. Set `OIDC_ISSUER=https://accounts.google.com`. The same Web client can serve these two flows: put its client ID into both `OIDC_CLIENT_ID` and `DRIVE_CLIENT_ID`, and its secret into both corresponding secret fields. Registration and consent must be completed in your Google account; configured variables alone do not establish a valid client. Do not put passwords, refresh tokens, or secret values in chat.
+`127.0.0.1` is the template default. If your registered Google callbacks use `localhost`, retain that hostname instead: change `APP_ORIGIN`, `PUBLIC_URL`, `FRONTEND_URL` to `http://localhost:3000` and `DRIVE_REDIRECT_URI` to `http://localhost:3000/api/v1/connections/drive/callback`. Register both callbacks for that same origin and open it in the browser. Compose preserves the private-file origins. Do not mix the hostnames or point browser callbacks at backend port 8000. Set `OIDC_ISSUER=https://accounts.google.com`. The same Web client can serve these two flows: put its client ID into both `OIDC_CLIENT_ID` and `DRIVE_CLIENT_ID`, and its secret into both corresponding secret fields. Registration and consent must be completed in your Google account; configured variables alone do not establish a valid client. Do not put passwords, refresh tokens, or secret values in chat.
 
 ## Start the connected review
 
@@ -68,7 +80,7 @@ After saving the private settings and registering both callbacks, in **PowerShel
 docker compose -f deploy/compose.connected-local.yml up --build -d --wait
 ```
 
-Open **`http://127.0.0.1:3000`** on that computer. Sign in with your permitted Google test account, then open **Connections → Connect Drive** and grant the application's consent. Authentication uses Google OIDC; no demo identity is inserted. Missing/invalid local authentication or model configuration blocks startup/readiness rather than substituting demo success. Configuration presence is not proof Google/provider credentials work. The first frozen image build can take several minutes.
+Open the browser origin you configured in `PUBLIC_URL` on that computer (the template defaults to **`http://127.0.0.1:3000`**). Sign in with your permitted Google test account, then open **Connections → Connect Drive** and grant the application's consent. Authentication uses Google OIDC; no demo identity is inserted. Missing/invalid local authentication or model configuration blocks startup/readiness rather than substituting demo success. Configuration presence is not proof Google/provider credentials work. The first frozen image build can take several minutes.
 
 Both web/API ports bind only to `127.0.0.1`; connected state lives in the `learningos-connected-local_connected-data` volume. Stop with:
 

@@ -1,10 +1,18 @@
 # Learning OS build and release report
 
-The requested application is implemented with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The release is an **offline demonstration candidate** with preliminary live provider verification. All twelve batches were attempted; complete connected and production gates remain pending. The user requested access outside Codex, so the reviewed source was pushed to the initial `main` branch at https://github.com/hopeogbons/learningOS. Public application deployment remains unpublished.
+The requested application is implemented with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The default Docker application now runs **authenticated connected local mode**, with real AI workflow verification; demo is an explicit opt-in. The validation level remains below complete live release because real Drive and language/voice gates are still pending. All twelve batches were attempted; complete connected and production gates remain pending. The user requested access outside Codex, so the reviewed source was pushed to the initial `main` branch at https://github.com/hopeogbons/learningOS. Public application deployment remains unpublished.
+
+## Local connected audit
+
+The current delivery target is the real application on localhost. Root Compose now selects live mode, preserves the private configured origin and connected volume, and requires sign-in without sample seeding. `docs/LOCAL_HEALTH_REPORT.md` records verified behavior, fixed defects and remaining account-dependent checks.
+
+This follow-up corrected folder provisioning races, transient token-refresh classification, delayed poll capacity and manual Sync admission, connected Collection defaults, terminal/cancelled UI polling, slow request overlap and consent error recovery. Configuration diagnostics now identify missing/quoted fields and reject callbacks on unmapped frontend ports. Sync retries unfinished folder provisioning. The backend passed **177 tests with real isolated PostgreSQL, no skips**, and the connected container workflow performed real AI question/assessment with persisted history and restart recovery. Google sign-in used a test-owned synthetic session in this check; actual Google consent/folders remain unverified. Browser regression checks and the release frontend build passed; catalogs now have 270 keys per locale.
+
+Backend and production frontend package audits passed. Development-toolchain findings remain documented, and OS/container scans remain unrun. No public hosting action was performed. Evidence: `docs/evidence/local-connected-audit/`.
 
 ## Hosted beta target and Drive connection correction
 
-The user now requests a hosted connected beta to give feedback on real functionality. Public deployment is authorized, but no hosting destination/access, domain/DNS, Google sign-in registration or private production storage is available. `HOSTED_BETA.md` records the concrete launch handoff; no hosted URL exists yet.
+A hosted connected beta is an optional future delivery. No hosting destination/access, domain/DNS, Google sign-in registration or private production storage is available; the active delivery is localhost. `HOSTED_BETA.md` records the concrete launch handoff; no hosted URL exists yet.
 
 Drive setup metadata now distinguishes offline demo, missing/invalid setup and configured consent. The UI explains setup requirements and disables unavailable actions; valid configuration starts OAuth with a CSRF-protected POST. Callback configuration is checked against the actual origin, and the production preflight rejects a mismatched callback or conflicting origins before launch. These checks do not establish real Google consent.
 

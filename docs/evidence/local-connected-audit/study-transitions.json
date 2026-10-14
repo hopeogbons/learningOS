@@ -1,0 +1,16 @@
+{
+  "case": "answer-review-advance-answer-finish-transitions-resume-polls-only-pending",
+  "status": "passed",
+  "synthetic_only": true,
+  "requests": {
+    "/me": 2,
+    "/collections": 2,
+    "/dashboard": 6,
+    "/sessions/synthetic-session/next": 9,
+    "/sessions/synthetic-session/answer": 2,
+    "/sessions/synthetic-session/advance": 1,
+    "/sessions/synthetic-session/finish": 1,
+    "/sessions/synthetic-session/summary": 2
+  },
+  "page_errors": []
+}

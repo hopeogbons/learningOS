@@ -294,19 +294,27 @@ def callback(state:str='',code:str='',error:str='',db=Depends(get_db),learner=De
     if not state or checkpoint.get('oauth_expires_at',0)<time.time() or not secrets.compare_digest(checkpoint.get('oauth_state_hash',''),hashlib.sha256(state.encode()).hexdigest()): raise HTTPException(400,'oauth_state_invalid')
     verifier=decrypt_credentials(checkpoint['oauth_verifier'])['verifier']
     connection.checkpoint={k:v for k,v in checkpoint.items() if not k.startswith('oauth_')}; db.commit()
-    if error or not code: raise HTTPException(400,'oauth_denied')
+    def consent_failure(reason):
+        connection.error_code=reason; db.commit()
+        return RedirectResponse(settings.frontend_url.rstrip('/')+'/connections?drive_error='+reason)
+    if error or not code:return consent_failure('oauth_denied')
     try:
         response=httpx.post('https://oauth2.googleapis.com/token',data={'client_id':settings.drive_client_id,'client_secret':settings.drive_client_secret,'code':code,'redirect_uri':settings.drive_redirect_uri,'grant_type':'authorization_code','code_verifier':verifier},timeout=20)
-        if response.status_code!=200: raise HTTPException(502,'oauth_token_exchange_failed')
-        credentials=response.json();scopes=credentials.get('scope','').split()
-        if not set(SCOPES)<=set(scopes): raise HTTPException(403,'drive_scope_incomplete')
-        if not credentials.get('refresh_token'): raise HTTPException(403,'drive_refresh_token_missing')
-        credentials['expires_at']=time.time()+credentials.get('expires_in',3600)
+        if response.status_code!=200:return consent_failure('oauth_token_exchange_failed')
+        credentials=response.json()
+        if not isinstance(credentials,dict) or not isinstance(credentials.get('scope'),str) or not isinstance(credentials.get('access_token'),str) or not credentials['access_token']:
+            return consent_failure('oauth_token_exchange_failed')
+        scopes=credentials['scope'].split()
+        if not set(SCOPES)<=set(scopes):return consent_failure('drive_scope_incomplete')
+        if not isinstance(credentials.get('refresh_token'),str) or not credentials['refresh_token']:return consent_failure('drive_refresh_token_missing')
+        expires_in=float(credentials.get('expires_in',3600))
+        if not 0<expires_in<=86400:return consent_failure('oauth_token_exchange_failed')
+        credentials['expires_at']=time.time()+expires_in
         connection.encrypted_credentials=encrypt_credentials(credentials); connection.scopes=scopes; connection.status='connected'; connection.error_code=None
         connection.capability_json={'managed_writes':'authorized-unverified','direct_drop':'authorized-unverified','live_gates':'blocked-pending-provider-tests'}
         queue_provision(db,learner.id)
         db.commit()
-    except httpx.HTTPError as exc: raise HTTPException(502,'oauth_network') from exc
+    except (httpx.HTTPError,ValueError,TypeError):return consent_failure('oauth_network')
     return RedirectResponse(settings.frontend_url.rstrip('/')+'/connections?drive=connected')
 
 
@@ -368,11 +376,23 @@ def material_storage(material_id:str,db=Depends(get_db),learner=Depends(get_lear
 def sync(collection_id:str,db=Depends(get_db),learner=Depends(get_learner)):
     collection=require_owned(db,Collection,collection_id,learner)
     if collection.storage_mode!='drive' or collection.provisioning_state!='ready':raise HTTPException(409,'drive_folder_not_ready')
-    pending=db.scalar(select(Job).where(Job.learner_id==learner.id,Job.kind=='drive-sync',Job.entity_id==collection.id,Job.state.in_(['queued','running'])))
-    if pending:
-        if pending.state=='queued':pending.run_at=utcnow()
+    from sqlalchemy import update
+    from .db import as_utc
+    # Serialize simultaneous Sync clicks, including SQLite where FOR UPDATE
+    # does not lock rows. No provider request occurs in this short transaction.
+    db.execute(update(Collection).where(Collection.id==collection.id,Collection.learner_id==learner.id).values(id=Collection.id))
+    pending=db.scalar(select(Job).where(Job.learner_id==learner.id,Job.kind=='drive-sync',Job.entity_id==collection.id,Job.state.in_(['queued','running']))
+                      .order_by((Job.state=='running').desc(),Job.run_at,Job.created_at))
+    sleeping_poll = (pending is not None and pending.state=='queued' and as_utc(pending.run_at)>utcnow()
+                     and bool(pending.idempotency_key and pending.idempotency_key.startswith(('poll:','initial-poll:'))))
+    if pending and not sleeping_poll:
         job=pending
-    else:job=enqueue(db,learner.id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'manual-sync:{collection.id}:{uuid4()}')
+    else:
+        # Admit/rate-account the user's request before replacing maintenance.
+        # A rejected admission leaves the existing scheduled poll intact.
+        job=enqueue(db,learner.id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'manual-sync:{collection.id}:{uuid4()}')
+        if sleeping_poll:
+            pending.state='cancelled';pending.lease_owner=None;pending.lease_until=None
     db.commit();return {'job_id':job.id,'status':job.state}
 
 from .speech import router as speech_router

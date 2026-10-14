@@ -34,3 +34,41 @@ def test_configured_local_setup_is_presence_only(monkeypatch, capsys):
     for name in ['oidc_client_secret','api_key','credentials_key','session_secret']:
         assert values[name] not in output
     assert 'remain to be verified' in output
+
+
+def test_raw_quoted_key_is_actionable_without_exposing_it(monkeypatch, capsys):
+    secret=Fernet.generate_key().decode()
+    monkeypatch.setattr(settings,'credentials_key','"'+secret+'"')
+    assert main(json_output=True)==1
+    output=capsys.readouterr().out
+    assert 'TOKEN_ENCRYPTION_KEY has surrounding quotes' in output
+    assert secret not in output
+
+
+def test_localhost_registration_is_supported_and_report_is_safe(monkeypatch, capsys):
+    import json
+    monkeypatch.setattr(settings,'public_url','http://localhost:3000')
+    monkeypatch.setattr(settings,'frontend_url','http://localhost:3000')
+    monkeypatch.setattr(settings,'drive_redirect_uri','http://localhost:3000/api/v1/connections/drive/callback')
+    main(json_output=True)
+    data=json.loads(capsys.readouterr().out)
+    assert data['expected_callbacks']['drive']=='http://localhost:3000/api/v1/connections/drive/callback'
+    assert data['database_seed_required'] is False
+    assert not any('PUBLIC_URL and FRONTEND_URL' in x for x in data['issues'])
+    monkeypatch.setattr(settings,'public_url','http://private-secret@localhost:3000/?key=private-secret')
+    main(json_output=True)
+    output=capsys.readouterr().out
+    assert 'private-secret' not in output
+    assert 'PUBLIC_URL and FRONTEND_URL' in output
+
+
+def test_unmapped_ports_and_ipv6_cannot_pass_docker_preflight(monkeypatch):
+    for origin in ('http://localhost:8000','http://localhost:3030','http://[::1]:3000'):
+        monkeypatch.setattr(settings,'public_url',origin)
+        monkeypatch.setattr(settings,'frontend_url',origin)
+        monkeypatch.setattr(settings,'drive_redirect_uri',origin+'/api/v1/connections/drive/callback')
+        assert any('mapped frontend port 3000' in issue for issue in issues())
+    monkeypatch.setattr(settings,'public_url','http://localhost:13320')
+    monkeypatch.setattr(settings,'frontend_url','http://localhost:13320')
+    monkeypatch.setattr(settings,'drive_redirect_uri','http://localhost:13320/api/v1/connections/drive/callback')
+    assert not any('mapped frontend port' in issue for issue in issues(expected_web_port=13320))

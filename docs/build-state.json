@@ -476,13 +476,21 @@
           "cwd": "/workspace/learningOS",
           "exit_code": 0,
           "artifact": "docs/evidence/drive-setup/verification.json"
+        },
+        {
+          "name": "Local connected audit:177 PostgreSQL backend tests; real container-worker AI workflow and restart; synthetic UI regressions; build/contracts/catalogs/security checks",
+          "outcome": "passed",
+          "command": "isolated PostgreSQL pytest; connected Compose private synthetic-session smoke with live AI; UI regression scripts; frozen image builds and contracts/security checks",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/local-connected-audit/verification.json"
         }
       ]
     }
   ],
   "external_blockers": [
     "AI model availability and 42 live text/vision checks passed; L03 proficient/native semantic review remains pending.",
-    "User now requested a hosted connected beta. Hosting destination/access, domain/DNS and target account credentials are not yet available. Registered Google callbacks, actual sign-in/Drive consent and D01-D06 remain pending.",
+    "Active target is localhost. Actual Google Web-client sign-in/Drive consent and D01-D06 on the user's local account remain pending; the supplied migrate log confirms missing application settings before Alembic; initialize/complete the private local file, no seed/reset.",
     "All ten real TTS/STT synthetic roundtrips passed; L04 native transcript/audibility/browser three-turn proof and proficient catalog review remain pending. Runtime speech allowlist unchanged.",
     "Public-page pinned DNS route and permitted captions fetch remain unverified on the target network.",
     "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public application deployment; reviewed source is now available on GitHub main.",

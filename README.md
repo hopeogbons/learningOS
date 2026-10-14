@@ -2,40 +2,38 @@
 
 Learning OS turns your own source material into cited teaching, recall checks, confidence-aware assessment and spaced review. The Next.js/React/TypeScript frontend preserves the supplied Learning OS dashboard; Python/FastAPI, SQLAlchemy and durable database jobs implement the learning workflow.
 
-The current delivery target is a **hosted connected beta** for feedback with real sign-in, AI and Drive. Hosting access and account configuration are still required; [the launch handoff](docs/HOSTED_BETA.md) describes the supported deployment and exact Google callbacks. No hosted app URL has been published yet.
+## Run the real application locally
 
-## Open the app on your computer
+Docker supports the real application. The **default** `compose.yaml` now selects connected mode (`APP_MODE=live`), requires Google sign-in and uses an empty persistent database. The sample demo remains an explicit opt-in. There is no special demo branch to leave and no sample seed is required.
 
-The source is available on [GitHub](https://github.com/hopeogbons/learningOS). Download it using **Code → Download ZIP**, extract it, and open a terminal in the folder containing this README. With [Docker Desktop](https://docs.docker.com/desktop/) installed and running (or Docker Engine with Compose on Linux), run:
+Update your checkout from [GitHub](https://github.com/hopeogbons/learningOS), retaining `.runtime/localhost/localhost.env` and Docker volumes. If settings have not been created, run:
 
-```bash
-docker compose -f deploy/compose.demo.yml up --build -d --wait
+```text
+docker compose --profile init run --build --rm --no-deps init
 ```
 
-Then open `http://127.0.0.1:3000` in a browser **on that computer**. Docker supplies Node, Python, the database, API, worker, and frontend; you do not need Codex or provider keys to view the dashboard. This is the labeled offline demo: AI responses use synthetic English fixtures, live Drive/voice is unavailable, and external link retrieval remains separately verified. Interface language switching, local file intake, source citations, scope selection, and study/review state can be tested. The first image build can take several minutes.
+On Linux add `--user "$(id -u):$(id -g)"` before `init`. Fill **`.runtime/localhost/localhost.env`** with your actual AI model/key and Google Web-client settings. Settings in a different `.env` file or Google Console alone are not loaded by this target. Docker Compose 2.30+ is required. Follow [the local setup guide](docs/LOCALHOST_STAGING.md) for both sign-in and Drive callbacks.
 
-Stop the demo with `docker compose -f deploy/compose.demo.yml down`; its local demo data remains in the named volume. For real AI, sign-in, and Drive consent, follow the connected-localhost guide below.
+Before starting, this diagnostic reports mode, configuration issues and expected callbacks without secret values:
 
-[View the tested desktop dashboard](docs/evidence/github-demo-home.png) · [View the mobile dashboard](docs/evidence/github-demo-mobile.png)
+```text
+docker compose --profile diagnose run --build --rm --no-deps diagnose
+```
 
-## Connect Google Drive locally
+Keep your existing `localhost` or `127.0.0.1` registration consistent in `APP_ORIGIN`, `PUBLIC_URL`, `FRONTEND_URL` and `DRIVE_REDIRECT_URI`. The selected origin must be the browser's frontend port, normally 3000. Those hostnames are distinct Google OAuth registrations; Compose now preserves your private file's choice.
 
-The offline demo above cannot connect Drive. Switch to the authenticated connected target using [the Docker Desktop localhost guide](docs/LOCALHOST_STAGING.md): it works from Windows PowerShell without installing host Node or Python. Docker Compose 2.30+ is required.
+Stop the old sample stack without deleting its data, then start the actual application:
 
 ```text
 docker compose -f deploy/compose.demo.yml down
-docker compose -f deploy/compose.connected-local.yml --profile init run --build --rm --no-deps init
+docker compose up --build -d --wait
 ```
 
-On Linux add `--user "$(id -u):$(id -g)"` before `init` in the second command so you own its private settings. Fill `.runtime/localhost/localhost.env` locally with the actual provider and Google Web OAuth client settings, and register both exact callbacks in [the guide](docs/LOCALHOST_STAGING.md). Then:
+Open your configured browser origin, sign in with Google, connect Drive and create your own Collection. Once Drive is connected, new Collections default to Drive and provision their managed folders. An explicit Local option is available. The connected database and files persist in the existing connected-data volume; do not use `down -v`. Repeated init preserves settings and keys. Configuration changes require recreating containers with `up`.
 
-```text
-docker compose -f deploy/compose.connected-local.yml up --build -d --wait
-```
+For a launcher that performs diagnosis and startup, use `scripts/local.ps1 -Action start` in PowerShell or `bash scripts/local.sh start` in Bash. The same launchers accept `doctor`, `init` and `stop`.
 
-Open `http://127.0.0.1:3000`, sign in with Google, then choose **Connections → Connect Drive**. The connected target has a separate persistent data volume; repeated init preserves settings/encryption keys. The frontend receives only internal backend URLs. Real text/vision and synthetic speech endpoint checks are distinct from native-language/voice review, actual Drive consent, and production gates.
-
-The current release level and exact passed/blocked gates are recorded in [the release report](docs/RELEASE_REPORT.md), [build state](docs/build-state.json) and [capability evidence](docs/capabilities.md). Offline tests and translated catalogs do not establish live multilingual study/speech or real Google Drive folder/write/drop access.
+[Local health audit and remaining limits](docs/LOCAL_HEALTH_REPORT.md) · [Exact setup and troubleshooting](docs/LOCALHOST_STAGING.md) · [Release evidence](docs/RELEASE_REPORT.md)
 
 ## Run the offline demo
 

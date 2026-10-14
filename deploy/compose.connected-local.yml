@@ -13,9 +13,8 @@ x-backend: &backend
       format: raw
   environment:
     APP_MODE: live
-    APP_ORIGIN: http://127.0.0.1:3000
-    PUBLIC_URL: http://127.0.0.1:3000
-    FRONTEND_URL: http://127.0.0.1:3000
+    # Browser origins come from the private file: localhost and 127.0.0.1
+    # are distinct OAuth registrations. Do not silently replace either.
     LEARNING_OS_RUNTIME_DIR: /data
     DATABASE_URL: sqlite:////data/learningos.db
     PRIVATE_STORAGE_DIR: /data/private
@@ -42,6 +41,12 @@ services:
   migrate:
     <<: *backend
     command: [sh, -c, 'python -m app.local_connected_check && alembic upgrade head']
+    healthcheck: {disable: true}
+    restart: 'no'
+  diagnose:
+    <<: *backend
+    profiles: [diagnose]
+    command: [python, -m, app.local_connected_check, --json]
     healthcheck: {disable: true}
     restart: 'no'
   backend:

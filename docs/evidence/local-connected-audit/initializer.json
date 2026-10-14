@@ -1,0 +1,8 @@
+{
+  "empty_file_repaired": true,
+  "repeat_preserves_all_keys_and_values": true,
+  "private_mode": "0o600",
+  "secret_values_printed": false,
+  "network_after_build": "none",
+  "outcome": "passed"
+}

@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "case": "connected-drive-default-explicit-local",
+      "status": "passed"
+    },
+    {
+      "case": "offline-local-drive-disabled",
+      "status": "passed"
+    },
+    {
+      "case": "upload-terminal-stop-receipt-succeeded",
+      "status": "passed",
+      "stable_counts": {
+        "/me": 1,
+        "/collections": 1,
+        "/collections/audit-collection/materials": 4,
+        "/dashboard": 3,
+        "job": 1
+      }
+    },
+    {
+      "case": "upload-terminal-stop-receipt-needs-attention",
+      "status": "passed",
+      "stable_counts": {
+        "/me": 1,
+        "/collections": 1,
+        "/collections/audit-collection/materials": 5,
+        "/dashboard": 4,
+        "job": 2,
+        "retry": 1
+      }
+    },
+    {
+      "case": "upload-terminal-stop-receipt-cancelled",
+      "status": "passed",
+      "stable_counts": {
+        "/me": 1,
+        "/collections": 1,
+        "/collections/audit-collection/materials": 4,
+        "/dashboard": 3,
+        "job": 1
+      }
+    },
+    {
+      "case": "study-stop-finished",
+      "status": "passed",
+      "next_requests": 1
+    },
+    {
+      "case": "study-stop-awaiting_answer",
+      "status": "passed",
+      "next_requests": 1
+    },
+    {
+      "case": "study-stop-needs_attention",
+      "status": "passed",
+      "next_requests": 1
+    },
+    {
+      "case": "study-slow-pending-no-overlap-stops-ready",
+      "status": "passed",
+      "max_concurrent": 1,
+      "next_requests": 2
+    }
+  ],
+  "all_sources_synthetic": true,
+  "live_provider_calls": 0,
+  "Google_consent_proven": false
+}

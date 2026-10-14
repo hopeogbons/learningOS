@@ -161,6 +161,7 @@ export function StorageBadge({ state }: { state: string }) {
     upload_pending: "common.uploadPending",
     uploading: "common.uploading",
     failed: "common.failed",
+    cancelled: "common.cancelled",
     attention: "common.attention",
     needs_attention: "common.attention",
     pending: "common.uploadPending",

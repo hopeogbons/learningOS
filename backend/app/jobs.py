@@ -1,7 +1,7 @@
 """DB queue with atomic leases, transaction-owned handlers and durable outbox."""
 import os
 import socket
-from datetime import timedelta
+from datetime import timedelta, timezone
 from sqlalchemy import select, update, or_, and_
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
@@ -12,6 +12,7 @@ from .models import Job, OutboxEvent, WorkerHeartbeat, Notification, Learner
 HANDLERS = {}
 WORKER_ID = f"{socket.gethostname()}:{os.getpid()}"
 MAX_ATTEMPTS = 4
+MAX_SCHEDULED_DRIVE_POLLS = 1000
 
 class NeedsAttention(Exception):
     def __init__(self, code="needs_attention"):
@@ -34,25 +35,48 @@ class JobBudgetExceeded(HTTPException):
     def __init__(self):
         super().__init__(429, self.code, headers={"Retry-After": "60"})
 
-def check_job_budget(db, learner_id):
+def automatic_drive_poll():
+    """Only internal polling keys identify maintenance; manual Sync stays interactive."""
+    from sqlalchemy import func
+    key = func.coalesce(Job.idempotency_key, "")
+    return and_(Job.kind == "drive-sync", or_(key.startswith("poll:"), key.startswith("initial-poll:")))
+
+
+def check_job_budget(db, learner_id, delayed_poll=False):
     """A tenant row lock serializes admission across PostgreSQL API/worker hosts."""
     if settings.app_mode not in {"live", "connected", "production"}:
         return
-    db.scalar(select(Learner.id).where(Learner.id == learner_id).with_for_update())
+    # This short write serializes admission on SQLite as well as PostgreSQL.
+    db.execute(update(Learner).where(Learner.id == learner_id).values(id=Learner.id))
     from sqlalchemy import func
-    outstanding = db.scalar(select(func.count()).select_from(Job).where(Job.learner_id == learner_id, Job.state.in_(["queued", "running"])))
-    recent = db.scalar(select(func.count()).select_from(Job).where(Job.learner_id == learner_id, Job.created_at >= utcnow() - timedelta(minutes=1)))
+    now = utcnow()
+    automatic = automatic_drive_poll()
+    if delayed_poll:
+        scheduled = db.scalar(select(func.count()).select_from(Job).where(Job.learner_id == learner_id, automatic, Job.state.in_(["queued", "running"])))
+        if scheduled >= MAX_SCHEDULED_DRIVE_POLLS:
+            raise JobBudgetExceeded()
+        return
+    sleeping_poll = and_(automatic, Job.state == "queued", Job.run_at > now)
+    outstanding = db.scalar(select(func.count()).select_from(Job).where(Job.learner_id == learner_id, Job.state.in_(["queued", "running"]), ~sleeping_poll))
+    recent = db.scalar(select(func.count()).select_from(Job).where(Job.learner_id == learner_id, Job.created_at >= now - timedelta(minutes=1), ~automatic))
     if outstanding >= 20 or recent >= 50:
         raise JobBudgetExceeded()
 
-def enqueue(db, learner_id, kind, payload, idempotency_key=None):
+def enqueue(db, learner_id, kind, payload, idempotency_key=None, run_at=None):
+    if run_at is not None:
+        run_at = as_utc(run_at).astimezone(timezone.utc)
     if idempotency_key:
         existing = db.scalar(select(Job).where(Job.learner_id == learner_id, Job.idempotency_key == idempotency_key))
         if existing:
             return existing
     if kind != "delete-learner":
-        check_job_budget(db, learner_id)
+        delayed_poll = (kind == "drive-sync" and bool(payload.get("collection_id"))
+                        and bool(idempotency_key and idempotency_key.startswith("poll:"))
+                        and run_at is not None and run_at > utcnow())
+        check_job_budget(db, learner_id, delayed_poll=delayed_poll)
     job = Job(learner_id=learner_id, kind=kind, payload=payload, idempotency_key=idempotency_key, entity_id=payload.get("entity_id") or payload.get("material_id") or payload.get("session_id") or payload.get("collection_id"))
+    if run_at is not None:
+        job.run_at = run_at
     try:
         with db.begin_nested():
             db.add(job)

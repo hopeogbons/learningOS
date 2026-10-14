@@ -264,5 +264,9 @@
   "auth.signIn": "Anmelden",
   "connections.demoDrive": "Google Drive ist in der Offline-Demo nicht verfügbar. Starte die verbundene Version und melde dich an, um dein Konto zu verbinden.",
   "connections.setupNeeded": "Google Drive muss vor dem Verbinden eingerichtet werden. Richte die Google-Verbindung für diese Installation ein und lade die Seite neu.",
-  "connections.setupRequired": "Einrichtung erforderlich"
+  "connections.setupRequired": "Einrichtung erforderlich",
+  "connections.consentDenied": "Google Drive wurde nicht verbunden, weil die Zustimmung abgelehnt wurde. Wähle Verbinden, um es erneut zu versuchen.",
+  "connections.consentScopes": "Google hat nicht alle erforderlichen Drive-Berechtigungen erteilt. Wähle Verbinden und erteile die angeforderten Berechtigungen.",
+  "connections.consentRetry": "Die Verbindung mit Google Drive konnte nicht abgeschlossen werden. Wähle Verbinden, um es erneut zu versuchen; prüfe bei anhaltenden Problemen die Google-Client-Einstellungen.",
+  "common.cancelled": "Abgebrochen"
 }

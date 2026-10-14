@@ -68,6 +68,11 @@ def drive_adapter(db,learner_id):
 def queue_provision(db,learner_id,collection_id=None):
     key=f'drive-provision:{learner_id}'
     job=db.scalar(select(Job).where(Job.learner_id==learner_id,Job.idempotency_key==key))
+    if job:
+        # Serialize requests against the worker's final pending-folder check.
+        # A no-op write also obtains SQLite's write lock (FOR UPDATE is ignored).
+        db.execute(update(Job).where(Job.id==job.id).values(id=Job.id))
+        db.refresh(job)
     if job and job.state in {'succeeded','failed','needs-attention','cancelled'}:
         job.state='queued'; job.error_code=None; job.attempts=0; job.run_at=utcnow(); job.payload={}; job.lease_owner=None; job.lease_until=None
     if not job: job=enqueue(db,learner_id,'drive-provision',{},idempotency_key=key)
@@ -229,18 +234,29 @@ def provision_drive(db,job):
     if job.lease_owner is not None:assert_lease(db,job)
     connection.app_root_id=root['id']; db.commit()
     collections=db.scalars(select(Collection).where(Collection.learner_id==job.learner_id,Collection.storage_mode=='drive',Collection.archived==False)).all()
-    for collection in collections:
-        try:
-            collection.provisioning_state='provisioning'; db.commit()
-            folder=adapter.ensure_folder(f'collection:{collection.id}',collection.name,root['id'],collection.drive_folder_id)
-            if job.lease_owner is not None:assert_lease(db,job)
-            collection.drive_folder_id=folder['id']; collection.drive_root_id=root['id']; collection.provisioning_state='ready'
-            pending=db.scalar(select(Job).where(Job.learner_id==job.learner_id,Job.kind=='drive-sync',Job.entity_id==collection.id,Job.state.in_(['queued','running'])))
-            if not pending: enqueue(db,job.learner_id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'initial-poll:{collection.id}:{job.id}:{job.attempts}')
-            db.commit()
-        except SourceError:
-            collection.provisioning_state='needs-attention'; db.commit(); raise
-    return {'root_id':root['id'],'collection_count':len(collections)}
+    processed=set()
+    while True:
+        for collection in collections:
+            try:
+                collection.provisioning_state='provisioning'; db.commit()
+                folder=adapter.ensure_folder(f'collection:{collection.id}',collection.name,root['id'],collection.drive_folder_id)
+                if job.lease_owner is not None:assert_lease(db,job)
+                collection.drive_folder_id=folder['id']; collection.drive_root_id=root['id']; collection.provisioning_state='ready'
+                pending=db.scalar(select(Job).where(Job.learner_id==job.learner_id,Job.kind=='drive-sync',Job.entity_id==collection.id,Job.state.in_(['queued','running'])))
+                if not pending: enqueue(db,job.learner_id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'initial-poll:{collection.id}:{job.id}:{job.attempts}')
+                db.commit(); processed.add(collection.id)
+            except SourceError:
+                collection.provisioning_state='needs-attention'; db.commit(); raise
+        # Hold the same admission lock until run_once commits success. A request
+        # that arrives later then observes succeeded and requeues this job;
+        # one admitted during provider I/O is included in this next pass.
+        db.execute(update(Job).where(Job.id==job.id).values(id=Job.id))
+        if job.lease_owner is not None:assert_lease(db,job)
+        collections=db.scalars(select(Collection).where(Collection.learner_id==job.learner_id,Collection.storage_mode=='drive',Collection.archived==False,
+            (Collection.provisioning_state.in_(['pending','provisioning'])) | Collection.drive_folder_id.is_(None))).all()
+        if not collections:
+            break
+    return {'root_id':root['id'],'collection_count':len(processed)}
 
 
 def sync_drive(db,job):
@@ -301,8 +317,7 @@ def sync_drive(db,job):
             revision.metadata_json={**revision.metadata_json,'remote_state':'removed-or-moved','requires_reconciliation':True}
     collection.last_sync=utcnow(); connection=connection_for(db,job.learner_id); connection.last_sync=utcnow(); connection.checkpoint={**connection.checkpoint,collection.id:{'last_scan':utcnow().isoformat(),'file_count':len(files)}}
     # Durable bounded polling; disconnect cancels this before the next run.
-    next_job=enqueue(db,job.learner_id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'poll:{collection.id}:{job.id}')
-    next_job.run_at=utcnow()+timedelta(seconds=60)
+    enqueue(db,job.learner_id,'drive-sync',{'collection_id':collection.id},idempotency_key=f'poll:{collection.id}:{job.id}',run_at=utcnow()+timedelta(seconds=60))
     return {'collection_id':collection.id,'discovered':discovered,'scanned':len(files)}
 
 def job_handler(handler):

@@ -264,5 +264,9 @@
   "auth.signIn": "登录",
   "connections.demoDrive": "离线演示无法连接 Google Drive。请启动已配置的版本并登录，以连接您的账户。",
   "connections.setupNeeded": "连接 Google Drive 前需要完成设置。请配置此应用的 Google 连接，然后重新加载此页面。",
-  "connections.setupRequired": "需要设置"
+  "connections.setupRequired": "需要设置",
+  "connections.consentDenied": "未授权访问，因此未连接 Google Drive。选择“连接”重试。",
+  "connections.consentScopes": "Google 未授予全部所需的 Drive 权限。请选择“连接”并授予所请求的权限。",
+  "connections.consentRetry": "Google Drive 未能完成连接。请选择“连接”重试；如果问题持续，请检查 Google 客户端设置。",
+  "common.cancelled": "已取消"
 }

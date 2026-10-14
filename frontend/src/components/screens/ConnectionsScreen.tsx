@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Cloud, Mail, Globe, CirclePlay, RefreshCw, Plug } from "lucide-react";
 import { useI18n } from "@/i18n";
 import {
@@ -23,6 +24,8 @@ export default function ConnectionsScreen() {
   const connection = list(query.data).find((c) => c.provider === "drive");
   const connected = connection?.status === "connected";
   const configured = connection?.configured === true;
+  const reason = useSearchParams().get("drive_error");
+  const callbackError = reason && ["oauth_denied", "oauth_token_exchange_failed", "oauth_network", "drive_scope_incomplete", "drive_refresh_token_missing"].includes(reason) ? reason : null;
   async function action(kind: string) {
     setBusy(true);
     setError(null);
@@ -45,7 +48,12 @@ export default function ConnectionsScreen() {
         for (const c of list(collections.data).filter(
           (c) => c.storage_mode === "drive",
         ))
-          await api(`/collections/${c.id}/sync`, { method: "POST" });
+          await api(
+            c.provisioning_state === "ready"
+              ? `/collections/${c.id}/sync`
+              : `/collections/${c.id}/drive-folder/provision`,
+            { method: "POST" },
+          );
         setNotice(t("connections.syncQueued"));
         query.reload();
         reload();
@@ -63,9 +71,9 @@ export default function ConnectionsScreen() {
         description={t("connections.description")}
       />
       <Status
-        error={error ?? query.error}
+        error={error ?? callbackError ?? query.error}
         loading={query.loading}
-        retry={query.reload}
+        retry={callbackError && configured ? () => void action("connect") : query.reload}
       />
       {notice && (
         <div className="alert alert-info" role="status">

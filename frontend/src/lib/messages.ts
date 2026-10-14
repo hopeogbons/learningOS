@@ -27,6 +27,7 @@ export const messages = {
   "common.error": "Something went wrong. Please try again.",
   "common.save": "Save",
   "common.cancel": "Cancel",
+  "common.cancelled": "Cancelled",
   "common.close": "Close",
   "common.open": "Open",
   "common.edit": "Edit",
@@ -300,6 +301,9 @@ export const messages = {
   "auth.signIn": "Sign in",
   "connections.demoDrive": "Google Drive is unavailable in the offline demo. Start the connected version and sign in to connect your account.",
   "connections.setupNeeded": "Google Drive needs setup before you can connect. Configure the Google connection for this installation, then reload this page.",
+  "connections.consentDenied": "Google Drive was not connected because consent was declined. Choose Connect to try again.",
+  "connections.consentScopes": "Google did not grant all required Drive permissions. Choose Connect and grant the requested permissions.",
+  "connections.consentRetry": "Google Drive could not finish connecting. Choose Connect to try again; if it continues, check the Google client settings.",
   "connections.setupRequired": "Setup required",
 } as const;
 export type MessageKey = keyof typeof messages;

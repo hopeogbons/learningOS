@@ -1,0 +1,26 @@
+{
+  "project": "learningos-connected-audit-c3596f9c",
+  "mode": "live",
+  "auth_fixture": "synthetic opaque session in isolated database; real Google sign-in not verified",
+  "real_google_consent": "unrun",
+  "checks": [
+    {
+      "check": "Connected diagnostic preserves localhost registration and reports no seed requirement",
+      "outcome": "passed"
+    },
+    {
+      "check": "Fresh live Docker stack healthy, authentication required, database unseeded",
+      "outcome": "passed"
+    },
+    {
+      "check": "Authenticated POST/CSRF and Drive PKCE initiation; declined consent returns safely to UI",
+      "outcome": "passed"
+    },
+    {
+      "check": "Real connected file intake, durable extraction, original citation and scope selection",
+      "outcome": "passed"
+    }
+  ],
+  "provider_requests_expected": 0,
+  "outcome": "passed"
+}

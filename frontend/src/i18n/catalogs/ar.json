@@ -264,5 +264,9 @@
   "auth.signIn": "تسجيل الدخول",
   "connections.demoDrive": "Google Drive غير متاح في العرض التجريبي دون اتصال. شغّل النسخة المتصلة وسجّل الدخول لربط حسابك.",
   "connections.setupNeeded": "يجب إعداد Google Drive قبل الاتصال. اضبط اتصال Google لهذا التطبيق، ثم أعد تحميل هذه الصفحة.",
-  "connections.setupRequired": "الإعداد مطلوب"
+  "connections.setupRequired": "الإعداد مطلوب",
+  "connections.consentDenied": "لم يتم ربط Google Drive لأن الموافقة رُفضت. اختر ربط للمحاولة مجددًا.",
+  "connections.consentScopes": "لم يمنح Google جميع أذونات Drive المطلوبة. اختر ربط وامنح الأذونات المطلوبة.",
+  "connections.consentRetry": "تعذّر إكمال الربط مع Google Drive. اختر ربط للمحاولة مجددًا؛ وإذا استمرت المشكلة، فتحقّق من إعدادات عميل Google.",
+  "common.cancelled": "تم الإلغاء"
 }

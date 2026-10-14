@@ -1,0 +1,21 @@
+{
+  "backend-audit.json": {
+    "findings": 0
+  },
+  "frontend-production-audit.json": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "frontend-all-audit.json": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 5,
+    "critical": 0,
+    "total": 5
+  }
+}

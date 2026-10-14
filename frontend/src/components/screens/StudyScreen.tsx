@@ -25,6 +25,10 @@ import {
   CitationList,
 } from "../Shared";
 import VoiceControls from "../VoiceControls";
+const PENDING_TURNS = [
+  "pending", "generating", "reviewing", "pending_generation",
+  "pending_review", "assessing", "finishing",
+];
 export default function StudyScreen({
   initialCollection = "",
   initialScope = "",
@@ -51,13 +55,22 @@ export default function StudyScreen({
     [isVoice, setVoice] = useState(voice),
     [transcribed, setTranscribed] = useState(false),
     [turns, setTurns] = useState(0),
-    lastItem = useRef<string | null>(null);
+    lastItem = useRef<string | null>(null),
+    turnRequest = useRef<AbortController | null>(null);
   const collection = list(collections.data).find((c) => c.id === collectionId),
     scope = initialScope || collection?.active_scope?.id;
-  const fetchTurn = useCallback(async () => {
+  const unavailableMessage = t("common.notAvailable");
+  const fetchTurn = useCallback(async (replace = false) => {
     if (!sessionId) return;
+    if (turnRequest.current) {
+      if (!replace) return;
+      turnRequest.current.abort();
+    }
+    const request = new AbortController();
+    turnRequest.current = request;
     try {
-      const next = await api<SessionItem>(`/sessions/${sessionId}/next`);
+      const next = await api<SessionItem>(`/sessions/${sessionId}/next`, { signal: request.signal });
+      if (request.signal.aborted) return;
       if (lastItem.current !== next.item_id) {
         lastItem.current = next.item_id;
         setAnswer("");
@@ -68,22 +81,27 @@ export default function StudyScreen({
       if (next.voice_turn_count !== undefined) setTurns(next.voice_turn_count);
       setError(
         next.status === "needs_attention" || next.status === "needs-attention"
-          ? t("common.notAvailable")
+          ? unavailableMessage
           : null,
       );
     } catch (e) {
-      setError((e as Error).message);
+      if (!request.signal.aborted) setError((e as Error).message);
+    } finally {
+      if (turnRequest.current === request) turnRequest.current = null;
     }
-  }, [sessionId, t]);
+  }, [sessionId, unavailableMessage]);
+  const pending = Boolean(sessionId) && !error && (!item || PENDING_TURNS.includes(item.status));
   useEffect(() => {
-    if (!sessionId) return;
+    if (!pending) return;
     const initial = setTimeout(() => void fetchTurn(), 0);
     const interval = setInterval(() => void fetchTurn(), 1300);
     return () => {
       clearTimeout(initial);
       clearInterval(interval);
+      turnRequest.current?.abort();
     };
-  }, [sessionId, fetchTurn]);
+  }, [pending, fetchTurn]);
+  useEffect(() => () => turnRequest.current?.abort(), [sessionId, fetchTurn]);
   async function start() {
     if (!collectionId || !scope) return;
     setBusy(true);
@@ -127,7 +145,7 @@ export default function StudyScreen({
         }),
       });
       if (isVoice && transcribed) setTurns((v) => v + 1);
-      await fetchTurn();
+      await fetchTurn(true);
       reload();
     } catch (e) {
       setError((e as Error).message);
@@ -144,7 +162,7 @@ export default function StudyScreen({
         method: "POST",
         body: json({ expected_version: item.version }),
       });
-      await fetchTurn();
+      await fetchTurn(true);
       reload();
     } catch (e) {
       setError((e as Error).message);
@@ -159,27 +177,15 @@ export default function StudyScreen({
       setBusy(true);
       try {
         await api(`/jobs/${item.job_id}/retry`, { method: "POST" });
-        await fetchTurn();
+        await fetchTurn(true);
       } catch (e) {
         setError((e as Error).message);
       } finally {
         setBusy(false);
       }
-    } else await fetchTurn();
+    } else await fetchTurn(true);
   }
-  const finished = item?.status === "finished" || item?.status === "completed",
-    pending =
-      Boolean(sessionId) &&
-      (!item ||
-        [
-          "pending",
-          "generating",
-          "reviewing",
-          "pending_generation",
-          "pending_review",
-          "assessing",
-          "finishing",
-        ].includes(item.status));
+  const finished = item?.status === "finished" || item?.status === "completed";
   const feedback = item?.feedback;
   return (
     <>

@@ -57,9 +57,24 @@ class DriveAdapter:
         if self.credentials.get('expires_at', 0) < time.time()+60:
             if not self.credentials.get('refresh_token'):
                 raise SourceError('drive_reconnect', 'Reconnect Drive; its authorization has expired.')
-            response = self.client.post('https://oauth2.googleapis.com/token', data={'client_id': settings.drive_client_id, 'client_secret': settings.drive_client_secret, 'refresh_token': self.credentials['refresh_token'], 'grant_type':'refresh_token'})
-            if response.status_code != 200: raise SourceError('drive_reconnect', 'Drive authorization could not be refreshed.')
-            body = response.json(); self.credentials.update(body); self.credentials['expires_at'] = time.time()+body.get('expires_in',3600)
+            try:
+                response = self.client.post('https://oauth2.googleapis.com/token', data={'client_id': settings.drive_client_id, 'client_secret': settings.drive_client_secret, 'refresh_token': self.credentials['refresh_token'], 'grant_type':'refresh_token'})
+            except httpx.HTTPError as exc:
+                raise SourceError('drive_network', 'Drive is temporarily unavailable.', True) from exc
+            if response.status_code == 429 or response.status_code >= 500:
+                raise SourceError('drive_unavailable', 'Drive authorization is temporarily unavailable. Retry when available.', True)
+            if response.status_code != 200:
+                raise SourceError('drive_reconnect', 'Drive authorization could not be refreshed.')
+            try:
+                body = response.json()
+                if not isinstance(body, dict) or not isinstance(body.get('access_token'), str) or not body['access_token']:
+                    raise ValueError('invalid_token_response')
+                expires_in = float(body.get('expires_in', 3600))
+                if not 0 < expires_in <= 86400:
+                    raise ValueError('invalid_token_expiry')
+            except (ValueError, TypeError) as exc:
+                raise SourceError('drive_unavailable', 'Drive did not confirm refreshed authorization. Retry when available.', True) from exc
+            self.credentials.update(body); self.credentials['expires_at'] = time.time()+expires_in
             if self.persist_credentials: self.persist_credentials(self.credentials)
         return self.credentials['access_token']
     def request(self, method, url, **kwargs):

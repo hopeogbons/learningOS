@@ -1,6 +1,6 @@
 # Hosted connected beta
 
-The next delivery is an HTTPS application URL where invited learners use real sign-in, AI, private uploads and Google Drive. No host is selected or accessible yet; this file is the launch handoff, not a deployed site. The user has requested deployment. Google/client account setup and hosting access remain external prerequisites.
+This is an optional future HTTPS deployment. The active delivery is the connected application on localhost; see LOCAL_HEALTH_REPORT.md. A hosted beta would let invited learners use real sign-in, AI, private uploads and Google Drive. No host is selected or accessible yet; this file is the launch handoff, not a deployed site. The user has requested deployment. Google/client account setup and hosting access remain external prerequisites.
 
 ## Supported deployment target
 

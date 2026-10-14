@@ -1,0 +1,68 @@
+{
+  "delivery": "authenticated_connected_local",
+  "default_mode": "live",
+  "database_seed_required": false,
+  "reported_migrate_failure": "private application configuration not loaded/unfinished; preflight exited before database migrations",
+  "checks": {
+    "backend": {
+      "passed": 177,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 3,
+      "postgresql": "actual isolated PostgreSQL"
+    },
+    "production_ui": {
+      "polling_collection_cases": 9,
+      "consent_recovery_cases": 14,
+      "study_transition_case": 1,
+      "provider_calls": 0
+    },
+    "lint": "passed",
+    "typescript": "passed",
+    "frontend_image_build": "passed",
+    "api_contracts": "passed",
+    "catalogs": {
+      "languages": 10,
+      "keys_each": 270,
+      "icu_formats": 24300,
+      "fonts": 230
+    },
+    "live_ai_container_workflow": "passed with isolated synthetic auth session; real Google sign-in/Drive not proven",
+    "final_connected_startup": "passed after port preflight fix without repeating inference",
+    "initializer": "passed; missing keys/defaults repaired; existing values/legacy keys retained",
+    "package_audits": {
+      "backend-audit.json": {
+        "findings": 0
+      },
+      "frontend-production-audit.json": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "frontend-all-audit.json": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 5,
+        "critical": 0,
+        "total": 5
+      }
+    }
+  },
+  "local_image_ids": {
+    "backend": "sha256:afc6d8aac9d5146bc1c91666824b3b7395be8e0c991bb95eee75238b86f4d805",
+    "frontend": "sha256:a817a91eaeba607a34224a1de5c21d8bc1c66a7ddc1d454a4a7296a6f3683b59"
+  },
+  "immutable_registry_release": "not published",
+  "limitations": [
+    "User-local Google credentials/callbacks/consent and D01-D06 need actual account proof",
+    "Native ten-language/voice verification pending",
+    "Previous sustained-load p95 target failed; not revalidated here",
+    "Development toolchain5high findings; no production frontend or backend package findings",
+    "Windows launcher and OS-image scans unverified"
+  ],
+  "secrets_or_learner_content_in_evidence": false
+}

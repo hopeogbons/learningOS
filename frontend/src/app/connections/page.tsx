@@ -1,4 +1,6 @@
 import ConnectionsScreen from "@/components/screens/ConnectionsScreen";
+import { Suspense } from "react";
+import { Status } from "@/components/Shared";
 export default function Page() {
-  return <ConnectionsScreen />;
+  return <Suspense fallback={<Status loading />}><ConnectionsScreen /></Suspense>;
 }

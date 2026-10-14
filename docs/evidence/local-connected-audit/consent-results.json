@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "viewport": 390,
+      "callback_code": "oauth_denied",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 390,
+      "callback_code": "drive_scope_incomplete",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 390,
+      "callback_code": "oauth_network",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 390,
+      "callback_code": "unrecognized_private_token",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 390,
+      "case": "consent_retry_restarts_oauth_POST",
+      "outcome": "passed",
+      "real_google": "intercepted"
+    },
+    {
+      "viewport": 390,
+      "case": "configured_connect_still_enabled_POST_CSRF",
+      "outcome": "passed",
+      "real_google": "intercepted"
+    },
+    {
+      "viewport": 390,
+      "case": "sync_retries_failed_folder_and_scans_ready_folder",
+      "outcome": "passed"
+    },
+    {
+      "viewport": 1440,
+      "callback_code": "oauth_denied",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 1440,
+      "callback_code": "drive_scope_incomplete",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 1440,
+      "callback_code": "oauth_network",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 1440,
+      "callback_code": "unrecognized_private_token",
+      "outcome": "passed",
+      "connect_enabled": true
+    },
+    {
+      "viewport": 1440,
+      "case": "consent_retry_restarts_oauth_POST",
+      "outcome": "passed",
+      "real_google": "intercepted"
+    },
+    {
+      "viewport": 1440,
+      "case": "configured_connect_still_enabled_POST_CSRF",
+      "outcome": "passed",
+      "real_google": "intercepted"
+    },
+    {
+      "viewport": 1440,
+      "case": "sync_retries_failed_folder_and_scans_ready_folder",
+      "outcome": "passed"
+    }
+  ],
+  "passed": 14,
+  "synthetic_only": true
+}

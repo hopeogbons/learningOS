@@ -264,5 +264,9 @@
   "auth.signIn": "Iniciar sesión",
   "connections.demoDrive": "Google Drive no está disponible en la demo sin conexión. Inicia la versión conectada e inicia sesión para conectar tu cuenta.",
   "connections.setupNeeded": "Debes configurar Google Drive antes de conectarlo. Configura la conexión de Google para esta instalación y recarga esta página.",
-  "connections.setupRequired": "Configuración necesaria"
+  "connections.setupRequired": "Configuración necesaria",
+  "connections.consentDenied": "Google Drive no se conectó porque se rechazó el consentimiento. Selecciona Conectar para intentarlo de nuevo.",
+  "connections.consentScopes": "Google no concedió todos los permisos de Drive necesarios. Selecciona Conectar y concede los permisos solicitados.",
+  "connections.consentRetry": "No se pudo completar la conexión con Google Drive. Selecciona Conectar para volver a intentarlo; si continúa, revisa la configuración del cliente de Google.",
+  "common.cancelled": "Cancelado"
 }

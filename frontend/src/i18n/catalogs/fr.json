@@ -264,5 +264,9 @@
   "auth.signIn": "Se connecter",
   "connections.demoDrive": "Google Drive est indisponible dans la démo hors ligne. Lancez la version connectée et connectez-vous pour associer votre compte.",
   "connections.setupNeeded": "Google Drive doit être configuré avant la connexion. Configurez la connexion Google de cette installation, puis rechargez cette page.",
-  "connections.setupRequired": "Configuration requise"
+  "connections.setupRequired": "Configuration requise",
+  "connections.consentDenied": "Google Drive n’a pas été connecté car le consentement a été refusé. Choisissez Connecter pour réessayer.",
+  "connections.consentScopes": "Google n’a pas accordé toutes les autorisations Drive requises. Choisissez Connecter et accordez les autorisations demandées.",
+  "connections.consentRetry": "La connexion à Google Drive n’a pas pu être terminée. Choisissez Connecter pour réessayer ; si le problème persiste, vérifiez les paramètres du client Google.",
+  "common.cancelled": "Annulé"
 }

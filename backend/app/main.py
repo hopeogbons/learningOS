@@ -66,11 +66,19 @@ def ready():
             dependencies["worker"] = "ready" if heartbeat and (utcnow() - as_utc(heartbeat)).total_seconds() < settings.worker_freshness_seconds else "stale"
     except Exception:
         dependencies["database"] = "unavailable"
-    dependencies["model"] = "offline-demo" if settings.is_demo else "configured-unverified" if settings.api_key and settings.model else "unconfigured"
+    offline=settings.app_mode in {"demo","test"}
+    dependencies["model"] = "offline-demo" if offline else "configured-unverified" if settings.api_key and settings.model else "unconfigured"
+    if not offline:
+        from .sources.drive import connection_setup_state
+        dependencies["oidc"] = "configured-unverified" if (all((settings.oidc_issuer, settings.oidc_client_id, settings.oidc_client_secret))
+            and settings.oidc_issuer.startswith('https://') and len(settings.session_secret)>=32
+            and not settings.session_secret.startswith('local-demo')) else "unconfigured"
+        dependencies["drive"] = "configured-unverified" if connection_setup_state()=='ready' else "unconfigured"
     if settings.app_mode == "production":
-        dependencies["oidc"] = "configured-unverified" if all((settings.oidc_issuer, settings.oidc_client_id, settings.oidc_client_secret)) else "unconfigured"
         dependencies["storage"] = "configured-unverified" if settings.s3_bucket else "unconfigured"
     ok = dependencies.get("database") == "ready" and dependencies.get("worker") == "ready" and dependencies.get("model") in {"offline-demo", "configured-unverified"}
+    if not offline:
+        ok = ok and dependencies.get('oidc')=='configured-unverified'
     return JSONResponse(status_code=200 if ok else 503, content={"status": "ready" if ok else "not-ready", "mode": settings.app_mode, "dependencies": dependencies})
 
 for name in ("auth", "core_api", "learning_api", "ingestion_api"):

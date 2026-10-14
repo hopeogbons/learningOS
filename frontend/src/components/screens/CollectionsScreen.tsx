@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, Edit3, Cloud } from "lucide-react";
 import { useI18n } from "@/i18n";
-import { api, json, list, usePagedApi, type Collection } from "@/lib/api";
+import { api, json, list, useApi, usePagedApi, type Collection, type Connection } from "@/lib/api";
 import { useApp } from "../AppState";
 import { Card, PageTitle, Status, Empty } from "../Shared";
 import { CollectionRow } from "../DesktopPanels";
@@ -11,11 +11,17 @@ export default function CollectionsScreen() {
   const { t, locale } = useI18n(),
     { reload: refresh } = useApp(),
     query = usePagedApi<Collection>("/collections"),
+    connections = useApi<Connection[]>("/connections"),
     [editing, setEditing] = useState<Collection | null>(null),
+    [storageChoice, setStorageChoice] = useState<string | null>(null),
     [form, setForm] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null);
   const items = list(query.data);
+  const driveReady = list(connections.data).some(
+    (connection) => connection.provider === "drive" &&
+      connection.status === "connected" && connection.configured === true,
+  );
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
@@ -57,6 +63,7 @@ export default function CollectionsScreen() {
           className="btn btn-primary d-inline-flex align-items-center gap-2"
           onClick={() => {
             setEditing(null);
+            setStorageChoice(null);
             setForm(!form);
           }}
         >
@@ -101,11 +108,12 @@ export default function CollectionsScreen() {
               <select
                 name="storage_mode"
                 className="form-select"
-                defaultValue={editing?.storage_mode ?? "local"}
+                value={editing?.storage_mode ?? storageChoice ?? (driveReady ? "drive" : "local")}
+                onChange={(event) => setStorageChoice(event.target.value)}
                 disabled={Boolean(editing)}
               >
                 <option value="local">{t("common.local")}</option>
-                <option value="drive">{t("common.drive")}</option>
+                <option value="drive" disabled={!driveReady}>{t("common.drive")}</option>
               </select>
             </label>
             <p className="small text-body-secondary">
@@ -113,7 +121,7 @@ export default function CollectionsScreen() {
             </p>
             <Status error={error} />
             <div className="d-flex gap-2">
-              <button className="btn btn-primary" disabled={busy}>
+              <button className="btn btn-primary" disabled={busy || (!editing && connections.loading)}>
                 {t(busy ? "common.working" : "common.save")}
               </button>
               <button

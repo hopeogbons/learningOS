@@ -626,3 +626,28 @@ def test_source_language_worker_refreshes_concurrent_correction_from_second_sess
     assert revision.source_language == 'ar'
     assert (revision.id, revision.content_hash) == identity
     assert revision.extracted_text == 'Original text remains unchanged.'
+
+
+@pytest.mark.parametrize('scenario,expected',[
+    ('denied','oauth_denied'),('network','oauth_network'),('bad_status','oauth_token_exchange_failed'),
+    ('bad_json','oauth_network'),('scope','drive_scope_incomplete'),('refresh','drive_refresh_token_missing')])
+def test_drive_consent_failure_returns_to_ui_consumes_state_and_never_leaks_tokens(db,client,configured_drive,monkeypatch,scenario,expected):
+    from urllib.parse import urlsplit,parse_qs
+    start=client.post('/api/v1/connections/drive/connect')
+    state=parse_qs(urlsplit(start.json()['authorization_url']).query)['state'][0]
+    def exchange(*args,**kwargs):
+        if scenario=='network':raise httpx.ConnectError('private-network-detail')
+        if scenario=='bad_status':return httpx.Response(503)
+        if scenario=='bad_json':return httpx.Response(200,text='not-json')
+        return httpx.Response(200,json={'access_token':'private-access-fixture','refresh_token':'' if scenario=='refresh' else 'private-refresh-fixture',
+            'scope':' '.join(SCOPES) if scenario!='scope' else SCOPES[0],'expires_in':3600})
+    monkeypatch.setattr('app.ingestion_api.httpx.post',exchange)
+    params={'state':state,'error':'access_denied'} if scenario=='denied' else {'state':state,'code':'private-code-fixture'}
+    response=client.get('/api/v1/connections/drive/callback',params=params,follow_redirects=False)
+    assert response.status_code==307
+    assert response.headers['location']==settings.frontend_url.rstrip('/')+'/connections?drive_error='+expected
+    assert 'private-' not in response.headers['location']
+    connection=db.scalar(select(ProviderConnection).where(ProviderConnection.learner_id=='owner',ProviderConnection.provider=='drive'))
+    assert connection.error_code==expected and not connection.encrypted_credentials
+    assert not any(key.startswith('oauth_') for key in connection.checkpoint)
+    assert client.get('/api/v1/connections/drive/callback',params=params,follow_redirects=False).status_code==400
