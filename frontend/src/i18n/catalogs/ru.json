@@ -259,5 +259,7 @@
   "home.reviewDetail": "{count, plural, one {# раздел на сегодня} few {# раздела на сегодня} many {# разделов на сегодня} other {# раздела на сегодня}}",
   "upload.sourceLanguage": "Язык источника",
   "upload.unknownLanguage": "Неизвестен",
-  "upload.sourceLanguageHelp": "Выберите язык исходного материала. Позже его можно исправить, не меняя исходный текст и цитаты."
+  "upload.sourceLanguageHelp": "Выберите язык исходного материала. Позже его можно исправить, не меняя исходный текст и цитаты.",
+  "auth.required": "Войдите в аккаунт Learning OS, чтобы продолжить.",
+  "auth.signIn": "Войти"
 }

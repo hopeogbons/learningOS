@@ -259,5 +259,7 @@
   "home.reviewDetail": "今日の復習 {count} セクション",
   "upload.sourceLanguage": "原資料の言語",
   "upload.unknownLanguage": "不明",
-  "upload.sourceLanguageHelp": "原資料の言語を選択してください。原文や引用を変更せずに、後からこの言語設定を修正できます。"
+  "upload.sourceLanguageHelp": "原資料の言語を選択してください。原文や引用を変更せずに、後からこの言語設定を修正できます。",
+  "auth.required": "続行するには Learning OS アカウントにログインしてください。",
+  "auth.signIn": "ログイン"
 }

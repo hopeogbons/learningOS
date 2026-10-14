@@ -259,5 +259,7 @@
   "home.reviewDetail": "{count} bagian perlu diulang hari ini",
   "upload.sourceLanguage": "Bahasa sumber",
   "upload.unknownLanguage": "Tidak diketahui",
-  "upload.sourceLanguageHelp": "Pilih bahasa materi asli. Anda dapat memperbaiki keterangan ini nanti tanpa mengubah teks sumber atau kutipannya."
+  "upload.sourceLanguageHelp": "Pilih bahasa materi asli. Anda dapat memperbaiki keterangan ini nanti tanpa mengubah teks sumber atau kutipannya.",
+  "auth.required": "Masuk ke akun Learning OS Anda untuk melanjutkan.",
+  "auth.signIn": "Masuk"
 }

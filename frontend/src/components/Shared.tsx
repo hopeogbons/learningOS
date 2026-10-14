@@ -45,6 +45,15 @@ export function Status({
   retry?: () => void;
 }) {
   const { t } = useI18n();
+  if (error === "authentication_required" || error === "authentication required")
+    return (
+      <div role="alert" className="alert alert-primary">
+        <p className="mb-2">{t("auth.required")}</p>
+        <a href="/api/v1/auth/login" className="btn btn-primary btn-sm">
+          {t("auth.signIn")}
+        </a>
+      </div>
+    );
   if (error)
     return (
       <div role="alert" className="alert alert-danger">

@@ -1,0 +1,7 @@
+{
+  "private_permissions": "passed",
+  "valid_encryption_key": "passed",
+  "strong_session_key": "passed",
+  "non_overwriting_repeat": "passed",
+  "isolated_database_path": "passed"
+}

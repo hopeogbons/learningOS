@@ -54,9 +54,15 @@ child_pids+=("$!")
 setsid bash -c 'cd "$1/frontend"; exec npm run dev -- --hostname 127.0.0.1 --port "$2"' _ "$REPO_ROOT" "$web_port" >"$LEARNING_OS_RUNTIME_DIR/web-$web_port.log" 2>&1 &
 child_pids+=("$!")
 ready=false
+expected_dashboard_status=200
+if [[ "$APP_MODE" == live || "$APP_MODE" == connected ]]; then
+  # Readiness is public, while a connected dashboard must require sign-in.
+  expected_dashboard_status=401
+fi
 for attempt in {1..90}; do
   for owned_pid in "${child_pids[@]}"; do kill -0 "$owned_pid" 2>/dev/null || { echo 'A service exited. Inspect private .runtime/*.log files.' >&2; exit 1; }; done
-  if curl --fail --silent "http://127.0.0.1:$api_port/api/v1/ready" >/dev/null && curl --fail --silent "http://127.0.0.1:$api_port/api/v1/dashboard" >/dev/null && curl --fail --silent "http://127.0.0.1:$web_port" >/dev/null; then ready=true; break; fi
+  dashboard_status="$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:$api_port/api/v1/dashboard" || true)"
+  if curl --fail --silent "http://127.0.0.1:$api_port/api/v1/ready" >/dev/null && [[ "$dashboard_status" == "$expected_dashboard_status" ]] && curl --fail --silent "http://127.0.0.1:$web_port" >/dev/null; then ready=true; break; fi
   sleep 1
 done
 [[ "$ready" == true ]] || { echo 'Services did not become ready within 90 seconds.' >&2; exit 1; }

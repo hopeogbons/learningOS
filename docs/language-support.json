@@ -3,132 +3,142 @@
   "languages": [
     {
       "ui_locale": "en",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-en.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "zh-Hans",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-zh-Hans.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "es",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-es.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "ar",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-ar.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "pt",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-pt.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "fr",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-fr.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "ja",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-ja.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "ru",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-ru.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "de",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-de.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     },
     {
       "ui_locale": "id",
-      "study_text": "blocked",
+      "study_text": "unverified",
       "ui_catalog": "verified",
-      "stt": "blocked",
-      "tts": "blocked",
+      "stt": "unverified",
+      "tts": "unverified",
       "evidence": [
         "docs/evidence/locales.json: technical catalog/ICU/assets passed; proficient quality review pending",
         "docs/evidence/browser/locale-id.png: layout render passed",
-        "docs/evidence/live-preflight.json: actual model/speech credentials absent; no provider calls",
-        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation"
+        "docs/evidence/live-preflight.json: historical preflight before credentials were supplied",
+        "docs/evidence/turn-locale-tests.log: fake-only context/pending-turn preservation, not live translation",
+        "docs/evidence/connected-verification.json: real study/assessment and synthetic TTS/STT endpoint checks passed; proficient/native/audibility/browser approval pending"
       ]
     }
   ]

@@ -2,6 +2,8 @@
 
 Learning OS turns your own source material into cited teaching, recall checks, confidence-aware assessment and spaced review. The Next.js/React/TypeScript frontend preserves the supplied Learning OS dashboard; Python/FastAPI, SQLAlchemy and durable database jobs implement the learning workflow.
 
+For the user-selected **localhost connected review**, follow [the local staging guide](docs/LOCALHOST_STAGING.md). It supplies private, non-overwriting settings initialization, exact Google callback registration, sign-in/Drive consent, and startup using the original frozen locks. Real text/vision and synthetic speech endpoint checks now pass; native-language/voice review, Drive consent, and production gates remain separate.
+
 The current release level and exact passed/blocked gates are recorded in [the release report](docs/RELEASE_REPORT.md), [build state](docs/build-state.json) and [capability evidence](docs/capabilities.md). Offline tests and translated catalogs do not establish live multilingual study/speech or real Google Drive folder/write/drop access.
 
 ## Run the offline demo

@@ -1,0 +1,489 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-14T01:30:27.271359+00:00",
+  "selected_staging_target": "localhost-on-user-computer",
+  "provider_access": {
+    "http_status": 200,
+    "configured_models_available": {
+      "LLM_MODEL": true,
+      "STT_MODEL": true,
+      "TTS_MODEL": true
+    }
+  },
+  "live_text_vision": {
+    "provider_calls_attempted": 42,
+    "checks": [
+      {
+        "case": "en:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "zh-Hans:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "es:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "ar:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "pt:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "fr:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "ja:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "ru:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "de:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "id:fixture-preflight",
+        "status": "programmatic_pass",
+        "source_sha256": "b25650d47cce7e908d221fc29f12746c7d219f9c0107b8c3754a8bdb11bc1a34"
+      },
+      {
+        "case": "en:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "3579edcf34804c6440b2f4bceb7b1d646688432e90f119fa93c0705e28bb0ad2",
+        "elapsed_ms": 4672
+      },
+      {
+        "case": "en:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "85b1164c430a293ad2f4c116b3fd21bc104445e827725c3f2c317e1ce3726d95",
+        "elapsed_ms": 8397
+      },
+      {
+        "case": "en:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "aad911171da3ec0fa0876a34e795bd2fe6ffe12cb1be707a6bef2dca2b37199a",
+        "elapsed_ms": 6704
+      },
+      {
+        "case": "en:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "3977bd4a01e4a825b9d2f60770a752304276b57820338f2bea154177e13bedbe",
+        "elapsed_ms": 9822
+      },
+      {
+        "case": "zh-Hans:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "64c2671877be9509cefd549c212250a6a163408421b938c33957f89257962c18",
+        "elapsed_ms": 4202
+      },
+      {
+        "case": "zh-Hans:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "a57939de32dbd8477dd1febb8b44628bcfa688b43e8e5c41b5d4a93a81d199ac",
+        "elapsed_ms": 11740
+      },
+      {
+        "case": "zh-Hans:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "a10f4bd3b0ac89c13043480608b4eba0bd2d2c65d676bfe1ed26c02775baa3bb",
+        "elapsed_ms": 6793
+      },
+      {
+        "case": "zh-Hans:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "ec3fcca9767b94b2e8ef2b4faa2dcdcf1ea9bcf43022dbf81a4bf5c8b2d7066c",
+        "elapsed_ms": 11860
+      },
+      {
+        "case": "es:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "5268540ef430c3a08863ebffa87dfc7ab33a16fad2ec1747c7a8a8c1d44bbd46",
+        "elapsed_ms": 4062
+      },
+      {
+        "case": "es:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "bd3a18d181f0d08fabdf001609555470402beaa68549a2b1e2beffc06d7e4063",
+        "elapsed_ms": 11099
+      },
+      {
+        "case": "es:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "ec2c42adf97ec1715dd7f42ab2d840c61da633df5aff78f453b91a24ddc7786d",
+        "elapsed_ms": 7652
+      },
+      {
+        "case": "es:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "3250458d198bcb1e4c9b5dc7d714d593f05d27e05b79d8566cb49a69c1629b62",
+        "elapsed_ms": 10644
+      },
+      {
+        "case": "ar:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "365a8c3ebf2ac23150ab62f09becb5f9a61072abab42b0dc9c0103705cc390bf",
+        "elapsed_ms": 4843
+      },
+      {
+        "case": "ar:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "3482175a2779a159c3319b33da8a5acee47c96b3630df5918599ab6503ca44ef",
+        "elapsed_ms": 12106
+      },
+      {
+        "case": "ar:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "7bce9843837cf1571ea35e89162dd2e9046404d50bd590417e5de1a112d59c54",
+        "elapsed_ms": 7293
+      },
+      {
+        "case": "ar:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "6324f3ad26b2150e116976b309f65cfff8220783e7e2bc33e467345a4b9499c3",
+        "elapsed_ms": 10906
+      },
+      {
+        "case": "pt:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "89a4e69954d9f1527405400e2d4c11df1e149d7a98ac2e352103e2b4575687b5",
+        "elapsed_ms": 4526
+      },
+      {
+        "case": "pt:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "df9f947322bb3bd5b94d118a13cb61e0d6c68b68e4d06a97bb1a4330e4027b5a",
+        "elapsed_ms": 11047
+      },
+      {
+        "case": "pt:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "bdcf106d3fc9f9e10e50b368bc86bfdb74258a9ec37a62e0d04eb7a9ea4c25b1",
+        "elapsed_ms": 7099
+      },
+      {
+        "case": "pt:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "e33912c287047d4ef78c46485706b79df2d0cc5d192d18ae29fa0fcd02a10009",
+        "elapsed_ms": 10459
+      },
+      {
+        "case": "fr:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "fbdbc57540330979da6d61b2170f03279609a0e1e1f0c8b8b53dfbfe83813cb8",
+        "elapsed_ms": 5000
+      },
+      {
+        "case": "fr:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "6d42f75c68089ad43c06bb60704009275911038f1a530ae7466626a7cfa10fdf",
+        "elapsed_ms": 10890
+      },
+      {
+        "case": "fr:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "d4e583cae95eb27419970cf51094f52bd64927f2883ff32d969ba09fab02ec8b",
+        "elapsed_ms": 6663
+      },
+      {
+        "case": "fr:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "6e9ea5dba3169f1f6222c8bdbd45e78765ae8e4dc9aac7803a163f97b3d6c70f",
+        "elapsed_ms": 10098
+      },
+      {
+        "case": "ja:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "e13d07797ad92d875d1d268418889ceedfa1dc32ebb80070502ff6c2ada0c79b",
+        "elapsed_ms": 5542
+      },
+      {
+        "case": "ja:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "6fc8f0d4334372f84488f66c8b4ad8aebfe6de6bd477e9ecdadca0c3136e793a",
+        "elapsed_ms": 10189
+      },
+      {
+        "case": "ja:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "0b24e93f21f146da6039471b02da8e843b9eb4069925f7c475484c9219ccfaeb",
+        "elapsed_ms": 7981
+      },
+      {
+        "case": "ja:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "782919a4e3261ad3cd00977a25a70389006a866743c6d65d2b6b58466acfce39",
+        "elapsed_ms": 12746
+      },
+      {
+        "case": "ru:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "d6127eae4331ecf709f3f18d63236c9575e825b1263b813fad1d2201c058133b",
+        "elapsed_ms": 4234
+      },
+      {
+        "case": "ru:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "58910130ed6565bb6c45cb0d28237d4978035797174ef1172f91a951340396fc",
+        "elapsed_ms": 13015
+      },
+      {
+        "case": "ru:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "51905e45e34f44ff7627cd51b43fe965f8ec17ca5514f6f502d111d8936d12a0",
+        "elapsed_ms": 7494
+      },
+      {
+        "case": "ru:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "f75bc2247290363ab986c374e8baf2d1ed271dcced0b535fde34a111e4926192",
+        "elapsed_ms": 8637
+      },
+      {
+        "case": "de:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "c9da8adc6255a53ed9643c2b8dfa392267983bb6f861df146b075c57759fe446",
+        "elapsed_ms": 4519
+      },
+      {
+        "case": "de:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "85488600a68388ddf3d90ead801f877c3f91c3fe7701eab4a55e1dc188344dd6",
+        "elapsed_ms": 10411
+      },
+      {
+        "case": "de:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "763acbd71cc26db0006f67f076a1cbd1bd44d5187a916c7996050a2d453a7899",
+        "elapsed_ms": 7889
+      },
+      {
+        "case": "de:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "49014200a201db88b1cd572036d3a59519bbb3c0e30c3bac5869da2509ac6d45",
+        "elapsed_ms": 11727
+      },
+      {
+        "case": "id:text:question",
+        "status": "programmatic_pass",
+        "output_sha256": "8f6bc57894db7f51d99b3f9f921480e867d215274f72a10129b4a63cdc49536a",
+        "elapsed_ms": 4939
+      },
+      {
+        "case": "id:text:correct",
+        "status": "programmatic_pass",
+        "output_sha256": "0c23c71b0ded64db0a1bed9c913fa31b2ec017ea4a34b6ad7112dfeac41dd3c7",
+        "elapsed_ms": 9789
+      },
+      {
+        "case": "id:text:incorrect",
+        "status": "programmatic_pass",
+        "output_sha256": "1dd9d292d42be00e6e1b24dfd3d299bf1582f405124ae6531a411a30d5cf4e62",
+        "elapsed_ms": 6837
+      },
+      {
+        "case": "id:text:low-confidence",
+        "status": "programmatic_pass",
+        "output_sha256": "fec2e96bdaef43ed929a12e1b3c9670b40b3b71822d69b3848921a110862e527",
+        "elapsed_ms": 13695
+      },
+      {
+        "case": "vision:clear",
+        "status": "programmatic_pass",
+        "output_sha256": "316e83348131770b3539dc01d2be394360a68f97cb653f2e0673e2b1d1f918f9",
+        "elapsed_ms": 3139
+      },
+      {
+        "case": "vision:blurry-needs-retake",
+        "status": "programmatic_pass",
+        "output_sha256": "38087034348ae058242ee39533521aa8b4547278d2e49bb47c360842e773d111",
+        "elapsed_ms": 2673
+      }
+    ],
+    "human_semantic_review": "pending"
+  },
+  "live_speech_endpoints": {
+    "checks": [
+      {
+        "locale": "en",
+        "speech_locale": "en-GB",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true,
+        "reused_english_smoke": true
+      },
+      {
+        "locale": "zh-Hans",
+        "speech_locale": "zh-CN",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "es",
+        "speech_locale": "es-ES",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "ar",
+        "speech_locale": "ar-SA",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "pt",
+        "speech_locale": "pt-BR",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "fr",
+        "speech_locale": "fr-FR",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "ja",
+        "speech_locale": "ja-JP",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "ru",
+        "speech_locale": "ru-RU",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "de",
+        "speech_locale": "de-DE",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      },
+      {
+        "locale": "id",
+        "speech_locale": "id-ID",
+        "tts": "programmatic_pass",
+        "stt": "programmatic_pass",
+        "semantic_review": "pending",
+        "synthetic_keyword_check": true
+      }
+    ],
+    "provider_calls_including_english_smoke": 20,
+    "native_review": "pending",
+    "audibility_review": "pending",
+    "browser_three_turn_proof": "pending",
+    "runtime_verified_allowlist_changed": false
+  },
+  "drive": {
+    "drive_client_config_present": true,
+    "token_encryption_key_present": false,
+    "oidc_config_present": false,
+    "authenticated_staging_origin_present": false,
+    "configured_drive_redirect_is_https": false,
+    "configured_drive_redirect_matches_app_callback_path": false,
+    "connected_drive_accounts": 0,
+    "live_drive_gates": "blocked-until-authenticated-staging-and-learner-consent"
+  },
+  "localhost_browser": {
+    "results": [
+      {
+        "locale": "en",
+        "signin_link": "passed",
+        "rtl_and_mobile_layout": "passed",
+        "page_errors": 0
+      },
+      {
+        "locale": "ar",
+        "signin_link": "passed",
+        "rtl_and_mobile_layout": "passed",
+        "page_errors": 0
+      }
+    ],
+    "google_consent": "blocked-until-client-registration"
+  },
+  "validation": {
+    "backend_passed": 106,
+    "backend_skipped": 3,
+    "backend_skip_reason": "isolated PostgreSQL fixture not provided for this follow-up; previous PostgreSQL proof retained",
+    "targeted_backend_passed": 26,
+    "frontend_lint": "passed",
+    "frontend_typecheck": "passed",
+    "frontend_build_routes": 16,
+    "catalogs": 10,
+    "keys_per_catalog": 263
+  },
+  "initial_failures": [
+    {
+      "case": "original-teaching-smoke",
+      "attempts": 2,
+      "failure": "required original source quote omitted",
+      "fix": "nonempty quote schema and explicit original-quote instruction"
+    },
+    {
+      "case": "reviewer-schema-smoke",
+      "attempts": 1,
+      "http_status": 400,
+      "failure": "provider rejects uniqueItems",
+      "fix": "provider-subset schema; full local uniqueness validation retained"
+    }
+  ],
+  "total_billable_inference_attempts": 67,
+  "source_hashes": {
+    "backend/app/llm.py": "4be6c2f13338b3f6dafa0eec88ba8e682925f17b47756f7206d4381c2d7bfdd3",
+    "backend/app/prompts/quizzer.md": "0bbd0bde4984c162d5baa1f6bb3a2c1c3ac1d854ab50b0d24d1733685d5dc693",
+    "backend/app/prompts/reviewer.md": "e92cb8de09b5901c11390e875ab201e12d30212611b7a3590cd4a545c25eb515",
+    "contracts/reviewer.schema.json": "f927ff5f05cef00a63ff45cf718f52c835c0f1c4b27f3b6bdf85cda5b527d115",
+    "scripts/dev.sh": "29791c254d644b71acc27cce86694c223c54e4cceafe71dd78c3057fcb4564c0"
+  },
+  "limits": [
+    "Bounded synthetic-source checks do not establish native-language correctness or education efficacy.",
+    "Synthetic TTS/STT roundtrips do not satisfy L04 native/audio/browser three-turn proof.",
+    "Drive consent and D01-D06 remain blocked; no live Drive writes were made.",
+    "Localhost origin is reachable only on its own machine.",
+    "Previous container images/archive predate these changes; production latency target remains failed."
+  ],
+  "independent_native_review": {
+    "agent": "/root/connected_review",
+    "scope": "read-only provider subset, localhost auth/startup, private initialization, evidence/gate honesty",
+    "focused_provider_regressions_passed": 5,
+    "helper_atomic_permissions_symlink_checks": "passed",
+    "source_hashes": "matched",
+    "external_requests": false,
+    "credential_values_inspected": false,
+    "finding": "Historical catalog count clarified by labeling initial offline section."
+  }
+}

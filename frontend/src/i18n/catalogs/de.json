@@ -259,5 +259,7 @@
   "home.reviewDetail": "{count, plural, one {# Abschnitt heute fällig} other {# Abschnitte heute fällig}}",
   "upload.sourceLanguage": "Sprache der Quelle",
   "upload.unknownLanguage": "Unbekannt",
-  "upload.sourceLanguageHelp": "Wählen Sie die Sprache des Originalmaterials. Sie können diese Angabe später korrigieren, ohne den Quelltext oder die Zitate zu ändern."
+  "upload.sourceLanguageHelp": "Wählen Sie die Sprache des Originalmaterials. Sie können diese Angabe später korrigieren, ohne den Quelltext oder die Zitate zu ändern.",
+  "auth.required": "Melde dich bei deinem Learning OS-Konto an, um fortzufahren.",
+  "auth.signIn": "Anmelden"
 }

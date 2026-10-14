@@ -259,5 +259,7 @@
   "home.reviewDetail": "今天需复习 {count} 个章节",
   "upload.sourceLanguage": "原始资料语言",
   "upload.unknownLanguage": "未知",
-  "upload.sourceLanguageHelp": "选择原始资料的语言。您可以稍后更正此标签，而不会更改原文或引用。"
+  "upload.sourceLanguageHelp": "选择原始资料的语言。您可以稍后更正此标签，而不会更改原文或引用。",
+  "auth.required": "登录您的 Learning OS 账户以继续。",
+  "auth.signIn": "登录"
 }

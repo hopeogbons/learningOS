@@ -1,5 +1,17 @@
 # Build log
 
-No application batch has run yet. Package preparation validated the source template and document/helper contracts only.
+The original package-preparation note predates implementation. Completed build evidence is recorded in build-state.json, RELEASE_REPORT.md, and docs/evidence; retain historical checks as evidence of their exact source version.
 
 Use one entry per actual gate: timestamp/client timezone; batch; commit/diff; commands and working directories; exit codes; test counts/statuses; screenshot paths/review; native Codex artifacts; diagnosis/fix; remaining external prerequisite. Never add sample 'passed' entries before execution.
+
+## 2026-10-14 — connected follow-up, localhost target (Africa/Lagos)
+
+The user authorized connected verification and selected localhost. From /workspace/learningOS, the real API model list returned 200 and all configured text/STT/TTS models were available. Two initial teaching probes failed because the required original-quote array was empty. After a nonempty schema/prompt fix, a teaching probe passed; the first reviewer probe returned 400 because uniqueItems is unsupported by the provider. Adapting only the outbound schema while retaining full local validation corrected that failure. Five provider regressions were added; 26 targeted tests passed, exit 0.
+
+The existing verify_live_learning.py command ran APP_MODE=live with --allow-provider-calls --sections text,vision and fresh private report/review paths: exit 0, 42 actual inference checks passed across all ten languages and two vision cases. Twenty actual TTS/STT endpoint checks also passed using synthetic audio and a temporary probe-only locale allowlist. No persistent speech certification was changed. L03/L04 human/browser requirements remain pending. Raw outputs stayed ignored/private; redacted metadata is evidence/connected-verification.json.
+
+Local staging initialization created a private 0600 environment file and usable generated encryption/session keys without copying cloud credentials. A second invocation refused overwrite. The first uv command encountered a read-only default cache; the supported writable cache resolved it. APP_MODE=live is explicitly set before uv to override an inherited demo mode. Google consent remains unavailable until actual Web-client/redirect registration and user sign-in.
+
+scripts/dev.sh previously required an anonymous dashboard 200 in live mode; it now verifies a protected 401 plus functional readiness and frontend 200. API/worker/frontend live startup passed on internal test ports 8040/3040. An initially missing sign-in prompt was added to the shared alert with all-ten catalog strings; the browser exposed a space-normalized auth message, and both actual forms are handled. English/Arabic mobile browser checks then passed with no page errors or overflow. The browser's downloaded executable was absent; the installed Chromium used by the existing acceptance suite resolved it.
+
+Full backend follow-up: 106 passed, 3 skipped, 3 warnings, exit 0; PostgreSQL fixture unavailable in this run. The old PostgreSQL evidence is retained. Catalog check: ten locales, 263 keys, 23,670 ICU formats, 230 local font assets, exit 0. Lint, TypeScript, and 16-route production frontend build passed. No live Google Drive writes, public deployment, remote Git publication, provider account provisioning, or production latency rebenchmark occurred. New source packaging excludes all private environment files/audio/transcripts. Existing container images and downloads predate the fixes.

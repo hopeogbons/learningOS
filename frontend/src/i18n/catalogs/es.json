@@ -259,5 +259,7 @@
   "home.reviewDetail": "{count, plural, one {# sección para hoy} other {# secciones para hoy}}",
   "upload.sourceLanguage": "Idioma de la fuente",
   "upload.unknownLanguage": "Desconocido",
-  "upload.sourceLanguageHelp": "Elige el idioma del material original. Puedes corregir esta etiqueta más adelante sin cambiar el texto ni las citas."
+  "upload.sourceLanguageHelp": "Elige el idioma del material original. Puedes corregir esta etiqueta más adelante sin cambiar el texto ni las citas.",
+  "auth.required": "Inicia sesión en tu cuenta de Learning OS para continuar.",
+  "auth.signIn": "Iniciar sesión"
 }

@@ -296,5 +296,7 @@ export const messages = {
   "notices.empty": "You are all caught up.",
   "notices.read": "Mark read",
   "notices.description": "Ingestion and review updates from your account.",
+  "auth.required": "Sign in to continue with your Learning OS account.",
+  "auth.signIn": "Sign in",
 } as const;
 export type MessageKey = keyof typeof messages;

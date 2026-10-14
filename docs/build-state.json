@@ -139,12 +139,20 @@
           "artifact": "docs/evidence/turn-locale-tests.log"
         },
         {
-          "name": "Real multilingual provider semantics",
+          "name": "L03 proficient/native semantic review after passed live provider probes",
           "outcome": "blocked",
           "command": null,
           "cwd": "/workspace/learningOS",
           "exit_code": null,
-          "artifact": "docs/evidence/live-preflight.json"
+          "artifact": "docs/evidence/connected-verification.json"
+        },
+        {
+          "name": "All ten live text question/correct/incorrect/low-confidence provider probes (40); proficient review pending",
+          "outcome": "passed",
+          "command": "APP_MODE=live backend/.venv/bin/python scripts/verify_live_learning.py --allow-provider-calls --sections text,vision --private-review-dir .runtime/connected-verification/<fresh-run>/all-ten-private --report .runtime/connected-verification/<fresh-run>/all-ten-text-vision.json",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/connected-verification.json"
         }
       ]
     },
@@ -246,10 +254,11 @@
     },
     {
       "id": "08",
-      "status": "blocked",
+      "status": "passed",
       "evidence": [
         "backend/app/sources/local.py",
-        "scripts/verify_live_learning.py"
+        "scripts/verify_live_learning.py",
+        "docs/evidence/connected-verification.json"
       ],
       "checks": [
         {
@@ -262,11 +271,11 @@
         },
         {
           "name": "Real clear/blurry vision provider proof",
-          "outcome": "blocked",
-          "command": null,
+          "outcome": "passed",
+          "command": "APP_MODE=live backend/.venv/bin/python scripts/verify_live_learning.py --allow-provider-calls --sections text,vision --private-review-dir .runtime/connected-verification/<fresh-run>/all-ten-private --report .runtime/connected-verification/<fresh-run>/all-ten-text-vision.json",
           "cwd": "/workspace/learningOS",
-          "exit_code": null,
-          "artifact": "docs/evidence/live-preflight.json"
+          "exit_code": 0,
+          "artifact": "docs/evidence/connected-verification.json"
         }
       ]
     },
@@ -327,6 +336,14 @@
           "cwd": "/workspace/learningOS",
           "exit_code": null,
           "artifact": "docs/evidence/live-preflight.json"
+        },
+        {
+          "name": "All ten real TTS/STT synthetic endpoint roundtrips; native/browser L04 pending",
+          "outcome": "passed",
+          "command": "APP_MODE=live private synthetic speech probe through app/llm.py; temporary probe-only speech allowlist",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/connected-verification.json"
         }
       ]
     },
@@ -411,18 +428,34 @@
           "cwd": "/workspace/learningOS",
           "exit_code": 0,
           "artifact": "docs/evidence/environment-draft.json"
+        },
+        {
+          "name": "Follow-up regression suite: 106 passed, 3 PostgreSQL-fixture skips; 26 targeted provider/session regressions passed",
+          "outcome": "passed",
+          "command": "backend/.venv/bin/python -m pytest -q backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/connected-backend-tests.log"
+        },
+        {
+          "name": "Local live startup; protected dashboard 401; English/Arabic mobile sign-in; Google OAuth still unconfigured",
+          "outcome": "passed",
+          "command": "APP_MODE=live API_PORT=8040 WEB_PORT=3040 uv run --frozen --project backend --env-file .runtime/localhost/localhost.env bash scripts/dev.sh; local HTTP/Chromium checks",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/connected-verification.json"
         }
       ]
     }
   ],
   "external_blockers": [
-    "Live model/vision credentials and actual model identifiers missing; L03 semantic review unrun.",
-    "Real per-learner Drive OAuth scopes/consent, folder/UI placement/direct-drop D01\u2013D06 unverified.",
-    "Live all-ten STT/TTS, native transcript/audibility/browser three-turn L04 proof pending; translation catalogs need proficient review.",
-    "Public-page pinned DNS route unavailable in this cloud; permitted captions access unverified.",
-    "Production OIDC/private S3/domain/DNS/HTTPS/account settings and P09 deployment proof missing; no publication performed.",
-    "P05 latency target failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
-    "Development lint chain has five high advisory findings; standalone production npm audit zero; OS/container scanning unrun.",
-    "Environment draft saved/requires publish; remote GitHub publication and fresh-task local-only commit restoration unverified."
+    "AI model availability and 42 live text/vision checks passed; L03 proficient/native semantic review remains pending.",
+    "User selected localhost: real Google Web-client registration, valid local callback, account sign-in/Drive consent and D01-D06 actual folder/write/drop proof remain pending. Local raw token/session keys are generated privately, never proxy placeholders.",
+    "All ten real TTS/STT synthetic roundtrips passed; L04 native transcript/audibility/browser three-turn proof and proficient catalog review remain pending. Runtime speech allowlist unchanged.",
+    "Public-page pinned DNS route and permitted captions fetch remain unverified on the target network.",
+    "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public/GitHub publication performed.",
+    "P05 latency target remains failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
+    "Development lint-chain findings and OS/container scans remain pending as recorded in release report.",
+    "Previously verified container images/archive predate connected fixes; rebuild/revalidate images before a production release. New source archive carries the follow-up."
   ]
 }

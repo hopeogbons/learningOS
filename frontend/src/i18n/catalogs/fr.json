@@ -259,5 +259,7 @@
   "home.reviewDetail": "{count, plural, one {# section à réviser aujourd’hui} other {# sections à réviser aujourd’hui}}",
   "upload.sourceLanguage": "Langue de la source",
   "upload.unknownLanguage": "Inconnue",
-  "upload.sourceLanguageHelp": "Choisissez la langue du document original. Vous pourrez corriger cette indication plus tard sans modifier le texte ni les citations."
+  "upload.sourceLanguageHelp": "Choisissez la langue du document original. Vous pourrez corriger cette indication plus tard sans modifier le texte ni les citations.",
+  "auth.required": "Connectez-vous à votre compte Learning OS pour continuer.",
+  "auth.signIn": "Se connecter"
 }
