@@ -726,6 +726,17 @@
         "skipped": 0,
         "exit_code": 0
       }
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "Google-only sign-in panel; remove disabled future-provider placeholders",
+      "status": "implemented; frontend lint and frozen production image build passed",
+      "evidence": [
+        "docs/UI_CONTRACT.md",
+        "frontend/src/components/Shared.tsx"
+      ],
+      "frontend_lint": "passed",
+      "frontend_build": "passed"
     }
   ]
 }

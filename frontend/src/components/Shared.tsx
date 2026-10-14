@@ -50,15 +50,9 @@ export function Status({
       <div role="alert" className="alert alert-primary auth-required">
         <p className="mb-2">{t("auth.required")}</p>
         <div className="auth-provider-actions d-flex flex-wrap gap-2">
-        <a href="/api/v1/auth/login" className="btn btn-primary">
-          {t("auth.signIn")}
-        </a>
-        <button type="button" className="btn btn-outline-secondary" disabled aria-label={`${t("auth.apple")}: ${t("auth.comingSoon")}`}>
-          {t("auth.apple")} <span className="small">· {t("auth.comingSoon")}</span>
-        </button>
-        <button type="button" className="btn btn-outline-secondary" disabled aria-label={`${t("auth.microsoft")}: ${t("auth.comingSoon")}`}>
-          {t("auth.microsoft")} <span className="small">· {t("auth.comingSoon")}</span>
-        </button>
+          <a href="/api/v1/auth/login" className="btn btn-primary">
+            {t("auth.signIn")}
+          </a>
         </div>
         <p className="small text-body-secondary mt-2 mb-0">{t("auth.googleNote")}</p>
       </div>

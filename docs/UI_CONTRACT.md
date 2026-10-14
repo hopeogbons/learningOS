@@ -49,7 +49,7 @@
 
 ## Sign-in providers
 
-The current configured identity provider is Google OIDC. The active authentication action must say **Continue with Google** (localized) and clearly refer to a Google account. Do not call this Gmail access: Gmail remains a separate, optional read-only content connection. Apple, Microsoft and other future providers may appear as clearly disabled outline placeholders labeled **Coming soon**; placeholders must not navigate, submit to Google or imply configured sign-in support. The active Google action remains filled kale; Log out remains outline/link-style.
+The current configured identity provider is Google OIDC. The active authentication action must say **Continue with Google** (localized) and clearly refer to a Google account. Do not call this Gmail access: Gmail remains a separate, optional read-only content connection. Show only the configured Google sign-in option. Remove Apple, Microsoft and other future-provider Coming soon placeholders. Done when the sign-in panel contains one active Google action and no unsupported-provider buttons on mobile or desktop. Future providers may use their actual brand icons when implemented. The active Google action remains filled kale; Log out remains outline/link-style.
 
 ## Visual verification and acceptance
 
