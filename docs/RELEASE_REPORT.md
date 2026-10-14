@@ -1,6 +1,12 @@
 # Learning OS build and release report
 
-The requested application is implemented in this checkout with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The release is an **offline demonstration candidate**. All twelve batches were attempted; connected and production gates remain explicitly blocked. No public deployment or GitHub publication was performed.
+The requested application is implemented with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The release is an **offline demonstration candidate** with preliminary live provider verification. All twelve batches were attempted; complete connected and production gates remain pending. The user requested access outside Codex, so the reviewed source was pushed to the initial `main` branch at https://github.com/hopeogbons/learningOS. Public application deployment remains unpublished.
+
+## GitHub access and Docker demo follow-up
+
+The source is now accessible through the repository's regular Code → Download ZIP action. README supplies one Docker Compose startup command for the user's own computer, with no Codex/Node/Python/provider-key setup required for the offline demo. Current backend/frontend images were rebuilt and the isolated Compose stack started successfully. Initial `--wait` failed because the worker had no healthcheck; a container-local database heartbeat check now verifies only that worker's host, rejects stale/future timestamps, and returns failure without logging connection secrets. Both demo and prepared production Compose use it; no production deployment was made.
+
+Seven worker-health regressions plus five provider regressions passed. The latest full backend run has **113 passed, 3 skipped** (the isolated PostgreSQL fixture was absent). The rebuilt stack passed same-origin readiness, original Home desktop/mobile rendering with no errors/overflow, and an actual browser upload followed by durable extraction and an original citation. New demo image IDs, input fingerprints, checks, and synthetic-only screenshots are in evidence/github-access-review.json and evidence/github-demo-container-source.json. The earlier full container rollback evidence remains historical; production registry references, live integrations, performance, and target-host validation are still pending.
 
 ## Connected follow-up: localhost selected
 

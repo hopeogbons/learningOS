@@ -30,7 +30,12 @@ services:
     command: [python, -m, app.worker]
     depends_on:
       migrate: {condition: service_completed_successfully}
-    healthcheck: {disable: true}
+    healthcheck:
+      test: [CMD, python, -m, app.worker_health]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
     restart: unless-stopped
   frontend:
     image: learningos-frontend:demo

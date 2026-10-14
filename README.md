@@ -2,6 +2,20 @@
 
 Learning OS turns your own source material into cited teaching, recall checks, confidence-aware assessment and spaced review. The Next.js/React/TypeScript frontend preserves the supplied Learning OS dashboard; Python/FastAPI, SQLAlchemy and durable database jobs implement the learning workflow.
 
+## Open the app on your computer
+
+The source is available on [GitHub](https://github.com/hopeogbons/learningOS). Download it using **Code → Download ZIP**, extract it, and open a terminal in the folder containing this README. With [Docker Desktop](https://docs.docker.com/desktop/) installed and running (or Docker Engine with Compose on Linux), run:
+
+```bash
+docker compose -f deploy/compose.demo.yml up --build -d --wait
+```
+
+Then open `http://127.0.0.1:3000` in a browser **on that computer**. Docker supplies Node, Python, the database, API, worker, and frontend; you do not need Codex or provider keys to view the dashboard. This is the labeled offline demo: AI responses use synthetic English fixtures, live Drive/voice is unavailable, and external link retrieval remains separately verified. Interface language switching, local file intake, source citations, scope selection, and study/review state can be tested. The first image build can take several minutes.
+
+Stop the demo with `docker compose -f deploy/compose.demo.yml down`; its local demo data remains in the named volume. For real AI, sign-in, and Drive consent, follow the connected-localhost guide below.
+
+[View the tested desktop dashboard](docs/evidence/github-demo-home.png) · [View the mobile dashboard](docs/evidence/github-demo-mobile.png)
+
 For the user-selected **localhost connected review**, follow [the local staging guide](docs/LOCALHOST_STAGING.md). It supplies private, non-overwriting settings initialization, exact Google callback registration, sign-in/Drive consent, and startup using the original frozen locks. Real text/vision and synthetic speech endpoint checks now pass; native-language/voice review, Drive consent, and production gates remain separate.
 
 The current release level and exact passed/blocked gates are recorded in [the release report](docs/RELEASE_REPORT.md), [build state](docs/build-state.json) and [capability evidence](docs/capabilities.md). Offline tests and translated catalogs do not establish live multilingual study/speech or real Google Drive folder/write/drop access.
@@ -17,7 +31,7 @@ scripts/seed.sh
 scripts/dev.sh
 ```
 
-The implementation is currently a local review candidate; GitHub publication has not been performed. For the downloadable source archive, safely extract it, change into its root, then run the same scripts. Seed is idempotent, synthetic and restricted to demo mode. In the existing cloud checkout start from `scripts/setup.sh`; snapshots retain installed files and data, but running servers must be started again with `scripts/dev.sh`.
+The reviewed source is available on GitHub's `main` branch; public application deployment remains pending. For a downloaded source archive, safely extract it, change into its root, then run the same scripts. Seed is idempotent, synthetic and restricted to demo mode. In the existing cloud checkout start from `scripts/setup.sh`; snapshots retain installed files and data, but running servers must be started again with `scripts/dev.sh`.
 
 The local web listens on `http://127.0.0.1:3000`; the API listens on loopback port 8000. The dev script starts API, durable worker and web, checks functional readiness, and stops only its owned child processes on exit. This local address is an internal verification endpoint; a browser on another computer needs the cloud platform's authorized preview/port forwarding. It is not a public deployment URL.
 

@@ -1,0 +1,31 @@
+{
+  "review_target": "isolated loopback Docker demo; no public application deployment",
+  "image_ids": {
+    "learningos-backend:demo": "sha256:ddf6fc0b01e4f129fb5eacdccdc10de50bb79d9bd39b196cb1bc5375c918fee6",
+    "learningos-frontend:demo": "sha256:787e5848d98f67481925ab3a5702fecb1709b4ce5dd136955a09325deddb4863"
+  },
+  "build": "passed",
+  "compose_startup": "passed after adding container-local worker heartbeat healthcheck",
+  "checks": [
+    {
+      "check": "same-origin frontend proxy, migrated database and durable worker readiness",
+      "status": "passed"
+    },
+    {
+      "check": "original Home shell renders on desktop/mobile without errors/overflow",
+      "status": "passed"
+    },
+    {
+      "check": "actual browser file upload, worker extraction and original-source citation through final Docker stack",
+      "status": "passed"
+    }
+  ],
+  "backend_follow_up": "113 passed, 3 skipped (PostgreSQL fixture unavailable)",
+  "worker_and_provider_regressions": 12,
+  "provider_calls": 0,
+  "google_consent": "pending",
+  "github_source": "main branch verified via git ls-remote",
+  "first_compose_attempt": "failed: worker had no healthcheck; retained in build log",
+  "first_source_publish_commit": "9dceb2e4ad5ef8ea084f78b66da7fb61e6ab8edb",
+  "image_inputs_manifest": "docs/evidence/github-demo-container-source.json"
+}

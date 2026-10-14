@@ -444,6 +444,14 @@
           "cwd": "/workspace/learningOS",
           "exit_code": 0,
           "artifact": "docs/evidence/connected-verification.json"
+        },
+        {
+          "name": "GitHub initial main push verified; rebuilt Docker stack/readiness/desktop/mobile/actual UI upload and citation passed; full backend 113 passed/3 fixture skips",
+          "outcome": "passed",
+          "command": "git push origin HEAD:refs/heads/main; git ls-remote origin HEAD refs/heads/main; bash scripts/build_images.sh; docker compose -p learningos-github-review -f deploy/compose.demo.yml -f .runtime/github-access-review/compose.override.yml up -d --wait; actual HTTP/Chromium upload smoke",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/github-access-review.json"
         }
       ]
     }
@@ -453,9 +461,9 @@
     "User selected localhost: real Google Web-client registration, valid local callback, account sign-in/Drive consent and D01-D06 actual folder/write/drop proof remain pending. Local raw token/session keys are generated privately, never proxy placeholders.",
     "All ten real TTS/STT synthetic roundtrips passed; L04 native transcript/audibility/browser three-turn proof and proficient catalog review remain pending. Runtime speech allowlist unchanged.",
     "Public-page pinned DNS route and permitted captions fetch remain unverified on the target network.",
-    "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public/GitHub publication performed.",
+    "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public application deployment; reviewed source is now available on GitHub main.",
     "P05 latency target remains failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
     "Development lint-chain findings and OS/container scans remain pending as recorded in release report.",
-    "Previously verified container images/archive predate connected fixes; rebuild/revalidate images before a production release. New source archive carries the follow-up."
+    "New local demo images rebuilt and container/UI upload/citation checks passed; source is on GitHub main. Production immutable registry references and target-host rollback/release checks still require review."
   ]
 }

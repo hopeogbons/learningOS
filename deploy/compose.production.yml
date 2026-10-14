@@ -29,7 +29,12 @@ services:
     command: [python, -m, app.worker]
     depends_on:
       migrate: {condition: service_completed_successfully}
-    healthcheck: {disable: true}
+    healthcheck:
+      test: [CMD, python, -m, app.worker_health]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 6
   frontend:
     image: ${FRONTEND_IMAGE:?Set a reviewed immutable frontend image reference}
     environment:
