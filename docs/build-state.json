@@ -497,5 +497,27 @@
     "P05 latency target remains failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
     "Development lint-chain findings and OS/container scans remain pending as recorded in release report.",
     "New local demo images rebuilt and container/UI upload/citation checks passed; source is on GitHub main. Production immutable registry references and target-host rollback/release checks still require review."
+  ],
+  "maintenance_updates": [
+    {
+      "date": "2026-10-14",
+      "scope": "bounded source chunks, original provenance verification, Andela green and transparent logo, persistent build instructions",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "docs/UPLOAD_BRANDING_UPDATE.md",
+        "docs/evidence/upload-branding-2026-10-14/pdf-verification.json",
+        "docs/evidence/upload-branding-2026-10-14/responsive-verification.json"
+      ],
+      "backend": {
+        "passed": 178,
+        "skipped": 3,
+        "exit_code": 0
+      },
+      "frontend_lint": "passed",
+      "frontend_build": "passed",
+      "synthetic_9kb_pdf_browser_upload": "passed",
+      "reported_user_pdf_failure": "unresolved_missing_file_or_error",
+      "live_drive": "unrun"
+    }
   ]
 }

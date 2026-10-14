@@ -32,6 +32,7 @@ Authentication is per-learner except health and OIDC start/callback. Envelope er
 | POST `/sessions/{id}/finish` | explicit learner finish; idempotent | summary job/status; only successfully assessed work counts |
 | GET `/sessions/{id}/summary` | privacy protected | covered titles, matched calibration, completed/remaining, citations |
 | GET `/review/due` | optional collection; server clock (demo/test clock injected only) | due titles,next_review_at,stage,needs_attention |
+| GET `/material-revisions/{revision_id}/original` | ownership checked; immutable retained original bytes | private no-store original download, never chunk-only replacement |
 | GET `/citations/{id}` | ownership; revision locator resolves | excerpt,source metadata,authorized viewer URL/coordinates |
 | GET `/jobs/{id}` | owner only | status/progress/retryable/error_code/result IDs |
 | POST `/jobs/{id}/retry` | idempotent; failed/needs-attention only | queued job outcome |

@@ -20,7 +20,7 @@ from .sources.publicweb import fetch_public_page
 from .sources.captions import extract_captions
 from .sources.drive import DriveAdapter, decrypt_credentials, encrypt_credentials, READ_SCOPE, WRITE_SCOPE
 
-EXTRACTION_VERSION = 'source-excerpts-v1'
+EXTRACTION_VERSION = 'source-excerpts-v2'
 
 
 def owned(db, model, identifier, learner_id):

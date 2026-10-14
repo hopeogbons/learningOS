@@ -105,7 +105,7 @@ export const quickActions = [
 export function collectionStyle(key?: string) {
   const styles = {
     teal: { icon: Lightbulb, color: "#0D9488", tint: "#E3F7F4" },
-    blue: { icon: GraduationCap, color: "#2F7BEB", tint: "#EAF3FF" },
+    blue: { icon: GraduationCap, color: "#173b3f", tint: "#eaf5f0" },
     purple: { icon: Music, color: "#7C5CE6", tint: "#F1ECFF" },
   };
   return styles[key as keyof typeof styles] ?? styles.blue;

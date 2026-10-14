@@ -31,7 +31,7 @@ These are implementation tests to create/run, not checks already passed. Tests m
 
 ## Visual/accessibility cases
 
-V01: 390/768/1440 Home captures against supplied baseline; blue hero, 264px sidebar, shortcuts, cards and logo remain recognizable. V02: every route mobile+desktop, 360px and 991/992 boundary, 200% zoom/long strings; no overflow or hidden required capability. V03: keyboard drawer traps/restores focus, Escape and navigation close, tabs/links have correct active state, keyboard reorder works. V04: axe/contrast/label review, 44px actions, screen-reader source/confidence/progress feedback, reduced motion. Screenshot review is recorded by file and reviewer; a screenshot existing alone is not a review.
+V01: 390/768/1440 Home captures against supplied baseline; green hero and standalone brain/circuit logo as authorized on 2026-10-14; 264px sidebar, original six shortcut colors and card geometry remain recognizable. V02: every route mobile+desktop, 360px and 991/992 boundary, 200% zoom/long strings; no overflow or hidden required capability. V03: keyboard drawer traps/restores focus, Escape and navigation close, tabs/links have correct active state, keyboard reorder works. V04: axe/contrast/label review, 44px actions, screen-reader source/confidence/progress feedback, reduced motion. Screenshot review is recorded by file and reviewer; a screenshot existing alone is not a review.
 
 ## Production/security cases
 

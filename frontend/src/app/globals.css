@@ -13,36 +13,36 @@
 @import "tailwindcss/utilities.css" prefix(tw);
 
 @theme {
-  --color-brand-50: #eef3ff;
-  --color-brand-100: #dbe5ff;
-  --color-brand-500: #2f62ea;
-  --color-brand-600: #2149e0;
-  --color-brand-700: #1a37c9;
-  --color-brand-900: #14267f;
-  --color-ink: #1f2a44;
-  --color-muted: #5d6882;
-  --color-surface: #f4f6fb;
+  --color-brand-50: #eaf5f0;
+  --color-brand-100: #b0d6cd;
+  --color-brand-500: #267c4c;
+  --color-brand-600: #173b3f;
+  --color-brand-700: #132128;
+  --color-brand-900: #132128;
+  --color-ink: #132128;
+  --color-muted: #536b69;
+  --color-surface: #f3f8f6;
   --breakpoint-xxl: 87.5rem; /* 1400px, same as Bootstrap xxl */
 }
 
 :root {
-  --edu-brand: #2149e0;
-  --edu-brand-dark: #1a37c9;
-  --edu-ink: #1f2a44;
-  --edu-muted: #5d6882;
-  --edu-surface: #f4f6fb;
+  --edu-brand: #173b3f;
+  --edu-brand-dark: #132128;
+  --edu-ink: #132128;
+  --edu-muted: #536b69;
+  --edu-surface: #f3f8f6;
   --edu-sidebar-w: 264px;
   --bs-body-font-family:
     "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --bs-body-color: var(--edu-ink);
   --bs-body-bg: var(--edu-surface);
-  --bs-primary: #2149e0;
-  --bs-primary-rgb: 33, 73, 224;
-  --bs-link-color: #2149e0;
-  --bs-link-color-rgb: 33, 73, 224;
-  --bs-link-hover-color: #1a37c9;
-  --bs-secondary-color: #5d6882;
-  --bs-border-color: #e6eaf3;
+  --bs-primary: #173b3f;
+  --bs-primary-rgb: 23, 59, 63;
+  --bs-link-color: #173b3f;
+  --bs-link-color-rgb: 23, 59, 63;
+  --bs-link-hover-color: #132128;
+  --bs-secondary-color: #536b69;
+  --bs-border-color: #dce8e3;
 }
 
 body {
@@ -63,7 +63,7 @@ body {
   max-width: 640px;
 }
 
-/* ---------- Mobile hero (blue header + greeting) ---------- */
+/* ---------- Mobile hero (green header + greeting) ---------- */
 .card {
   --bs-card-bg: #fff;
 }
@@ -76,10 +76,10 @@ body {
   background:
     radial-gradient(
       120% 90% at 85% 0%,
-      rgba(86, 130, 255, 0.55) 0%,
-      rgba(86, 130, 255, 0) 60%
+      rgba(64, 193, 95, 0.55) 0%,
+      rgba(64, 193, 95, 0) 60%
     ),
-    linear-gradient(165deg, var(--edu-brand-dark) 0%, #2a5bea 70%, #4a79f2 100%);
+    linear-gradient(165deg, var(--edu-brand-dark) 0%, #173b3f 70%, #267c4c 100%);
   color: #fff;
   padding: calc(env(safe-area-inset-top) + 14px) 20px 64px;
   position: relative;
@@ -87,7 +87,7 @@ body {
 }
 
 /* The reference hero ends in a flat edge. Beside the quick-action card a lighter
-   blue band continues downward and fades into the page background. */
+   opal band continues downward and fades into the page background. */
 .hero::after {
   content: "";
   position: absolute;
@@ -98,11 +98,11 @@ body {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    #2f78eb 0,
-    #93bef2 30px,
-    #a3c8f3 25%,
-    #bcd6f6 55%,
-    #d6e6fa 80%,
+    #267c4c 0,
+    #81c7a5 30px,
+    #a1d3bf 25%,
+    #b0d6cd 55%,
+    #dceee6 80%,
     var(--edu-surface) 100%
   );
 }
@@ -162,7 +162,7 @@ body {
 }
 
 .dot-badge--hero {
-  border-color: #2a5bea;
+  border-color: #173b3f;
 }
 
 .nav-group-label {
@@ -203,7 +203,7 @@ body {
   transform: translateY(-2px);
 }
 .quick-tile:focus-visible {
-  outline: 3px solid rgba(33, 73, 224, 0.35);
+  outline: 3px solid rgba(23, 59, 63, 0.35);
   outline-offset: 3px;
 }
 
@@ -214,7 +214,7 @@ body {
   z-index: 1030;
   background: #fff;
   border-top: 1px solid var(--bs-border-color);
-  box-shadow: 0 -8px 24px rgba(31, 42, 68, 0.06);
+  box-shadow: 0 -8px 24px rgba(19, 33, 40, 0.06);
   padding-bottom: env(safe-area-inset-bottom);
 }
 .bottom-nav a {
@@ -225,7 +225,7 @@ body {
   padding: 10px 0 8px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #5b667d;
+  color: #536b69;
   text-decoration: none;
 }
 .bottom-nav a[aria-current="page"] {
@@ -250,7 +250,7 @@ body {
   gap: 12px;
   padding: 11px 14px;
   border-radius: 12px;
-  color: #4a5670;
+  color: #536b69;
   font-weight: 500;
   font-size: 0.95rem;
 }
@@ -263,7 +263,7 @@ body {
 .drawer-nav .nav-link.active {
   background: var(--edu-brand);
   color: #fff;
-  box-shadow: 0 8px 18px rgba(33, 73, 224, 0.28);
+  box-shadow: 0 8px 18px rgba(23, 59, 63, 0.28);
 }
 
 @media (min-width: 992px) and (max-height: 860px) {
@@ -341,7 +341,7 @@ bdi,
   max-width: 850px;
 }
 .demo-notice {
-  color: #5d6882;
+  color: #536b69;
   background: #fff9e6;
   border: 1px solid #f0dfae;
   padding: 6px 12px;
@@ -385,7 +385,7 @@ bdi,
   height: 16px;
   display: block;
   border-radius: 8px;
-  background: linear-gradient(90deg, #e6eaf3, #f4f6fb, #e6eaf3);
+  background: linear-gradient(90deg, #dce8e3, #f3f8f6, #dce8e3);
 }
 .skeleton span:nth-child(2) {
   width: 70%;
@@ -410,30 +410,30 @@ bdi,
   z-index: 1000;
 }
 .upload-dropzone {
-  border: 2px dashed #cbd6f3;
+  border: 2px dashed #b0d6cd;
   border-radius: 18px;
   padding: 26px 20px;
-  background: #f8faff;
+  background: #f3f8f6;
 }
 .upload-dropzone input {
   max-width: 100%;
   font-size: 0.875rem;
 }
 .citation-chip {
-  background: #eef3ff;
-  border: 1px solid #dbe5ff;
+  background: #eaf5f0;
+  border: 1px solid #b0d6cd;
   padding: 10px 12px;
   border-radius: 12px;
   font-size: 0.78rem;
   margin-bottom: 8px;
-  color: #28458c;
+  color: #173b3f;
 }
 .citation-chip summary {
   cursor: pointer;
   min-height: 24px;
 }
 .citation-chip blockquote {
-  border-inline-start: 3px solid #b2c5fd;
+  border-inline-start: 3px solid #40c15f;
   padding-inline-start: 10px;
   white-space: pre-wrap;
 }
@@ -460,7 +460,7 @@ bdi,
   flex-direction: column;
   align-items: center;
   padding: 12px 4px;
-  border: 1px solid #d6ddea;
+  border: 1px solid #dce8e3;
   border-radius: 12px;
   cursor: pointer;
   min-height: 78px;
@@ -486,12 +486,12 @@ bdi,
 .confidence-option.selected {
   border-color: var(--edu-brand);
   color: var(--edu-brand);
-  background: #eef3ff;
+  background: #eaf5f0;
 }
 .source-icon {
   display: grid;
   place-items: center;
-  background: #eef3ff;
+  background: #eaf5f0;
   color: var(--edu-brand);
   width: 48px;
   height: 48px;
@@ -595,10 +595,10 @@ body:has(.offcanvas.show) .bottom-nav {
   background:
     radial-gradient(
       120% 90% at 15% 0%,
-      rgba(86, 130, 255, 0.55) 0%,
-      rgba(86, 130, 255, 0) 60%
+      rgba(64, 193, 95, 0.55) 0%,
+      rgba(64, 193, 95, 0) 60%
     ),
-    linear-gradient(195deg, var(--edu-brand-dark) 0%, #2a5bea 70%, #4a79f2 100%);
+    linear-gradient(195deg, var(--edu-brand-dark) 0%, #173b3f 70%, #267c4c 100%);
 }
 [dir="rtl"] .input-group > .input-group-text {
   border-radius: 0 0.375rem 0.375rem 0;
@@ -624,4 +624,25 @@ body:has(.offcanvas.show) .bottom-nav {
 }
 .outline-row label {
   min-height: 44px;
+}
+
+/* Andela brand palette. Quick action colors and Bootstrap button variants stay intact. */
+:root {
+  --edu-emerald: #40c15f;
+  --edu-opal: #b0d6cd;
+  --bs-nav-pills-link-active-bg: var(--edu-brand);
+}
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--edu-brand);
+}
+.text-primary { color: var(--edu-brand) !important; }
+.bg-primary { background-color: var(--edu-brand) !important; }
+.progress { --bs-progress-bar-bg: var(--edu-brand); }
+.form-control:focus, .form-select:focus {
+  border-color: var(--edu-opal);
+  box-shadow: 0 0 0 0.25rem rgba(64, 193, 95, 0.18);
+}
+.form-check-input:checked {
+  background-color: var(--edu-brand);
+  border-color: var(--edu-brand);
 }

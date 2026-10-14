@@ -7,6 +7,8 @@ User request > this revised execution contract > original playbook/design contex
 | Product name | Learning OS | All provided source files use this spelling |
 | Frontend | Next.js App Router, React, TypeScript | Existing dashboard, not inferred from prose |
 | Frontend baseline | Next 16.4.0; React/DOM 19.3.0; supplied npm lock | Frozen install, lint and production build passed |
+| Brand (2026-10-14) | Andela emerald #40c15f / kale #173b3f / green black #132128 / opal #b0d6cd / white; standalone brain/circuit SVG + favicon | User-provided palette and mark; supersedes blue/book instructions; preserve six dashboard button colors |
+| Source processing | Coherent bounded source sections, immutable originals and exact citations; teach before assess | Upload indexing is preparation for retrieval, not model fine-tuning; unsupported content never becomes fabricated facts |
 | Style | Bootstrap first; Inter font and Tailwind `tw:` utilities; custom CSS last | `layout.tsx`, `globals.css`, template README |
 | Backend | Python 3.12 + FastAPI + SQLAlchemy + Alembic | Keep original playbook's simple backend |
 | Data in local demo | SQLite with foreign keys/WAL; private local files | Single process/small demonstration; not a distributed database |

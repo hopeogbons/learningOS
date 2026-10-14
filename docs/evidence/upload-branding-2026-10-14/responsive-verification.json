@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "width": 360,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    },
+    {
+      "width": 991,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    },
+    {
+      "width": 992,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "brand": "#173b3f",
+      "quickActions": [
+        "rgb(47, 123, 235)",
+        "rgb(245, 158, 11)",
+        "rgb(34, 177, 76)",
+        "rgb(124, 92, 230)",
+        "rgb(229, 68, 79)",
+        "rgb(20, 184, 166)"
+      ],
+      "icons": [
+        "/favicon.ico?favicon.2iurexcc2ics5.ico",
+        "/icon.svg?icon.1ct55w2yo6q0-.svg"
+      ]
+    }
+  ],
+  "errors": []
+}
