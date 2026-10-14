@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 VOICE_EVIDENCE_PATH=docs/evidence/ui-aesthetic-refinement/voice-roundtrip.json python3 tests/frontend_voice.py",
+  "cwd": "/home/hope/Projects/learningOS",
+  "exit_code": 0,
+  "fixture": "synthetic session; STT/TTS responses intercepted",
+  "checks": [
+    "Voice mode explains the tutor/learner audio loop before session start",
+    "Tutor question is spoken and teaching can be replayed",
+    "Recording is cancelled on navigation without submitting audio",
+    "Transcribed answer remains editable and requires confidence",
+    "Voice response uses the ordinary answer endpoint with voice=true",
+    "Reviewer feedback is spoken after a voice answer with replay available",
+    "Unavailable speech preserves visible text and typing fallback"
+  ],
+  "voice_answer_posts": 1,
+  "voice_flag": true,
+  "editable_transcript_before_submit": "Edited spoken answer: equal protons and electrons.",
+  "speech_message_ids": [
+    "question",
+    "teaching",
+    "feedback"
+  ],
+  "live_speech_verified": false,
+  "page_errors": [],
+  "limitations": [
+    "No real microphone capture, transcription quality or audible provider output was exercised."
+  ]
+}

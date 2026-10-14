@@ -1,5 +1,4 @@
 "use client";
-import DesktopGreeting from "@/components/DesktopGreeting";
 import {
   CalibrationCard,
   CollectionsPanel,
@@ -10,12 +9,19 @@ import DueForReview from "@/components/DueForReview";
 import QuickActions from "@/components/QuickActions";
 import { useApp } from "@/components/AppState";
 import { Status } from "@/components/Shared";
+import HomeIntroduction from "@/components/HomeIntroduction";
 export default function HomePage() {
   const { loading, error, reload } = useApp();
+  const authRequired =
+    error === "authentication_required" || error === "authentication required";
   return (
     <>
-      <Status error={error} loading={loading} retry={reload} />
-      <DesktopGreeting />
+      <HomeIntroduction />
+      <Status
+        error={authRequired ? null : error}
+        loading={loading && !authRequired}
+        retry={reload}
+      />
       <QuickActions />
       <StatsRow />
       <div className="row gx-0 gx-xl-4 gy-0">

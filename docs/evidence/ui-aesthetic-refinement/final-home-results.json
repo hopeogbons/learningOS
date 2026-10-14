@@ -1,0 +1,343 @@
+{
+  "status": "passed",
+  "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+  "cwd": "/home/hope/Projects/learningOS",
+  "exit_code": 0,
+  "target": "http://127.0.0.1:3000",
+  "browser_executable": "/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell",
+  "fixture": "synthetic learner; all API responses intercepted",
+  "checks": [
+    {
+      "screenshot": "home-final-mobile-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "documentWidth": 390,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": -28,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 10,
+        "distinctX": 10,
+        "distinctY": 10
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 3,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": null
+    },
+    {
+      "screenshot": "home-final-tablet-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "documentWidth": 768,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": -28,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 10,
+        "distinctX": 10,
+        "distinctY": 10
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 3,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": null
+    },
+    {
+      "screenshot": "home-final-mobile-991.png",
+      "viewport": {
+        "width": 991,
+        "height": 900
+      },
+      "documentWidth": 991,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": -28,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 10,
+        "distinctX": 10,
+        "distinctY": 10
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 3,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": null
+    },
+    {
+      "screenshot": "home-final-desktop-992.png",
+      "viewport": {
+        "width": 992,
+        "height": 900
+      },
+      "documentWidth": 992,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": 16,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 22,
+        "distinctX": 22,
+        "distinctY": 22
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 3,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24,
+        "sidebarTopGap": 24,
+        "sidebarLeft": 0,
+        "sidebarWidth": 264,
+        "topbarRowGap": 0
+      }
+    },
+    {
+      "screenshot": "home-final-desktop-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "documentWidth": 1440,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": 16,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 22,
+        "distinctX": 22,
+        "distinctY": 22
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 6,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24,
+        "sidebarTopGap": 24,
+        "sidebarLeft": 0,
+        "sidebarWidth": 264,
+        "topbarRowGap": 0
+      }
+    },
+    {
+      "screenshot": "home-final-projector-1920.png",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "documentWidth": 1920,
+      "verticalWordmarkPresent": false,
+      "heroBackground": "rgb(176, 214, 205)",
+      "pageCanvas": "rgb(243, 248, 246)",
+      "introVisible": true,
+      "introTopGap": 16,
+      "footerTabs": [
+        "Home",
+        "Collections",
+        "Study",
+        "Review"
+      ],
+      "pattern": {
+        "count": 22,
+        "distinctX": 22,
+        "distinctY": 22
+      },
+      "quickAction": {
+        "flexDirection": "column",
+        "gridColumns": 6,
+        "labels": [
+          "Study",
+          "Review",
+          "Add Material",
+          "Outline",
+          "Voice",
+          "Progress"
+        ],
+        "colors": [
+          "rgb(47, 123, 235)",
+          "rgb(245, 158, 11)",
+          "rgb(34, 177, 76)",
+          "rgb(124, 92, 230)",
+          "rgb(229, 68, 79)",
+          "rgb(20, 184, 166)"
+        ]
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24,
+        "sidebarTopGap": 24,
+        "sidebarLeft": 0,
+        "sidebarWidth": 264,
+        "topbarRowGap": 0
+      }
+    }
+  ],
+  "rtl_checks": [
+    {
+      "screenshot": "home-final-rtl-mobile-390.png",
+      "width": 390,
+      "documentWidth": 390,
+      "lang": "ar",
+      "dir": "rtl",
+      "introVisible": true,
+      "heroLeft": 0,
+      "heroRightInset": 0,
+      "sidebarLeft": 0,
+      "sidebarRight": 0,
+      "footerTabs": 4
+    },
+    {
+      "screenshot": "home-final-rtl-desktop-1440.png",
+      "width": 1440,
+      "documentWidth": 1440,
+      "lang": "ar",
+      "dir": "rtl",
+      "introVisible": true,
+      "heroLeft": 24,
+      "heroRightInset": 24,
+      "sidebarLeft": 1176,
+      "sidebarRight": 1440,
+      "footerTabs": 4
+    }
+  ],
+  "signed_out_home": {
+    "intro_remains_visible_signed_out": true,
+    "intro_has_no_signin_action": true,
+    "lower_due_review_signin_visible": true
+  },
+  "page_errors": [],
+  "limitations": [
+    "This focused run verifies Home at 390\u00d7844, 768\u00d71024, 991\u00d7900, 992\u00d7900, 1440\u00d71000 and 1920\u00d71080; it does not replace full route/accessibility acceptance.",
+    "No authentication, Drive, live speech or learner account was exercised."
+  ]
+}

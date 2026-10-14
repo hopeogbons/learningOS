@@ -64,6 +64,7 @@ class MaterialDTO(BaseModel):
     source_language: str
     storage_state: str
     size: int
+    deletion_job_id: str | None
 
 class MaterialListDTO(BaseModel):
     items: list[MaterialDTO]
@@ -210,6 +211,46 @@ class LanguageListDTO(BaseModel):
 class DeleteQueuedDTO(BaseModel):
     job_id: str
     state: str
+
+class PdfPageDTO(BaseModel):
+    page_number: int
+    status: str
+    method: str | None
+    warning: str | None
+    text_chars: int
+    section_count: int
+    chapter_path: list[str]
+    correction_hash: str | None = None
+    corrected_at: str | None = None
+    text: str
+    text_truncated: bool
+
+class PdfPageManifestDTO(BaseModel):
+    material_id: str
+    revision_id: str
+    version: int
+    status: str
+    warning: str | None = None
+    page_count: int
+    processed_pages: int
+    review_required_count: int
+    original_url: str
+    items: list[PdfPageDTO]
+    total: int
+    next_cursor: int | None
+
+class PdfPageCorrectionDTO(BaseModel):
+    material_id: str
+    revision_id: str
+    page_number: int
+    status: str
+    version: int
+    review_required_count: int
+    material_status: str
+    finalize_job_id: str | None
+
+class UploadLimitsDTO(BaseModel):
+    max_upload_bytes: int
 
 class HistoryItemDTO(BaseModel):
     id: str

@@ -19,16 +19,17 @@
   --color-brand-600: #173b3f;
   --color-brand-700: #132128;
   --color-brand-900: #132128;
-  --color-ink: #132128;
+  --color-ink: #173b3f;
   --color-muted: #536b69;
   --color-surface: #f3f8f6;
+  --breakpoint-lg: 62rem; /* 992px, aligned with Bootstrap's desktop shell */
   --breakpoint-xxl: 87.5rem; /* 1400px, same as Bootstrap xxl */
 }
 
 :root {
   --edu-brand: #173b3f;
   --edu-brand-dark: #132128;
-  --edu-ink: #132128;
+  --edu-ink: #173b3f;
   --edu-muted: #536b69;
   --edu-surface: #f3f8f6;
   --edu-sidebar-w: 264px;
@@ -71,40 +72,43 @@ body {
 .offcanvas {
   --bs-offcanvas-bg: #fff;
 }
+.mobile-navigation-drawer {
+  --bs-offcanvas-width: 100vw;
+}
 
 .hero {
-  background:
-    radial-gradient(
-      120% 90% at 85% 0%,
-      rgba(64, 193, 95, 0.55) 0%,
-      rgba(64, 193, 95, 0) 60%
-    ),
-    linear-gradient(165deg, var(--edu-brand-dark) 0%, #173b3f 70%, #267c4c 100%);
-  color: #fff;
+  background: #b0d6cd;
+  color: #173b3f;
   padding: calc(env(safe-area-inset-top) + 14px) 20px 64px;
   position: relative;
+  overflow: hidden;
   z-index: 0;
 }
 
-/* The reference hero ends in a flat edge. Beside the quick-action card a lighter
-   opal band continues downward and fades into the page background. */
-.hero::after {
-  content: "";
+.learning-motif-pattern {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 250px;
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    #267c4c 0,
-    #81c7a5 30px,
-    #a1d3bf 25%,
-    #b0d6cd 55%,
-    #dceee6 80%,
-    var(--edu-surface) 100%
-  );
+  overflow: hidden;
+  color: #173b3f;
+  opacity: 0.11;
+}
+.learning-motif {
+  position: absolute;
+  display: block;
+  line-height: 0;
+}
+.learning-motif svg { display: block; }
+.hero-greeting-label,
+.hero-greeting-meta {
+  color: rgba(23, 59, 63, 0.82);
+}
+
+.hero-bar,
+.hero-greeting {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-bar {
@@ -145,11 +149,11 @@ body {
 }
 .icon-btn:hover,
 .icon-btn:focus-visible {
-  background-color: rgba(255, 255, 255, 0.14);
+  background-color: rgba(23, 59, 63, 0.08);
   outline: none;
 }
 .icon-btn:focus-visible {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(23, 59, 63, 0.22);
 }
 .icon-btn--light {
   background: #fff;
@@ -162,7 +166,7 @@ body {
 }
 
 .dot-badge--hero {
-  border-color: #173b3f;
+  border-color: #b0d6cd;
 }
 
 .nav-group-label {
@@ -190,13 +194,42 @@ body {
 .quick-tile {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 7px;
   color: var(--edu-ink);
   text-decoration: none;
   border-radius: 16px;
+  min-width: 0;
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
+}
+.quick-tile--stacked {
+  width: 100%;
+  min-height: 102px;
+  text-align: center;
+  padding: 2px 3px;
+}
+.quick-action-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: inherit;
+  gap: 2px;
+}
+.quick-action-label {
+  color: #173b3f;
+  font-size: 0.83rem;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.quick-action-detail {
+  display: none;
+  color: #536b69;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 .quick-tile:hover {
   color: var(--edu-ink);
@@ -235,13 +268,15 @@ body {
 
 /* ---------- Sidebar (desktop) ---------- */
 .sidebar {
-  position: fixed;
-  inset: 0 auto 0 0;
+  position: sticky;
+  inset-block-start: 0;
+  align-self: start;
+  height: 100vh;
   width: var(--edu-sidebar-w);
   background: #fff;
   border-right: 1px solid var(--bs-border-color);
   padding: 24px 16px;
-  z-index: 1020;
+  z-index: 10;
 }
 .sidebar .nav-link,
 .drawer-nav .nav-link {
@@ -261,9 +296,9 @@ body {
 }
 .sidebar .nav-link.active,
 .drawer-nav .nav-link.active {
-  background: var(--edu-brand);
+  background: #173b3f;
   color: #fff;
-  box-shadow: 0 8px 18px rgba(23, 59, 63, 0.28);
+  box-shadow: 0 6px 14px rgba(23, 59, 63, 0.18);
 }
 
 @media (min-width: 992px) and (max-height: 860px) {
@@ -274,14 +309,28 @@ body {
 
 /* ---------- Desktop layout switch ---------- */
 @media (min-width: 992px) {
-  .app-main {
-    margin-left: var(--edu-sidebar-w);
+  .app-layout {
+    display: grid;
+    grid-template-columns: var(--edu-sidebar-w) minmax(0, 1fr);
+    align-items: start;
+    min-height: 100vh;
   }
+  .app-main { min-width: 0; }
   .app-content {
     margin: 0 auto;
-    padding: 8px 32px 48px;
+    padding: 0 24px 48px;
     max-width: 1280px;
   }
+  .quick-tile--stacked {
+    align-items: flex-start;
+    min-height: 126px;
+    padding: 14px;
+    text-align: start;
+    border: 1px solid #e3ebe7;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(23, 59, 63, 0.07);
+  }
+  .quick-action-icon { width: 56px; height: 56px; }
 }
 
 /* ---------- Misc ---------- */
@@ -422,6 +471,18 @@ bdi,
   border-radius: 18px;
   padding: 26px 20px;
   background: #f3f8f6;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.upload-dropzone.drag-active {
+  border-color: #173b3f;
+  background: #e1efeb;
+}
+.upload-format-chips .badge {
+  color: #173b3f;
+  background: #ffffff;
+  border: 1px solid #b0d6cd;
+  font-weight: 600;
 }
 .upload-dropzone input {
   max-width: 100%;
@@ -446,8 +507,21 @@ bdi,
   white-space: pre-wrap;
 }
 .voice-controls {
-  background: #fff4f5;
-  border: 1px solid #f4d6db;
+  background: linear-gradient(120deg, #f8fbf9, #ffffff);
+  border: 1px solid #b0d6cd;
+}
+.voice-conversation-intro {
+  background: linear-gradient(120deg, rgba(176, 214, 205, 0.42), #ffffff 78%);
+  border: 1px solid #b0d6cd;
+}
+.voice-conversation-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  color: #ffffff;
+  background: #173b3f;
+  border-radius: 12px;
 }
 .reviewer-feedback {
   background: #edf7f3;
@@ -514,23 +588,47 @@ bdi,
 .account-chip {
   max-width: 190px;
 }
-.account-chip span {
+.account-chip .account-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.profile-avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+.profile-avatar-hint {
+  position: absolute;
+  inset-inline-end: -3px;
+  inset-block-end: -2px;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  color: #fff;
+  background: #173b3f;
+  border: 2px solid #fff;
+  border-radius: 999px;
 }
 body:has(.offcanvas.show) .app-main > main,
 body:has(.offcanvas.show) .bottom-nav {
   pointer-events: none;
 }
 @media (max-width: 991px) {
+  .learning-motif:nth-child(n + 11) {
+    display: none;
+  }
   .demo-notice {
     position: relative;
     margin-top: 0;
     margin-bottom: 12px;
   }
   .route-heading {
-    padding-top: 10px;
+    /* App content overlaps the hero by 28px for the Home action card. Routes
+       without that card must move their headings below the hero instead. */
+    padding-top: 36px;
   }
   .quick-tile {
     min-width: 0;
@@ -546,10 +644,15 @@ body:has(.offcanvas.show) .bottom-nav {
   .route-heading {
     padding-top: 24px;
   }
+  .quick-action-detail {
+    display: block;
+  }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
-  .account-chip span,
-  .account-chip svg:last-child {
+  .account-chip .account-chevron {
+    display: none;
+  }
+  .account-chip .account-name {
     display: none;
   }
   .language-select.compact {
@@ -567,23 +670,16 @@ body:has(.offcanvas.show) .bottom-nav {
     font-size: 1.1rem;
   }
 }
-/* Logical shell positioning mirrors Arabic without replacing the original geometry. */
+/* Logical shell positioning mirrors Arabic without changing the hero-first layout. */
 .sidebar {
-  inset: 0 auto 0 0;
-  inset-inline-start: 0;
-  inset-inline-end: auto;
+  inset-block-start: 0;
+  inset-block-end: auto;
   border-right: 0;
   border-inline-end: 1px solid var(--bs-border-color);
 }
 .dot-badge {
   right: auto;
   inset-inline-end: 10px;
-}
-@media (min-width: 992px) {
-  .app-main {
-    margin-left: 0;
-    margin-inline-start: var(--edu-sidebar-w);
-  }
 }
 [dir="rtl"] .offcanvas-start {
   left: auto;
@@ -600,13 +696,7 @@ body:has(.offcanvas.show) .bottom-nav {
   text-align: start;
 }
 [dir="rtl"] .hero {
-  background:
-    radial-gradient(
-      120% 90% at 15% 0%,
-      rgba(64, 193, 95, 0.55) 0%,
-      rgba(64, 193, 95, 0) 60%
-    ),
-    linear-gradient(195deg, var(--edu-brand-dark) 0%, #173b3f 70%, #267c4c 100%);
+  background: #b0d6cd;
 }
 [dir="rtl"] .input-group > .input-group-text {
   border-radius: 0 0.375rem 0.375rem 0;
@@ -634,7 +724,7 @@ body:has(.offcanvas.show) .bottom-nav {
   min-height: 44px;
 }
 
-/* Andela brand palette. Quick action colors and Bootstrap button variants stay intact. */
+/* Andela palette: white/opal surfaces, Kale actions and restrained emerald accents. */
 :root {
   --edu-emerald: #40c15f;
   --edu-opal: #b0d6cd;
@@ -653,4 +743,146 @@ body:has(.offcanvas.show) .bottom-nav {
 .form-check-input:checked {
   background-color: var(--edu-brand);
   border-color: var(--edu-brand);
+}
+
+/* Kale is the primary action color; secondary actions remain outlined. */
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #173b3f;
+  --bs-btn-border-color: #173b3f;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #132128;
+  --bs-btn-hover-border-color: #132128;
+  --bs-btn-focus-shadow-rgb: 64, 193, 95;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #132128;
+  --bs-btn-active-border-color: #132128;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #173b3f;
+  --bs-btn-disabled-border-color: #173b3f;
+}
+.btn-outline-primary {
+  --bs-btn-color: #173b3f;
+  --bs-btn-border-color: #173b3f;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #173b3f;
+  --bs-btn-hover-border-color: #173b3f;
+  --bs-btn-focus-shadow-rgb: 64, 193, 95;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #132128;
+  --bs-btn-active-border-color: #132128;
+  --bs-btn-disabled-color: #173b3f;
+  --bs-btn-disabled-border-color: #173b3f;
+}
+.alert-primary {
+  --bs-alert-color: #173b3f;
+  --bs-alert-bg: #eaf5f0;
+  --bs-alert-border-color: #b0d6cd;
+  --bs-alert-link-color: #173b3f;
+}
+.desktop-greeting {
+  min-height: 260px;
+  margin: 24px 24px;
+  padding: 16px 28px 24px;
+  color: #173b3f;
+  background: #b0d6cd;
+  border-radius: 24px;
+  box-shadow: 0 14px 28px rgba(23, 59, 63, 0.12);
+}
+.desktop-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin-inline: auto;
+}
+.desktop-hero-brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+.icon-btn--hero {
+  color: #173b3f;
+}
+.desktop-greeting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 12px;
+}
+.greeting-eyebrow,
+.greeting-resume-note {
+  color: rgba(23, 59, 63, 0.78);
+}
+.greeting-chip {
+  color: #173b3f;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(23, 59, 63, 0.08);
+}
+.greeting-resume {
+  width: min(30rem, 44%);
+  flex-shrink: 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(23, 59, 63, 0.1);
+  border-radius: 18px;
+}
+.greeting-progress-track {
+  --bs-progress-bg: rgba(23, 59, 63, 0.14);
+  height: 6px;
+}
+.greeting-progress-track .progress-bar {
+  background-color: #173b3f !important;
+}
+.greeting-content {
+  z-index: 2;
+}
+.quick-action-icon {
+  box-shadow: none;
+}
+.home-introduction {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 15px 17px;
+  color: #173b3f;
+  background: #eaf5f0;
+  border: 1px solid #b0d6cd;
+  border-radius: 16px;
+}
+.home-introduction-mark {
+  display: grid;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  color: #173b3f;
+  background: #fff;
+  border: 1px solid #b0d6cd;
+  border-radius: 14px;
+}
+.home-introduction-title {
+  margin: 0 0 3px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.home-introduction-copy {
+  color: #536b69;
+  font-size: 0.87rem;
+  line-height: 1.45;
+}
+@media (max-width: 575.98px) {
+  .home-introduction { align-items: flex-start; padding: 14px; }
+  .home-introduction-mark { flex-basis: 40px; width: 40px; height: 40px; }
+  .home-introduction-mark svg { width: 30px; height: 30px; }
+  .home-introduction-title { font-size: 0.95rem; }
+  .home-introduction-copy { font-size: 0.82rem; }
+}
+@media (min-width: 992px) {
+  .home-introduction { margin-top: 16px; }
+  .desktop-greeting-row { margin-top: 16px; }
+  .quick-tile--stacked:hover { box-shadow: 0 8px 18px rgba(23, 59, 63, 0.11); }
 }

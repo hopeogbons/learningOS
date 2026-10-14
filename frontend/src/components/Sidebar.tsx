@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { navGroups, isCurrent } from "@/data/dashboard";
 import { useI18n } from "@/i18n";
-import Logo from "./Logo";
 export default function Sidebar() {
   const path = usePathname(),
     { t } = useI18n();
@@ -13,13 +12,6 @@ export default function Sidebar() {
       className="sidebar d-none d-lg-flex flex-column"
       aria-label={t("nav.sidebar")}
     >
-      <Link
-        href="/"
-        className="d-inline-flex text-decoration-none px-2 mb-4"
-        aria-label="Learning OS"
-      >
-        <Logo size={44} />
-      </Link>
       <nav aria-label={t("nav.main")} className="flex-grow-1 overflow-auto">
         {navGroups.map((group, gi) => (
           <div key={group.key ?? "home"} className={gi === 0 ? "" : "mt-3"}>

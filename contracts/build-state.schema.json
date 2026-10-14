@@ -152,6 +152,10 @@
             "type": "string",
             "minLength": 1
           },
+          "browser_visual_smoke": {
+            "type": "string",
+            "minLength": 1
+          },
           "synthetic_9kb_pdf_browser_upload": {
             "type": "string",
             "minLength": 1

@@ -70,7 +70,10 @@ export const messages = {
   "common.required": "Required",
   "common.unknown": "Not available",
   "home.principle": "Teach, then check, in small loops.",
+  "home.introTitle": "Make your materials work harder.",
+  "home.introBody": "Turn your notes and documents into cited lessons, quick checks and spaced review.",
   "home.greeting": "Good morning",
+  "home.defaultLearner": "Fast Learner",
   "home.welcome": "Welcome",
   "home.collectionCount": "{count} Collections",
   "home.dueCount": "{count} titles due today",
@@ -151,6 +154,7 @@ export const messages = {
   "upload.spreadsheet": "Spreadsheet",
   "upload.link": "Paste link",
   "upload.selectFile": "Choose a file",
+  "upload.dropHere": "Drop a file here or choose a file",
   "upload.url": "Public web or captions link",
   "upload.submit": "Add to Collection",
   "upload.destination": "Destination",
@@ -160,7 +164,19 @@ export const messages = {
   "upload.driveWarning":
     "Files are only marked Saved to Drive after the provider confirms the write.",
   "upload.accepted":
-    "PDF, Markdown, text, CSV, XLSX, JPG and PNG. Maximum 20 MiB.",
+    "PDF, Markdown, text, Word, RST, CSV/TSV, Excel, JSON/YAML, logs, JPG and PNG. Maximum 20 MiB; this installation may set a lower cap.",
+  "upload.acceptedLimit":
+    "PDF, Markdown, text, Word, RST, CSV/TSV, Excel, JSON/YAML, logs, JPG and PNG. Maximum {uploadMiB} MiB.",
+  "upload.limits":
+    "Limits: {uploadMiB} MiB per uploaded file; PDFs up to 1,000 pages in 40-page batches and 64 MiB extracted text, with corrections up to 2 MiB per page; text formats 2 MiB; tables 10,000 cells; Office archives 64 MiB expanded/1,000 entries; JSON/YAML depth 64/10,000 values; photos 40 MP; public pages 2 MiB and URLs 4,096 characters; captions 10,000 segments/2 MiB; 10,000 teaching units per source revision.",
+  "upload.pdfProgress": "{processed} of {total} PDF pages processed; {review} need review.",
+  "upload.reviewPages": "Review pages",
+  "upload.reviewHelp": "Compare the original page with the extracted text. Correct it and save, or leave it empty to confirm the page is blank.",
+  "upload.pdfDone": "All pages have an accepted result. Final indexing is in progress.",
+  "upload.pageLabel": "Page",
+  "upload.truncatedText": "Only the first 200,000 characters are shown. Replace this with the complete corrected page text before saving.",
+  "upload.deleteWarning": "This permanently removes this material, its revisions, citations, sessions and related learning history, and updates the saved study scope. Connected Drive originals are deleted only when folder ownership and permissions can be confirmed. If cleanup cannot be confirmed, the material and its learning data stay in place for attention and retry. This cannot be undone.",
+  "upload.deletePrompt": "Type DELETE to permanently remove this material.",
   "upload.photoHelp":
     "Use a clear JPG or PNG photo. Unreadable notes need a retake; audio and video uploads are excluded.",
   "upload.linkHelp":
@@ -197,7 +213,7 @@ export const messages = {
   "study.evidence": "Source evidence",
   "study.voice": "Voice teach-back",
   "study.voiceDescription":
-    "Up to three learner turns. Edit your transcript before submitting; typing is always available.",
+    "Hear the tutor's cited teaching, question and feedback. Reply by voice or type; edit your transcript before submitting. Up to three spoken answers per session.",
   "study.voiceTurns": "Voice turns: {count} / 3",
   "study.microphone": "Record an answer",
   "study.stopRecording": "Stop recording",
@@ -298,7 +314,11 @@ export const messages = {
   "notices.read": "Mark read",
   "notices.description": "Ingestion and review updates from your account.",
   "auth.required": "Sign in to continue with your Learning OS account.",
-  "auth.signIn": "Sign in",
+  "auth.signIn": "Continue with Google",
+  "auth.googleNote": "Use a Google account to sign in. Gmail content access is separate and optional.",
+  "auth.apple": "Apple",
+  "auth.microsoft": "Microsoft",
+  "auth.comingSoon": "Coming soon",
   "connections.demoDrive": "Google Drive is unavailable in the offline demo. Start the connected version and sign in to connect your account.",
   "connections.setupNeeded": "Google Drive needs setup before you can connect. Configure the Google connection for this installation, then reload this page.",
   "connections.consentDenied": "Google Drive was not connected because consent was declined. Choose Connect to try again.",

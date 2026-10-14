@@ -1,0 +1,29 @@
+{
+  "target": "http://127.0.0.1:3000",
+  "mode": "live, unauthenticated browser context",
+  "hero": {
+    "background": "rgb(176, 214, 205)",
+    "pattern": "142px 142px",
+    "patternOpacity": "0.09"
+  },
+  "drawer_viewports": [
+    {
+      "viewport": 360,
+      "left": 0,
+      "width": 360,
+      "right": 360,
+      "scrollWidth": 360,
+      "transform": "none"
+    },
+    {
+      "viewport": 390,
+      "left": 0,
+      "width": 390,
+      "right": 390,
+      "scrollWidth": 390,
+      "transform": "none"
+    }
+  ],
+  "page_errors": [],
+  "status": "passed"
+}

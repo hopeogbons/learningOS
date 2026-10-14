@@ -38,6 +38,24 @@
                 "page": {
                   "type": "integer",
                   "minimum": 1
+                },
+                "filename": {
+                  "type": "string"
+                },
+                "heading_path": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "section_char_start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "section_char_end": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "reading_method": {
+                  "enum": ["text", "vision"]
                 }
               },
               "required": [
@@ -72,6 +90,32 @@
                 "line_end": {
                   "type": "integer",
                   "minimum": 1
+                },
+                "filename": {
+                  "type": "string"
+                },
+                "heading_path": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "key_path": {
+                  "type": "string"
+                },
+                "section_char_start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "section_char_end": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "docx_block_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "docx_block_end": {
+                  "type": "integer",
+                  "minimum": 1
                 }
               },
               "required": [
@@ -104,6 +148,21 @@
                 "cell_range": {
                   "type": "string",
                   "minLength": 1
+                },
+                "filename": {
+                  "type": "string"
+                },
+                "row_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "row_end": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "headers": {
+                  "type": "array",
+                  "items": {"type": "string"}
                 }
               },
               "required": [
@@ -142,6 +201,27 @@
                     "type": "string"
                   },
                   "minItems": 1
+                },
+                "filename": {
+                  "type": "string"
+                },
+                "column_start": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "column_end": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "headers": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "format": {
+                  "enum": ["csv", "tsv"]
+                },
+                "row": {
+                  "type": "boolean"
                 }
               },
               "required": [
@@ -172,8 +252,10 @@
                   "minLength": 1
                 },
                 "section": {
-                  "type": "string",
-                  "minLength": 1
+                  "oneOf": [
+                    {"type": "string", "minLength": 1},
+                    {"type": "integer", "minimum": 1}
+                  ]
                 }
               },
               "required": [

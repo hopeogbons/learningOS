@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-14",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "Frontend lint, typecheck and production build",
+      "command": "npm run lint && npm exec tsc -- --noEmit && npm run build",
+      "cwd": "/home/hope/Projects/learningOS/frontend",
+      "exit_code": 0
+    },
+    {
+      "name": "Contract and locale validation",
+      "command": "python3 scripts/validate_contracts.py && python3 scripts/check_locales.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "Six schemas and all ten locale catalogs passed."
+    },
+    {
+      "name": "Synthetic Home browser inspection at mobile, breakpoint, desktop and projector widths",
+      "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "artifact": "docs/evidence/ui-aesthetic-refinement/hero-layout-results.json",
+      "result": "At 390/768/991/992/1440/1920px, no vertical-wordmark element, no horizontal overflow or page errors; 24px top/side hero insets at desktop widths. All API responses were synthetic fixtures."
+    },
+    {
+      "name": "Rebuild only connected-local frontend",
+      "command": "docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml build frontend && docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml up -d --no-deps frontend",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "Frontend healthy; backend, worker and data volume preserved."
+    }
+  ],
+  "limitations": [
+    "Browser inspection covered Home only; full-route, axe, keyboard and zoom gates were not rerun.",
+    "Screenshots are synthetic rendered app UI, not source code or learner data."
+  ]
+}

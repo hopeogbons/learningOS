@@ -20,7 +20,7 @@ def verify_constraints(url):
     assert any(i["name"]=="uq_active_scope" and i["unique"] for i in info.get_indexes("scope_revisions"))
     assert any(c["column_names"]==["learner_id","idempotency_key"] for c in info.get_unique_constraints("jobs"))
     assert info.get_foreign_keys("scope_items")
-    with engine.connect() as conn:assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar()=="0002_durable_guards"
+    with engine.connect() as conn:assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar()=="0003_material_delete"
     engine.dispose()
 
 def test_sqlite_fresh_upgrade_rollback_reupgrade(tmp_path):

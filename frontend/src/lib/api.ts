@@ -11,9 +11,10 @@ export type ScopeProgress = {
 };
 export type Scope = components["schemas"]["ScopeDTO"];
 export type Collection = components["schemas"]["CollectionDTO"];
-export type Material = components["schemas"]["MaterialDTO"] & {
+export type Material = Omit<components["schemas"]["MaterialDTO"], "deletion_job_id"> & {
   chunks?: Chunk[];
   drive_file_id?: string | null;
+  deletion_job_id?: string | null;
 };
 export type Chunk = components["schemas"]["ChunkDTO"] & {
   concept_count?: number;

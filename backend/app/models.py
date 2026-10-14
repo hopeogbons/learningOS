@@ -62,6 +62,7 @@ class Material(Owned, Base):
     status: Mapped[str] = mapped_column(String(30), default="queued")
     archived: Mapped[bool] = mapped_column(Boolean, default=False)
     version: Mapped[int] = mapped_column(Integer, default=1)
+    deletion_job_id: Mapped[str | None] = mapped_column(String(36))
     __table_args__ = (Index("ix_material_order", "learner_id", "collection_id", "position"),)
 
 class MaterialRevision(Owned, Base):

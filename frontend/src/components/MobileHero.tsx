@@ -9,6 +9,7 @@ import { useApp } from "./AppState";
 import LanguageSelect from "./LanguageSelect";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
+import LearningPattern from "./LearningPattern";
 export default function MobileHero() {
   const [open, setOpen] = useState(false),
     titleId = useId(),
@@ -55,6 +56,7 @@ export default function MobileHero() {
   return (
     <>
       <header className="hero d-lg-none">
+        <LearningPattern />
         <div className="hero-bar">
           <button
             ref={trigger}
@@ -79,7 +81,7 @@ export default function MobileHero() {
               />
             </svg>
           </button>
-          <Logo tone="light" size={32} className="tw:justify-self-center" />
+          <Logo size={32} className="tw:justify-self-center" />
           <Link
             href="/notifications"
             className="icon-btn tw:justify-self-end"
@@ -91,13 +93,13 @@ export default function MobileHero() {
         <div className="hero-greeting">
           <Avatar src={null} size={84} tone="onDark" />
           <div>
-            <p className="mb-1 tw:text-[15px] tw:text-white/90">
+            <p className="hero-greeting-label mb-1 tw:text-[15px] tw:text-white/85">
               {t("home.greeting")},
             </p>
             <h1 className="mb-1 tw:text-2xl tw:leading-tight tw:font-bold">
-              <bdi>{data?.learner.display_name ?? "Learning OS"}</bdi>
+              <bdi>{data?.learner.display_name ?? t("home.defaultLearner")}</bdi>
             </h1>
-            <p className="mb-0 tw:text-[15px] tw:text-white/90">
+            <p className="hero-greeting-meta mb-0 tw:text-[15px] tw:text-white/85">
               {t("home.collectionCount", {
                 count: data?.collections_count ?? 0,
               })}{" "}
@@ -110,12 +112,11 @@ export default function MobileHero() {
         ref={dialog}
         role="dialog"
         aria-modal={open || undefined}
-        className={`offcanvas offcanvas-start${open ? " show" : ""}`}
+        className={`offcanvas offcanvas-start mobile-navigation-drawer${open ? " show" : ""}`}
         tabIndex={-1}
         aria-labelledby={titleId}
         aria-hidden={!open}
         inert={!open}
-        style={{ width: 296 }}
       >
         <div className="offcanvas-header justify-content-between">
           <span id={titleId}>

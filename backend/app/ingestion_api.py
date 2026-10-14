@@ -4,23 +4,28 @@ import secrets
 import time
 import os
 import re
+from copy import deepcopy
 from datetime import datetime
 from typing import Any, Literal
 from pathlib import Path
 from urllib.parse import urlencode
 from uuid import uuid4
 import httpx
-from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, Query, UploadFile
 from fastapi.responses import Response, RedirectResponse
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select, func
 from .auth import get_learner
 from .db import get_db, utcnow
 from .models import Collection, Material, MaterialRevision, Citation, Job, ProviderConnection
+from .core_schemas import PdfPageManifestDTO, PdfPageCorrectionDTO, UploadLimitsDTO
 from .jobs import enqueue
 from .settings import settings
 from .storage import get_storage
-from .ingest import owned, queue_provision, reserve_source_quota
+from .ingest import (owned, queue_provision, reserve_source_quota,
+                     _manifest_review_pages, _schedule_pdf_finalize)
+from .ingest_limits import (MAX_PDF_CORRECTION_BYTES, MAX_PDF_EXTRACTED_BYTES,
+                            MAX_PDF_PAGE_RESPONSE_CHARS, MAX_UPLOAD_BYTES)
 from .sources.base import SourceError
 from .sources.local import SUPPORTED
 from .sources.drive import SCOPES, encrypt_credentials, decrypt_credentials, DriveAdapter, connection_setup_state
@@ -61,6 +66,12 @@ class SourceLanguageDTO(BaseModel):
     source_language: str
 
 
+class PdfPageCorrectionInput(BaseModel):
+    model_config = {'extra': 'forbid'}
+    expected_version: int = Field(ge=1)
+    text: str = Field(max_length=2 * 1024 * 1024)
+
+
 class IntakeDTO(BaseModel):
     material_id:str
     revision_id:str
@@ -81,6 +92,11 @@ class MaterialStatusDTO(BaseModel):
     error_code:str|None
     error_message:str|None
     source_language:str
+
+
+@router.get('/ingestion/limits',response_model=UploadLimitsDTO)
+def upload_limits(learner=Depends(get_learner)):
+    return {'max_upload_bytes':max(0,min(settings.max_upload_bytes,MAX_UPLOAD_BYTES))}
 
 class ConnectionDTO(BaseModel):
     provider:str
@@ -180,11 +196,18 @@ async def upload(collection_id:str,file:UploadFile=File(...),idempotency_key:str
     if suffix not in SUPPORTED: raise HTTPException(415,'unsupported_type')
     idempotency_key=idempotency_key or request_key
     if not idempotency_key or not 1<=len(idempotency_key)<=150: raise HTTPException(422,'invalid_idempotency_key')
-    data=await file.read(settings.max_upload_bytes+1)
+    max_upload_bytes=min(settings.max_upload_bytes,MAX_UPLOAD_BYTES)
+    data=await file.read(max_upload_bytes+1)
     await file.close()
     if not data: raise HTTPException(422,'empty_source')
-    if len(data)>settings.max_upload_bytes: raise HTTPException(413,'oversize')
-    mime={'.pdf':'application/pdf','.md':'text/markdown','.txt':'text/plain','.csv':'text/csv','.xlsx':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png'}[suffix]
+    if len(data)>max_upload_bytes: raise HTTPException(413,'oversize')
+    mime={
+        '.pdf':'application/pdf','.md':'text/markdown','.markdown':'text/markdown','.txt':'text/plain',
+        '.docx':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','.rst':'text/plain',
+        '.csv':'text/csv','.tsv':'text/tab-separated-values','.xlsx':'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        '.xlsm':'application/vnd.ms-excel.sheet.macroEnabled.12','.json':'application/json','.yaml':'text/yaml','.yml':'text/yaml',
+        '.log':'text/plain','.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png'
+    }[suffix]
     return create_intake(db,learner,collection,filename,'photo' if suffix in {'.png','.jpg','.jpeg'} else suffix[1:],data,mime,idempotency_key,source_language=source_language)
 
 
@@ -224,6 +247,178 @@ def material_status(material_id:str,db=Depends(get_db),learner=Depends(get_learn
     return {'id':material.id,'title':material.title,'status':material.status,'collection_id':material.collection_id,'current_revision_id':material.current_revision_id,'revision_id':revision.id if revision else None,'storage_state':revision.storage_state if revision else None,'error_code':revision.metadata_json.get('error_code') if revision else None,'error_message':revision.metadata_json.get('error_message') if revision else None,'source_language':revision.source_language if revision else 'und'}
 
 
+def _pdf_revision_for_material(db,material,learner_id):
+    query=select(MaterialRevision).where(
+        MaterialRevision.material_id==material.id,
+        MaterialRevision.learner_id==learner_id,
+    )
+    if material.current_revision_id:
+        query=query.where(MaterialRevision.id==material.current_revision_id)
+    else:
+        query=query.order_by(MaterialRevision.created_at.desc())
+    revision=db.scalar(query)
+    if not revision or Path(revision.metadata_json.get('filename','')).suffix.lower()!='.pdf':
+        raise HTTPException(409,'pdf_revision_unavailable')
+    manifest=revision.metadata_json.get('ingestion_manifest')
+    if not isinstance(manifest,dict) or not manifest.get('pages'):
+        raise HTTPException(409,'pdf_manifest_unavailable')
+    return revision,deepcopy(manifest)
+
+
+@router.get('/materials/{material_id}/ingestion-pages',response_model=PdfPageManifestDTO)
+def pdf_ingestion_pages(material_id:str,cursor:int=Query(0,ge=0),limit:int=Query(40,ge=1,le=40),
+                        db=Depends(get_db),learner=Depends(get_learner)):
+    material=require_owned(db,Material,material_id,learner)
+    revision,manifest=_pdf_revision_for_material(db,material,learner.id)
+    pages=manifest.get('pages',[])
+    batches={int(batch['index']):batch for batch in manifest.get('batches',[])}
+    result_cache={}
+    items=[]
+    for page in pages[cursor:cursor+limit]:
+        batch_index=(int(page['page_number'])-1)//int(manifest.get('batch_size',40))
+        batch=batches.get(batch_index,{})
+        key=batch.get('result_blob_key')
+        extracted=''
+        if key:
+            if key not in result_cache:
+                try:
+                    result_cache[key]=json.loads(get_storage().get(learner.id,key))
+                except Exception as exc:
+                    raise HTTPException(409,'pdf_page_data_unavailable') from exc
+            value=result_cache[key]
+            if value.get('revision_id')!=revision.id or value.get('batch_index')!=batch_index:
+                raise HTTPException(409,'pdf_page_data_binding_invalid')
+            extracted='\n\n'.join(
+                section.get('text','') for section in value.get('sections',[])
+                if int(section.get('locator',{}).get('page',0))==int(page['page_number'])
+            )
+        items.append({**page,'text':extracted[:MAX_PDF_PAGE_RESPONSE_CHARS],
+                      'text_truncated':len(extracted)>MAX_PDF_PAGE_RESPONSE_CHARS})
+    return {
+        'material_id':material.id,'revision_id':revision.id,'version':material.version,
+        'status':manifest.get('status'),'warning':manifest.get('warning'),
+        'page_count':manifest.get('page_count',len(pages)),
+        'processed_pages':manifest.get('processed_pages',0),
+        'review_required_count':manifest.get('review_required_count',0),
+        'original_url':f'/api/v1/material-revisions/{revision.id}/original?inline=true',
+        'items':items,'total':len(pages),
+        'next_cursor':cursor+len(items) if cursor+len(items)<len(pages) else None,
+    }
+
+
+@router.patch('/materials/{material_id}/ingestion-pages/{page_number}',response_model=PdfPageCorrectionDTO)
+def correct_pdf_ingestion_page(material_id:str,page_number:int,body:PdfPageCorrectionInput,
+                               db=Depends(get_db),learner=Depends(get_learner)):
+    material=require_owned(db,Material,material_id,learner)
+    material=db.scalar(select(Material).where(Material.id==material.id,Material.learner_id==learner.id).with_for_update())
+    collection=require_owned(db,Collection,material.collection_id,learner)
+    if material.archived or material.status=='deleting' or collection.archived:
+        raise HTTPException(409,'material_not_editable')
+    if material.version!=body.expected_version:
+        raise HTTPException(409,'version_conflict')
+    revision,manifest=_pdf_revision_for_material(db,material,learner.id)
+    if manifest.get('status') in {'ready','failed'}:
+        raise HTTPException(409,'pdf_review_closed')
+    pages=[dict(page) for page in manifest['pages']]
+    if page_number<1 or page_number>len(pages):
+        raise HTTPException(404,'page_not_found')
+    page=pages[page_number-1]
+    if int(page.get('page_number',0))!=page_number or page.get('status') not in {'needs-review','failed'}:
+        raise HTTPException(409,'page_not_reviewable')
+    correction_bytes=body.text.encode('utf-8')
+    if len(correction_bytes)>MAX_PDF_CORRECTION_BYTES:
+        raise HTTPException(413,'pdf_page_correction_limit')
+
+    batch_index=(page_number-1)//int(manifest.get('batch_size',40))
+    batches=[dict(batch) for batch in manifest.get('batches',[])]
+    if batch_index>=len(batches) or not batches[batch_index].get('result_blob_key'):
+        raise HTTPException(409,'pdf_page_data_unavailable')
+    batch=batches[batch_index]
+    try:
+        value=json.loads(get_storage().get(learner.id,batch['result_blob_key']))
+    except Exception as exc:
+        raise HTTPException(409,'pdf_page_data_unavailable') from exc
+    if value.get('revision_id')!=revision.id or value.get('batch_index')!=batch_index:
+        raise HTTPException(409,'pdf_page_data_binding_invalid')
+
+    sections=[
+        section for section in value.get('sections',[])
+        if int(section.get('locator',{}).get('page',0))!=page_number
+    ]
+    chapter_path=list(page.get('chapter_path',[]))
+    corrected_text=body.text.strip()
+    if corrected_text:
+        heading_path=chapter_path
+        title=' / '.join(heading_path) if heading_path else f'Page {page_number}'
+        sections.append({
+            'title':title,'text':corrected_text,'locator_kind':'pdf',
+            'locator':{
+                'page':page_number,'page_start':page_number,'page_end':page_number,
+                'reading_method':'learner-correction','chapter_path':chapter_path,
+                'heading_path':heading_path,
+            },
+        })
+    sections.sort(key=lambda section:(
+        int(section.get('locator',{}).get('page',0)),
+        int(section.get('locator',{}).get('section_char_start',0)),
+    ))
+    old_key=batch['result_blob_key']
+    page_results=[dict(item) for item in value.get('page_results',[])]
+    for page_result in page_results:
+        if int(page_result.get('page_number',0))==page_number:
+            page_result.update(
+                status='corrected' if corrected_text else 'blank',
+                method='learner-correction' if corrected_text else 'learner-confirmed-blank',
+                warning=None,text_chars=len(corrected_text),
+                section_count=1 if corrected_text else 0,
+            )
+    result={'revision_id':revision.id,'batch_index':batch_index,
+            'sections':sections,'page_results':page_results}
+    result_bytes=json.dumps(result,ensure_ascii=False,separators=(',',':')).encode('utf-8')
+    new_batch_text_bytes=sum(len(str(section.get('text','')).encode('utf-8')) for section in sections)
+    new_total=int(manifest.get('extracted_text_bytes',0))-int(batch.get('extracted_text_bytes',0))+new_batch_text_bytes
+    if new_total>MAX_PDF_EXTRACTED_BYTES:
+        raise HTTPException(413,'pdf_extracted_text_limit')
+    new_key=get_storage().put(learner.id,result_bytes,f'{material.id}-pages-{batch_index}.json')
+    page.update(
+        status='corrected' if corrected_text else 'blank',
+        method='learner-correction' if corrected_text else 'learner-confirmed-blank',
+        warning=None,text_chars=len(corrected_text),
+        section_count=1 if corrected_text else 0,
+        correction_hash=hashlib.sha256(correction_bytes).hexdigest(),
+        corrected_at=utcnow().isoformat(),
+    )
+    old_result_bytes=int(batch.get('result_bytes',0))
+    batch.update(result_blob_key=new_key,result_bytes=len(result_bytes),
+                 extracted_text_bytes=new_batch_text_bytes)
+    manifest['pages']=pages
+    manifest['batches']=batches
+    manifest['batch_result_bytes']=int(manifest.get('batch_result_bytes',0))-old_result_bytes+len(result_bytes)
+    manifest['extracted_text_bytes']=new_total
+    obsolete=set(manifest.get('obsolete_result_blob_keys',[]))
+    if old_key!=new_key:
+        obsolete.add(old_key)
+    manifest['obsolete_result_blob_keys']=sorted(obsolete)
+    _manifest_review_pages(manifest)
+    all_batches_complete=all(item.get('state')=='completed' for item in batches)
+    if not manifest['review_required_count'] and all_batches_complete:
+        _schedule_pdf_finalize(db,revision,manifest)
+        material.status='processing'
+    elif manifest['review_required_count']:
+        manifest['status']='needs-review' if all_batches_complete else 'processing'
+        material.status='needs-attention' if all_batches_complete else 'processing'
+    else:
+        manifest['status']='processing'
+        material.status='processing'
+    revision.metadata_json={**revision.metadata_json,'ingestion_manifest':manifest}
+    material.version+=1
+    db.commit()
+    return {'material_id':material.id,'revision_id':revision.id,'page_number':page_number,
+            'status':page['status'],'version':material.version,
+            'review_required_count':manifest['review_required_count'],
+            'material_status':material.status,'finalize_job_id':manifest.get('finalize_job_id')}
+
+
 @router.patch('/materials/{material_id}/source-language', response_model=SourceLanguageDTO)
 def correct_source_language(material_id: str, body: SourceLanguageInput, db=Depends(get_db), learner=Depends(get_learner)):
     material = require_owned(db, Material, material_id, learner)
@@ -247,11 +442,12 @@ def correct_source_language(material_id: str, body: SourceLanguageInput, db=Depe
 
 
 @router.get('/material-revisions/{revision_id}/original')
-def original(revision_id:str,db=Depends(get_db),learner=Depends(get_learner)):
+def original(revision_id:str,inline:bool=False,db=Depends(get_db),learner=Depends(get_learner)):
     revision=require_owned(db,MaterialRevision,revision_id,learner)
     if not revision.private_blob_key: raise HTTPException(404,'original_unavailable')
     data=get_storage().get(learner.id,revision.private_blob_key)
-    return Response(data,media_type=revision.mime,headers={'Content-Disposition':'attachment','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'})
+    disposition='inline; filename="source.pdf"' if inline and revision.mime=='application/pdf' else 'attachment'
+    return Response(data,media_type=revision.mime,headers={'Content-Disposition':disposition,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'})
 
 
 @router.get('/connections',response_model=list[ConnectionDTO])

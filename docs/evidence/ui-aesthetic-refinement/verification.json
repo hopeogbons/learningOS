@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-14",
+  "status": "passed_with_documented_skips_and_live_limitations",
+  "checks": [
+    {
+      "name": "Pinned frontend install",
+      "command": "npm ci --no-audit --no-fund",
+      "cwd": "/home/hope/Projects/learningOS/frontend",
+      "exit_code": 0
+    },
+    {
+      "name": "Frontend lint, typecheck and production build",
+      "command": "npm run lint && npm exec tsc -- --noEmit && npm run build",
+      "cwd": "/home/hope/Projects/learningOS/frontend",
+      "exit_code": 0
+    },
+    {
+      "name": "Backend deterministic suite",
+      "command": "docker run --rm -e APP_MODE=test -v \"/home/hope/Projects/learningOS:/workspace\" -w /workspace/backend 392307d22300 sh -lc 'pip install --no-cache-dir uv==0.12.23 && uv run --python 3.12 --frozen --group dev pytest -q -rs'",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "passed": 188,
+      "skipped": 4,
+      "skipped_reasons": [
+        "Three PostgreSQL migration/multiworker checks require TEST_POSTGRES_URL.",
+        "One WebM-duration check requires deployment ffmpeg."
+      ]
+    },
+    {
+      "name": "Contract schemas and ten locale catalogs",
+      "command": "python3 scripts/validate_contracts.py && python3 scripts/check_locales.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "6 schemas; 10 locales with 276 keys each, 24,840 ICU formats and 230 local font assets."
+    },
+    {
+      "name": "Backend OpenAPI export drift",
+      "command": "docker run --rm -e APP_MODE=test -v \"/home/hope/Projects/learningOS:/workspace\" -w /workspace/backend 392307d22300 sh -lc 'pip install --no-cache-dir uv==0.12.23 && uv run --python 3.12 --frozen python scripts/export_openapi.py --check'",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "OpenAPI matches."
+    },
+    {
+      "name": "Generated TypeScript API contract drift",
+      "command": "npm exec --yes --package=openapi-typescript@7.10.1 -- openapi-typescript contracts/openapi.json --output /tmp/opencode/api.generated.ts && diff -u frontend/src/lib/api.generated.ts /tmp/opencode/api.generated.ts",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0
+    },
+    {
+      "name": "Synthetic Home visual assertions and screenshot capture",
+      "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "artifact": "docs/evidence/ui-aesthetic-refinement/viewport-wordmark-results.json",
+      "screenshots": [
+        "home-viewport-wordmark-mobile-390.png",
+        "home-viewport-wordmark-tablet-768.png",
+        "home-viewport-wordmark-mobile-991.png",
+        "home-viewport-wordmark-desktop-992.png",
+        "home-viewport-wordmark-desktop-1440.png",
+        "home-viewport-wordmark-projector-1920.png"
+      ],
+      "result": "No page errors or horizontal overflow; wordmark text has 90% horizontal visibility with 10px top/bottom insets; desktop Home hero has 24px left/right/top insets at 992, 1440 and 1920px; Bootstrap icon font loaded; 2/3/6 action columns at mobile/desktop/xxl cutoffs."
+    },
+    {
+      "name": "Synthetic two-way Voice Study browser loop",
+      "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 VOICE_EVIDENCE_PATH=docs/evidence/ui-aesthetic-refinement/voice-roundtrip.json python3 tests/frontend_voice.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "artifact": "docs/evidence/ui-aesthetic-refinement/voice-roundtrip.json",
+      "result": "Question, teaching and Reviewer feedback speech requests; editable synthetic transcript; confidence and voice answer path; typing fallback."
+    },
+    {
+      "name": "Rebuild only connected-local frontend and retain backend/worker/data volume",
+      "command": "docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml build frontend && docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml up -d --no-deps frontend",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "Frontend, backend and worker healthy; existing backend and data volume were not recreated."
+    }
+  ],
+  "limitations": [
+    "The focused visual run covers Home at five widths; it is not a replacement for full-route, axe, keyboard, zoom or long-label acceptance.",
+    "Synthetic speech interception does not prove live microphone capture, audible provider output or all-language speech.",
+    "Google OAuth/Drive and production gates remain as recorded in docs/build-state.json."
+  ]
+}

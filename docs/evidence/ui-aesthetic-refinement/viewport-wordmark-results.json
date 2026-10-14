@@ -1,0 +1,238 @@
+{
+  "status": "passed",
+  "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+  "cwd": "/home/hope/Projects/learningOS",
+  "exit_code": 0,
+  "target": "http://127.0.0.1:3000",
+  "browser_executable": "/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell",
+  "fixture": "synthetic learner; all API responses intercepted",
+  "checks": [
+    {
+      "screenshot": "home-viewport-wordmark-mobile-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "documentWidth": 390,
+      "wordmark": {
+        "top": 10,
+        "bottom": 834,
+        "left": 307.171875,
+        "right": 391.6875,
+        "width": 84.515625,
+        "height": 824,
+        "visibleWidth": 82.828125,
+        "textTop": 9.875309944152832,
+        "textBottom": 834.1246995925903,
+        "textLeft": 298.171875,
+        "textRight": 400.171875,
+        "textWidth": 102,
+        "textHeight": 824.2493896484375,
+        "textVisibleWidth": 91.828125,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-viewport-wordmark-tablet-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "documentWidth": 768,
+      "wordmark": {
+        "top": 10,
+        "bottom": 1014,
+        "left": 667.078125,
+        "right": 770.046875,
+        "width": 102.96875,
+        "height": 1004,
+        "visibleWidth": 100.921875,
+        "textTop": 10.382184028625488,
+        "textBottom": 1013.6177797317505,
+        "textLeft": 655.078125,
+        "textRight": 780.078125,
+        "textWidth": 125,
+        "textHeight": 1003.235595703125,
+        "textVisibleWidth": 112.921875,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-viewport-wordmark-mobile-991.png",
+      "viewport": {
+        "width": 991,
+        "height": 900
+      },
+      "documentWidth": 991,
+      "wordmark": {
+        "top": 10,
+        "bottom": 890,
+        "left": 902.546875,
+        "right": 992.796875,
+        "width": 90.25,
+        "height": 880,
+        "visibleWidth": 88.453125,
+        "textTop": 9.914528846740723,
+        "textBottom": 890.0854272842407,
+        "textLeft": 892.546875,
+        "textRight": 1001.546875,
+        "textWidth": 109,
+        "textHeight": 880.1708984375,
+        "textVisibleWidth": 98.453125,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-viewport-wordmark-desktop-992.png",
+      "viewport": {
+        "width": 992,
+        "height": 900
+      },
+      "documentWidth": 992,
+      "wordmark": {
+        "top": 10,
+        "bottom": 890,
+        "left": 903.546875,
+        "right": 993.796875,
+        "width": 90.25,
+        "height": 880,
+        "visibleWidth": 88.453125,
+        "textTop": 9.914528846740723,
+        "textBottom": 890.0854272842407,
+        "textLeft": 893.546875,
+        "textRight": 1002.546875,
+        "textWidth": 109,
+        "textHeight": 880.1708984375,
+        "textVisibleWidth": 98.453125,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 3
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-viewport-wordmark-desktop-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "documentWidth": 1440,
+      "wordmark": {
+        "top": 10,
+        "bottom": 990,
+        "left": 1341.484375,
+        "right": 1442,
+        "width": 100.515625,
+        "height": 980,
+        "visibleWidth": 98.515625,
+        "textTop": 10.352575302124023,
+        "textBottom": 989.6317501068115,
+        "textLeft": 1330.484375,
+        "textRight": 1451.484375,
+        "textWidth": 121,
+        "textHeight": 979.2791748046875,
+        "textVisibleWidth": 109.515625,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 6
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-viewport-wordmark-projector-1920.png",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "documentWidth": 1920,
+      "wordmark": {
+        "top": 10,
+        "bottom": 1070,
+        "left": 1813.453125,
+        "right": 1922.171875,
+        "width": 108.71875,
+        "height": 1060,
+        "visibleWidth": 106.546875,
+        "textTop": 11.166402816772461,
+        "textBottom": 1068.8336391448975,
+        "textLeft": 1801.453125,
+        "textRight": 1932.453125,
+        "textWidth": 131,
+        "textHeight": 1057.667236328125,
+        "textVisibleWidth": 118.546875,
+        "position": "fixed",
+        "zIndex": "0",
+        "writingMode": "vertical-rl",
+        "transform": "matrix(-1, 0, 0, -1.49, 0, 0)"
+      },
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 6
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    }
+  ],
+  "page_errors": [],
+  "limitations": [
+    "This focused run verifies Home at 390\u00d7844, 768\u00d71024, 991\u00d7900, 992\u00d7900, 1440\u00d71000 and 1920\u00d71080; it does not replace full route/accessibility acceptance.",
+    "No authentication, Drive, live speech or learner account was exercised."
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "status": "passed",
+  "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+  "cwd": "/home/hope/Projects/learningOS",
+  "exit_code": 0,
+  "target": "http://127.0.0.1:3000",
+  "browser_executable": "/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell",
+  "fixture": "synthetic learner; all API responses intercepted",
+  "checks": [
+    {
+      "screenshot": "home-no-wordmark-mobile-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "documentWidth": 390,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-no-wordmark-tablet-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "documentWidth": 768,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-no-wordmark-mobile-991.png",
+      "viewport": {
+        "width": 991,
+        "height": 900
+      },
+      "documentWidth": 991,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 2
+      },
+      "desktopHero": null,
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-no-wordmark-desktop-992.png",
+      "viewport": {
+        "width": 992,
+        "height": 900
+      },
+      "documentWidth": 992,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 3
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-no-wordmark-desktop-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "documentWidth": 1440,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 6
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    },
+    {
+      "screenshot": "home-no-wordmark-projector-1920.png",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "documentWidth": 1920,
+      "verticalWordmarkPresent": false,
+      "quickAction": {
+        "flexDirection": "row",
+        "gridColumns": 6
+      },
+      "desktopHero": {
+        "leftInset": 24,
+        "rightInset": 24,
+        "topInset": 24
+      },
+      "bootstrapIconFontLoaded": true,
+      "learningMotifs": 36
+    }
+  ],
+  "page_errors": [],
+  "limitations": [
+    "This focused run verifies Home at 390\u00d7844, 768\u00d71024, 991\u00d7900, 992\u00d7900, 1440\u00d71000 and 1920\u00d71080; it does not replace full route/accessibility acceptance.",
+    "No authentication, Drive, live speech or learner account was exercised."
+  ]
+}

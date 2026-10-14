@@ -12,7 +12,11 @@ from .models import Job, OutboxEvent, WorkerHeartbeat, Notification, Learner
 HANDLERS = {}
 WORKER_ID = f"{socket.gethostname()}:{os.getpid()}"
 MAX_ATTEMPTS = 4
+DELETE_MAX_ATTEMPTS = 12
 MAX_SCHEDULED_DRIVE_POLLS = 1000
+
+def retry_limit(kind):
+    return DELETE_MAX_ATTEMPTS if kind == "delete-material" else MAX_ATTEMPTS
 
 class NeedsAttention(Exception):
     def __init__(self, code="needs_attention"):
@@ -123,7 +127,11 @@ def run_once():
     with SessionLocal() as db:
         heartbeat(db)
         dispatch_outbox(db)
-        db.execute(update(Job).where(Job.state == "running", Job.lease_until < now, Job.attempts >= MAX_ATTEMPTS).values(state="failed", error_code="lease_exhausted", retryable=True, lease_owner=None, lease_until=None).execution_options(synchronize_session=False))
+        exhausted = or_(
+            and_(Job.kind == "delete-material", Job.attempts >= DELETE_MAX_ATTEMPTS),
+            and_(Job.kind != "delete-material", Job.attempts >= MAX_ATTEMPTS),
+        )
+        db.execute(update(Job).where(Job.state == "running", Job.lease_until < now, exhausted).values(state="failed", error_code="lease_exhausted", retryable=True, lease_owner=None, lease_until=None).execution_options(synchronize_session=False))
         db.commit()
         query = select(Job).where(eligible).order_by(Job.run_at, Job.created_at).limit(1)
         if db.bind.dialect.name == "postgresql":
@@ -164,7 +172,7 @@ def run_once():
                 attention = isinstance(exc, NeedsAttention) or not isinstance(exc, (RetryableJobError, JobBudgetExceeded))
                 job.error_code = getattr(exc, "code", "job_failed")
                 job.retryable = isinstance(exc, (RetryableJobError, JobBudgetExceeded))
-                job.state = "needs-attention" if attention else "queued" if job.attempts < MAX_ATTEMPTS else "failed"
+                job.state = "needs-attention" if attention else "queued" if job.attempts < retry_limit(job.kind) else "failed"
                 job.run_at = utcnow() + timedelta(seconds=min(300, 2 ** job.attempts))
                 job.lease_owner = None
                 job.lease_until = None

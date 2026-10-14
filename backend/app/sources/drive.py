@@ -103,6 +103,26 @@ class DriveAdapter:
         return value
     def get_file(self,file_id):
         return self.request('GET',f'https://www.googleapis.com/drive/v3/files/{self._safe_id(file_id)}',params={'fields':FILE_FIELDS}).json()
+    def delete_file(self,file_id,folder_id):
+        """Delete one confirmed file only while it remains in its bound Collection folder."""
+        file_id=self._safe_id(file_id);folder_id=self._safe_id(folder_id)
+        if file_id==folder_id:
+            raise SourceError('drive_delete_forbidden','A Collection folder cannot be deleted as a material.')
+        folder=self.get_file(folder_id)
+        if folder.get('trashed') or folder.get('mimeType')!='application/vnd.google-apps.folder':
+            raise SourceError('drive_folder_missing','The bound Collection folder could not be verified.')
+        try:
+            remote=self.get_file(file_id)
+        except SourceError as exc:
+            # The file can have been removed in Drive after the last local sync.
+            # Callers only pass persisted, Collection-owned file IDs.
+            if exc.code=='drive_folder_missing':
+                return {'deleted':True,'already_missing':True}
+            raise
+        if folder_id not in remote.get('parents',[]):
+            raise SourceError('drive_delete_wrong_parent','The Drive file moved outside this Collection folder; it was not deleted.')
+        response=self.request('DELETE',f'https://www.googleapis.com/drive/v3/files/{file_id}',allowed_status={404})
+        return {'deleted':True,'already_missing':response.status_code==404}
     def ensure_folder(self, identity, name, parent=None, existing_id=None):
         if existing_id:
             folder=self.get_file(existing_id)

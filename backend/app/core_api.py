@@ -81,7 +81,7 @@ def collection_dto(db, row):
 
 def material_dto(db, row, revision_cache=None):
     revision = revision_cache.get(row.current_revision_id) if revision_cache is not None else db.scalar(select(MaterialRevision).where(MaterialRevision.id == row.current_revision_id, MaterialRevision.learner_id == row.learner_id)) if row.current_revision_id else None
-    return {"id": row.id, "collection_id": row.collection_id, "title": row.title, "source_type": row.source_type, "position": row.position, "version": row.version, "status": row.status, "current_revision_id": row.current_revision_id, "created_at": iso(row.created_at), "origin": revision.origin if revision else None, "source_language": revision.source_language if revision else "und", "storage_state": revision.storage_state if revision else "pending", "size": revision.size if revision else 0}
+    return {"id": row.id, "collection_id": row.collection_id, "title": row.title, "source_type": row.source_type, "position": row.position, "version": row.version, "status": row.status, "current_revision_id": row.current_revision_id, "created_at": iso(row.created_at), "origin": revision.origin if revision else None, "source_language": revision.source_language if revision else "und", "storage_state": revision.storage_state if revision else "pending", "size": revision.size if revision else 0, "deletion_job_id": row.deletion_job_id}
 
 def material_cache(db, rows):
     if not rows:
@@ -200,6 +200,49 @@ def materials(collection_id: str, cursor: int = Query(0, ge=0), limit: int = Que
     total = db.scalar(select(func.count()).select_from(query.subquery()))
     rows = db.scalars(query.order_by(Material.position, Material.id).offset(cursor).limit(limit)).all()
     return {"items": material_dtos(db, rows), "total": total, "next_cursor": cursor + len(rows) if cursor + len(rows) < total else None}
+
+class DeleteMaterialBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_version: int = Field(ge=1)
+    confirmation: Literal["DELETE"]
+
+@router.delete("/collections/{collection_id}/materials/{material_id}", status_code=202, response_model=JobDTO)
+def delete_material(collection_id: str, material_id: str, body: DeleteMaterialBody,
+                    learner=Depends(get_learner), db=Depends(get_db)):
+    collection = owned(db, Collection, collection_id, learner.id)
+    material = owned(db, Material, material_id, learner.id)
+    if material.collection_id != collection.id:
+        raise HTTPException(404, "not_found")
+    key = f"delete-material:{material.id}"
+    existing = db.scalar(select(Job).where(Job.learner_id == learner.id, Job.idempotency_key == key))
+    if existing and existing.state in {"queued", "running"}:
+        material.deletion_job_id = existing.id
+        db.commit()
+        return job_dto(existing)
+
+    version_claim(db, Material, material, body.expected_version)
+    material.status = "deleting"
+    if existing:
+        existing.state = "queued"
+        existing.run_at = utcnow()
+        existing.attempts = 0
+        existing.progress = 0
+        existing.error_code = None
+        existing.retryable = True
+        existing.lease_owner = None
+        existing.lease_until = None
+        existing.result = {}
+    else:
+        existing = enqueue(
+            db,
+            learner.id,
+            "delete-material",
+            {"material_id": material.id, "collection_id": collection.id},
+            idempotency_key=key,
+        )
+    material.deletion_job_id = existing.id
+    db.commit()
+    return job_dto(existing)
 
 @router.get("/collections/{collection_id}/outline", response_model=OutlineDTO)
 def outline(collection_id: str, learner=Depends(get_learner), db=Depends(get_db)):

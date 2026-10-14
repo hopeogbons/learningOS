@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-14",
+  "status": "passed_with_documented_limits",
+  "checks": [
+    {
+      "name": "Frozen frontend install",
+      "command": "npm ci --no-audit --no-fund",
+      "cwd": "/home/hope/Projects/learningOS/frontend",
+      "exit_code": 0
+    },
+    {
+      "name": "Frontend lint, TypeScript and optimized build",
+      "command": "npm run lint && npm exec tsc -- --noEmit && npm run build",
+      "cwd": "/home/hope/Projects/learningOS/frontend",
+      "exit_code": 0
+    },
+    {
+      "name": "Schema, build-state and ten-locale validation",
+      "command": "python3 scripts/validate_contracts.py && python3 scripts/check_locales.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "Six schemas passed; all ten locales have 278 keys, 25,020 ICU formats and local font assets."
+    },
+    {
+      "name": "Rebuild only connected-local frontend",
+      "command": "docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml build frontend && docker compose -p learningos-connected-local -f deploy/compose.connected-local.yml up -d --no-deps frontend",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "result": "Frontend healthy; backend, worker and data volume preserved."
+    },
+    {
+      "name": "Synthetic browser Home inspection and signed-out product/CTA states",
+      "command": "PYTHONPATH=/tmp/opencode/pytools BROWSER_EXECUTABLE=/home/hope/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell E2E_BASE_URL=http://127.0.0.1:3000 python3 tests/ui_aesthetic_capture.py",
+      "cwd": "/home/hope/Projects/learningOS",
+      "exit_code": 0,
+      "artifact": "docs/evidence/ui-aesthetic-refinement/final-home-results.json",
+      "screenshots": [
+        "home-final-mobile-390.png",
+        "home-final-tablet-768.png",
+        "home-final-mobile-991.png",
+        "home-final-desktop-992.png",
+        "home-final-desktop-1440.png",
+        "home-final-projector-1920.png",
+        "home-final-rtl-mobile-390.png",
+        "home-final-rtl-desktop-1440.png"
+      ],
+      "result": "Zero page errors and horizontal overflow; #f3f8f6 canvas, 16px desktop intro-card gap (mobile retains -28px hero overlap), 24px hero margins and desktop menu starts below the hero; footer order and colored action labels/colors retained; signed-out state keeps product information above and a single sign-in action below in Due for Review. Arabic RTL was inspected on mobile and desktop. API responses are intercepted synthetic fixtures."
+    }
+  ],
+  "limitations": [
+    "This focused UI run is Home-only; full-route axe, keyboard, zoom and live-identity gates remain separate.",
+    "No real learner data, Drive access or live authentication was used."
+  ]
+}

@@ -1,0 +1,775 @@
+{
+  "date": "2026-10-14",
+  "fixture": "synthetic learner and synthetic Collection; API responses intercepted in browser",
+  "commands": [
+    {
+      "command": "npm ci --no-audit --no-fund",
+      "cwd": "frontend",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run lint",
+      "cwd": "frontend",
+      "exit_code": 0
+    },
+    {
+      "command": "npm exec tsc -- --noEmit",
+      "cwd": "frontend",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/validate_contracts.py",
+      "cwd": "repository root",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/check_locales.py",
+      "cwd": "repository root",
+      "exit_code": 0
+    },
+    {
+      "command": "Playwright + axe-core 4.10.3: Home and Collections at 390px and 1440px",
+      "cwd": "frontend",
+      "exit_code": 0
+    },
+    {
+      "command": "Playwright headless Chrome visual smoke: 14 routes × 6 viewports; API responses intercepted",
+      "cwd": "frontend",
+      "exit_code": 0
+    }
+  ],
+  "viewports": [
+    360,
+    390,
+    768,
+    991,
+    992,
+    1440
+  ],
+  "routes": [
+    "home",
+    "collections",
+    "collection-outline",
+    "outline-picker",
+    "add-material",
+    "study",
+    "voice-study",
+    "review",
+    "progress",
+    "connections",
+    "profile",
+    "search",
+    "notifications",
+    "logout"
+  ],
+  "checks": [
+    {
+      "route": "home",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "home",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "home",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "home",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "home",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "home",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Alex Learner"
+    },
+    {
+      "route": "collections",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collections",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collections",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collections",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collections",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collections",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Your Collections"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "collection-outline",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "outline-picker",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Choose your scope"
+    },
+    {
+      "route": "add-material",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Add Material"
+    },
+    {
+      "route": "add-material",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Add Material"
+    },
+    {
+      "route": "add-material",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Add Material"
+    },
+    {
+      "route": "add-material",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Add Material"
+    },
+    {
+      "route": "add-material",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Add Material"
+    },
+    {
+      "route": "add-material",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Add Material"
+    },
+    {
+      "route": "study",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Study"
+    },
+    {
+      "route": "study",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Study"
+    },
+    {
+      "route": "study",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Study"
+    },
+    {
+      "route": "study",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Study"
+    },
+    {
+      "route": "study",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Study"
+    },
+    {
+      "route": "study",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Study"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "voice-study",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Voice teach-back"
+    },
+    {
+      "route": "review",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "review",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "review",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "review",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "review",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "review",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Due for Review"
+    },
+    {
+      "route": "progress",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "progress",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "progress",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "progress",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "progress",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "progress",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Your Progress"
+    },
+    {
+      "route": "connections",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Connections"
+    },
+    {
+      "route": "connections",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Connections"
+    },
+    {
+      "route": "connections",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Connections"
+    },
+    {
+      "route": "connections",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Connections"
+    },
+    {
+      "route": "connections",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Connections"
+    },
+    {
+      "route": "connections",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Connections"
+    },
+    {
+      "route": "profile",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "profile",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "profile",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "profile",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "profile",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "profile",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Your Profile"
+    },
+    {
+      "route": "search",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Search your material"
+    },
+    {
+      "route": "search",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Search your material"
+    },
+    {
+      "route": "search",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Search your material"
+    },
+    {
+      "route": "search",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Search your material"
+    },
+    {
+      "route": "search",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Search your material"
+    },
+    {
+      "route": "search",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Search your material"
+    },
+    {
+      "route": "notifications",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Notifications"
+    },
+    {
+      "route": "notifications",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Notifications"
+    },
+    {
+      "route": "notifications",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Notifications"
+    },
+    {
+      "route": "notifications",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Notifications"
+    },
+    {
+      "route": "notifications",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Notifications"
+    },
+    {
+      "route": "notifications",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Notifications"
+    },
+    {
+      "route": "logout",
+      "viewport": 360,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 360,
+      "heading": "Log out"
+    },
+    {
+      "route": "logout",
+      "viewport": 390,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 390,
+      "heading": "Log out"
+    },
+    {
+      "route": "logout",
+      "viewport": 768,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 768,
+      "heading": "Log out"
+    },
+    {
+      "route": "logout",
+      "viewport": 991,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 991,
+      "heading": "Log out"
+    },
+    {
+      "route": "logout",
+      "viewport": 992,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 992,
+      "heading": "Log out"
+    },
+    {
+      "route": "logout",
+      "viewport": 1440,
+      "http_status": 200,
+      "horizontal_overflow": false,
+      "scroll_width": 1440,
+      "heading": "Log out"
+    }
+  ],
+  "captures": [
+    "home-mobile-390.png",
+    "home-desktop-1440.png",
+    "collections-mobile-390.png",
+    "collections-desktop-1440.png"
+  ],
+  "axe": {
+    "routes_and_viewports": ["Home 390px", "Collections 390px", "Home 1440px", "Collections 1440px"],
+    "violations": 0,
+    "passes": 161,
+    "incomplete": 4
+  },
+  "contrast_checks": {
+    "white_on_primary_267c4c": "5.16:1",
+    "quick_action_icon_on_tinted_surface": {
+      "study_blue": "5.35:1",
+      "review_amber": "3.43:1",
+      "add_material_green": "4.11:1",
+      "outline_purple": "5.91:1",
+      "voice_red": "5.44:1",
+      "progress_teal": "3.75:1"
+    },
+    "method": "WCAG relative luminance on the configured 70% action hue/30% ink glyph and 12% action hue/88% white tint"
+  },
+  "page_errors": [],
+  "failed_checks": [],
+  "status": "passed",
+  "limitations": [
+    "Provider/authentication/Drive workflows were not exercised by this visual smoke.",
+    "Axe, manual keyboard/focus, 200% zoom, and live integrations were not run."
+  ]
+}

@@ -1,7 +1,7 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { BookOpenCheck, ArrowRight } from "lucide-react";
+import { BookOpenCheck, ArrowRight, Mic, Volume2 } from "lucide-react";
 import { useI18n } from "@/i18n";
 import {
   api,
@@ -24,7 +24,7 @@ import {
   CollectionPicker,
   CitationList,
 } from "../Shared";
-import VoiceControls from "../VoiceControls";
+import VoiceControls, { type VoiceMessage } from "../VoiceControls";
 const PENDING_TURNS = [
   "pending", "generating", "reviewing", "pending_generation",
   "pending_review", "assessing", "finishing",
@@ -187,6 +187,18 @@ export default function StudyScreen({
   }
   const finished = item?.status === "finished" || item?.status === "completed";
   const feedback = item?.feedback;
+  const speechMessages = useMemo<VoiceMessage[]>(() => {
+    const messages: VoiceMessage[] = [];
+    if (item?.teaching && !review)
+      messages.push({ id: "teaching", label: t("study.teach"), text: item.teaching });
+    if (item?.question)
+      messages.push({ id: "question", label: t("study.check"), text: item.question });
+    if (item?.feedback?.feedback)
+      messages.push({ id: "feedback", label: t("study.feedback"), text: String(item.feedback.feedback) });
+    return messages;
+  }, [item, review, t]);
+  const autoSpeakMessageId: VoiceMessage["id"] | null =
+    !isVoice ? null : feedback?.voice === true ? "feedback" : feedback ? null : "question";
   return (
     <>
       <PageTitle
@@ -196,6 +208,19 @@ export default function StudyScreen({
       <Status error={error} retry={retryTurn} />
       {!sessionId && (
         <Card>
+          {isVoice && (
+            <div className="voice-conversation-intro rounded-3 p-3 mb-4" role="note">
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="voice-conversation-icon"><Volume2 size={18} /><Mic size={16} /></span>
+                <h2 className="h6 fw-bold mb-0">{t("study.voice")}</h2>
+              </div>
+              <p className="small mb-2" dir="auto">{t("study.voiceDescription")}</p>
+              <p className="small text-body-secondary mb-0">
+                {t("study.studyLanguage")}: <bdi>{preferences.study_locale}</bdi>
+                {" · "}{t("study.speechLanguage")}: <bdi>{preferences.speech_locale}</bdi>
+              </p>
+            </div>
+          )}
           <CollectionPicker
             hasMore={collections.hasMore}
             onLoadMore={collections.loadMore}
@@ -275,32 +300,26 @@ export default function StudyScreen({
                 {item.question}
               </p>
               <Citations ids={item.citation_ids ?? []} />
-              {isVoice && (
-                <VoiceControls
-                  key={`${sessionId}:${item.item_id}:${Boolean(feedback)}`}
-                  sessionId={sessionId}
-                  itemId={item.item_id ?? ""}
-                  messageId={feedback ? "feedback" : "question"}
-                  text={
-                    feedback
-                      ? String(feedback.feedback ?? "")
-                      : (item.question ?? "")
-                  }
-                  turns={turns}
-                  onTranscript={(text) => {
-                    setAnswer(text);
-                    setTranscribed(true);
-                  }}
-                  onTyping={() => {
-                    setVoice(false);
-                    setTranscribed(false);
-                  }}
-                />
-              )}
               {feedback ? (
                 <>
                   <Feedback value={feedback} />
                   <Citations ids={feedback.citation_ids ?? []} />
+                  {isVoice && (
+                    <VoiceControls
+                      key={`${sessionId}:${item.item_id}:feedback`}
+                      sessionId={sessionId}
+                      itemId={item.item_id ?? ""}
+                      messages={speechMessages}
+                      canRecord={false}
+                      autoSpeakMessageId={autoSpeakMessageId}
+                      turns={turns}
+                      onTranscript={setAnswer}
+                      onTyping={() => {
+                        setVoice(false);
+                        setTranscribed(false);
+                      }}
+                    />
+                  )}
                   <div className="d-flex flex-wrap gap-2 mt-4">
                     <button
                       className="btn btn-primary d-inline-flex align-items-center gap-2"
@@ -320,7 +339,27 @@ export default function StudyScreen({
                   </div>
                 </>
               ) : (
-                <form onSubmit={submit}>
+                <>
+                  {isVoice && (
+                    <VoiceControls
+                      key={`${sessionId}:${item.item_id}:question`}
+                      sessionId={sessionId}
+                      itemId={item.item_id ?? ""}
+                      messages={speechMessages}
+                      canRecord
+                      autoSpeakMessageId={autoSpeakMessageId}
+                      turns={turns}
+                      onTranscript={(text) => {
+                        setAnswer(text);
+                        setTranscribed(true);
+                      }}
+                      onTyping={() => {
+                        setVoice(false);
+                        setTranscribed(false);
+                      }}
+                    />
+                  )}
+                  <form onSubmit={submit}>
                   <label className="d-block mt-4 mb-3">
                     <span className="form-label fw-semibold">
                       {t("study.answer")}
@@ -375,7 +414,8 @@ export default function StudyScreen({
                   >
                     {t(busy ? "common.working" : "study.submit")}
                   </button>
-                </form>
+                  </form>
+                </>
               )}
             </>
           )}

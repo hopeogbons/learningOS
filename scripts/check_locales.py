@@ -79,7 +79,7 @@ for(const locale of locales){const catalog=JSON.parse(fs.readFileSync(path.join(
  try {const ast=parse(text); const names=variables(ast);if(JSON.stringify(names)!==JSON.stringify(expected[key]))throw Error('interpolation variables differ');
   const format=new IntlMessageFormat(ast,locale);
   for(const count of [0,1,2,3,5,11,21,101,1.5]){
-   const result=format.format({count,done:1,total:3,revision:7});
+    const result=format.format({count,done:1,total:3,revision:7,processed:2,review:1,uploadMiB:20});
    if(typeof result!=='string'||!result.trim()||result.includes('{count'))throw Error('unresolved output');checks++;
   }
  }catch(error){errors.push(locale+':'+key+': '+error.message);}

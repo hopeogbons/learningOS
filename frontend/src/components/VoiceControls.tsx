@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Mic, Square, Volume2, Keyboard } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { api, apiBlob } from "@/lib/api";
@@ -20,6 +20,11 @@ type SpeechWindow = Window & {
   SpeechRecognition?: new () => Recognition;
   webkitSpeechRecognition?: new () => Recognition;
 };
+export type VoiceMessage = {
+  id: "teaching" | "question" | "feedback";
+  label: string;
+  text: string;
+};
 /** Inventory can arrive asynchronously; observe voiceschanged before server fallback. */
 async function browserVoices(): Promise<SpeechSynthesisVoice[]> {
   const synthesis = window.speechSynthesis;
@@ -39,23 +44,25 @@ async function browserVoices(): Promise<SpeechSynthesisVoice[]> {
 export default function VoiceControls({
   sessionId,
   itemId,
-  messageId,
-  text,
+  messages,
+  canRecord,
+  autoSpeakMessageId = null,
   turns,
   onTranscript,
   onTyping,
 }: {
   sessionId: string;
   itemId: string;
-  messageId: "teaching" | "question" | "feedback";
-  text: string;
+  messages: VoiceMessage[];
+  canRecord: boolean;
+  autoSpeakMessageId?: VoiceMessage["id"] | null;
   turns: number;
   onTranscript: (text: string) => void;
   onTyping: () => void;
 }) {
   const { t, preferences } = useI18n(),
     [recording, setRecording] = useState(false),
-    [speaking, setSpeaking] = useState(false),
+    [speakingId, setSpeakingId] = useState<VoiceMessage["id"] | null>(null),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState<string | null>(null);
   const recognition = useRef<Recognition | null>(null),
@@ -66,7 +73,11 @@ export default function VoiceControls({
     active = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     request = useRef<AbortController | null>(null),
-    transcriptCallback = useRef(onTranscript);
+    transcriptCallback = useRef(onTranscript),
+    messagesRef = useRef(messages),
+    autoSpeechTimer = useRef<ReturnType<typeof setTimeout> | null>(null),
+    autoSpoken = useRef<string | null>(null),
+    speakRef = useRef<(message: VoiceMessage) => Promise<void>>(async () => {});
   useEffect(() => {
     transcriptCallback.current = onTranscript;
   }, [onTranscript]);
@@ -118,15 +129,17 @@ export default function VoiceControls({
     if (recorder.current?.state === "recording") recorder.current.stop();
     if (active.current) setRecording(false);
   }
-  function stopSpeech() {
+  const stopSpeech = useCallback(() => {
+    if (autoSpeechTimer.current) clearTimeout(autoSpeechTimer.current);
+    autoSpeechTimer.current = null;
     window.speechSynthesis?.cancel();
     audio.current?.pause();
     request.current?.abort();
     if (active.current) {
-      setSpeaking(false);
+      setSpeakingId(null);
       setBusy(false);
     }
-  }
+  }, []);
   async function serverRecord() {
     try {
       if (
@@ -205,6 +218,7 @@ export default function VoiceControls({
     }
   }
   function record() {
+    stopSpeech();
     setNotice(null);
     const Constructor =
       (window as SpeechWindow).SpeechRecognition ??
@@ -247,7 +261,7 @@ export default function VoiceControls({
       void serverRecord();
     }
   }
-  async function speak() {
+  const speak = useCallback(async (message: VoiceMessage) => {
     stopSpeech();
     setNotice(null);
     setBusy(true);
@@ -261,20 +275,20 @@ export default function VoiceControls({
             value.lang.toLowerCase().split("-")[0] === target.split("-")[0],
         );
     if (voice) {
-      const utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(message.text);
       utterance.lang = voice.lang;
       utterance.voice = voice;
       utterance.onend = () => {
-        if (active.current) setSpeaking(false);
+        if (active.current) setSpeakingId(null);
       };
       utterance.onerror = () => {
         if (active.current) {
-          setSpeaking(false);
+          setSpeakingId(null);
           setNotice(t("study.voiceUnavailable"));
         }
       };
       window.speechSynthesis.speak(utterance);
-      setSpeaking(true);
+      setSpeakingId(message.id);
       setBusy(false);
       return;
     }
@@ -284,7 +298,7 @@ export default function VoiceControls({
     try {
       const blob = await apiBlob(
         `/sessions/${sessionId}/speech/synthesize`,
-        { item_id: itemId, message_id: messageId },
+        { item_id: itemId, message_id: message.id },
         abort.signal,
       );
       if (!active.current || abort.signal.aborted) return;
@@ -292,11 +306,11 @@ export default function VoiceControls({
       audioUrl.current = URL.createObjectURL(blob);
       audio.current = new Audio(audioUrl.current);
       audio.current.onended = () => {
-        if (active.current) setSpeaking(false);
+        if (active.current) setSpeakingId(null);
       };
       await audio.current.play();
       if (!active.current || abort.signal.aborted) return;
-      setSpeaking(true);
+      setSpeakingId(message.id);
       setNotice(t("study.serverSpeech"));
     } catch {
       if (active.current && !abort.signal.aborted)
@@ -304,7 +318,29 @@ export default function VoiceControls({
     } finally {
       if (active.current && !abort.signal.aborted) setBusy(false);
     }
-  }
+  }, [itemId, preferences.speech_locale, sessionId, stopSpeech, t]);
+  useEffect(() => {
+    speakRef.current = speak;
+  }, [speak]);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+  useEffect(() => {
+    if (!autoSpeakMessageId) return;
+    autoSpeechTimer.current = setTimeout(() => {
+      autoSpeechTimer.current = null;
+      const message = messagesRef.current.find((entry) => entry.id === autoSpeakMessageId);
+      if (!message?.text) return;
+      const key = `${sessionId}:${itemId}:${message.id}:${message.text}`;
+      if (autoSpoken.current === key) return;
+      autoSpoken.current = key;
+      void speakRef.current(message);
+    }, 250);
+    return () => {
+      if (autoSpeechTimer.current) clearTimeout(autoSpeechTimer.current);
+      autoSpeechTimer.current = null;
+    };
+  }, [autoSpeakMessageId, itemId, sessionId]);
   return (
     <div className="voice-controls rounded-3 p-3 mb-3">
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
@@ -323,21 +359,29 @@ export default function VoiceControls({
           className="btn btn-danger btn-sm d-flex align-items-center gap-2"
           onClick={recording ? stopRecording : record}
           disabled={
-            !recording && (turns >= 3 || busy || messageId === "feedback")
+            !recording && (turns >= 3 || busy || !canRecord)
           }
         >
           {recording ? <Square size={16} /> : <Mic size={16} />}{" "}
           {t(recording ? "study.stopRecording" : "study.microphone")}
         </button>
-        <button
-          type="button"
-          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-          onClick={speaking ? stopSpeech : speak}
-          disabled={busy || !text}
-        >
-          <Volume2 size={16} />
-          {t(speaking ? "study.stopSpeech" : "study.listen")}
-        </button>
+        {messages.map((message) => {
+          const speaking = speakingId === message.id;
+          return (
+            <button
+              key={message.id}
+              type="button"
+              className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+              onClick={() => speaking ? stopSpeech() : void speak(message)}
+              disabled={busy || !message.text}
+              aria-label={`${t(speaking ? "study.stopSpeech" : "study.listen")}: ${message.label}`}
+            >
+              <Volume2 size={16} />
+              {t(speaking ? "study.stopSpeech" : "study.listen")}
+              <span className="small">{message.label}</span>
+            </button>
+          );
+        })}
         <button
           type="button"
           className="btn btn-light border btn-sm d-flex align-items-center gap-2"

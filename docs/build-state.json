@@ -496,7 +496,8 @@
     "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public application deployment; reviewed source is now available on GitHub main.",
     "P05 latency target remains failed: two-worker five-minute p95 855.08 ms; four-worker smoke 792.86 ms.",
     "Development lint-chain findings and OS/container scans remain pending as recorded in release report.",
-    "New local demo images rebuilt and container/UI upload/citation checks passed; source is on GitHub main. Production immutable registry references and target-host rollback/release checks still require review."
+    "New local demo images rebuilt and container/UI upload/citation checks passed; source is on GitHub main. Production immutable registry references and target-host rollback/release checks still require review.",
+    "D07 live Drive deletion/readback remains unrun; synthetic adapter tests do not prove the connected account's delete consent or direct-drop access."
   ],
   "maintenance_updates": [
     {
@@ -548,6 +549,127 @@
         "services": "frontend healthy; backend/worker preserved",
         "public_production": "unconfigured"
       }
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "mobile hero contrast/pattern, Andela green primary actions, quieter quick-action accents and desktop profile-photo placeholder",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "docs/UI_CONTRACT.md",
+        "contracts/build-state.schema.json",
+        "docs/evidence/ui-aesthetic-refinement/README.md",
+        "docs/evidence/ui-aesthetic-refinement/results.json",
+        "docs/evidence/ui-aesthetic-refinement/home-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/collections-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/home-desktop-1440.png",
+        "docs/evidence/ui-aesthetic-refinement/collections-desktop-1440.png"
+      ],
+      "frontend_lint": "passed; npm run lint (frontend, exit 0)",
+      "frontend_build": "passed; npm run build and npm exec tsc -- --noEmit (frontend, exit 0)",
+      "browser_visual_smoke": "passed; 14 routes at 360/390/768/991/992/1440px, zero horizontal overflow/page errors; four Home/Collections axe cases with zero violations; synthetic/intercepted API"
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "source-excerpts-v3 format-aware teaching windows, two-way voice, Bootstrap learning icons, 90%-visible viewport wordmark and elastic 24px desktop Home hero insets",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "backend/app/sources/local.py",
+        "backend/tests/test_sources.py",
+        "frontend/src/components/ViewportWordmark.tsx",
+        "frontend/src/components/LearningPattern.tsx",
+        "frontend/src/app/globals.css",
+        "docs/evidence/ui-aesthetic-refinement/verification.json",
+        "docs/evidence/ui-aesthetic-refinement/viewport-wordmark-results.json",
+        "docs/evidence/ui-aesthetic-refinement/voice-roundtrip.json",
+        "docs/evidence/ui-aesthetic-refinement/home-viewport-wordmark-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/home-viewport-wordmark-projector-1920.png"
+      ],
+      "backend": {
+        "passed": 188,
+        "skipped": 4,
+        "exit_code": 0
+      },
+      "frontend_lint": "passed; npm run lint (frontend, exit 0)",
+      "frontend_build": "passed; npm ci --no-audit --no-fund, npm exec tsc -- --noEmit and npm run build (frontend, exit 0); connected-local frontend image rebuilt",
+      "browser_visual_smoke": "passed; tests/ui_aesthetic_capture.py at 390/768/991/992/1440/1920px, no page errors or overflow, exact 90% visible wordmark and 10px vertical insets, 24px banner gutters at desktop sizes; tests/frontend_voice.py synthetic turn loop passed. Full route/axe/live-provider gates remain separate."
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "remove decorative vertical Learning OS wordmark; retain Bootstrap learning motifs and elastic 24px desktop Home hero insets",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "docs/UI_CONTRACT.md",
+        "docs/ACCEPTANCE_TESTS.md",
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/app/globals.css",
+        "docs/evidence/ui-aesthetic-refinement/no-wordmark-verification.json",
+        "docs/evidence/ui-aesthetic-refinement/hero-layout-results.json",
+        "docs/evidence/ui-aesthetic-refinement/home-no-wordmark-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/home-no-wordmark-projector-1920.png"
+      ],
+      "frontend_lint": "passed; npm run lint (frontend, exit 0)",
+      "frontend_build": "passed; npm exec tsc -- --noEmit and npm run build (frontend, exit 0); connected-local frontend image rebuilt",
+      "browser_visual_smoke": "passed; six Home widths, vertical wordmark DOM absent, 24px desktop hero insets and zero horizontal overflow/page errors; API responses intercepted with synthetic fixtures. Full route/axe gates were not rerun."
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "final unified mobile/desktop Home with scattered brain/circuit hero, colored actions, permanent product card, desktop menu below header, #f3f8f6 canvas and Arabic RTL check",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "docs/UI_CONTRACT.md",
+        "docs/ACCEPTANCE_TESTS.md",
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/components/DesktopGreeting.tsx",
+        "frontend/src/components/LearningPattern.tsx",
+        "frontend/src/components/HomeIntroduction.tsx",
+        "frontend/src/app/globals.css",
+        "docs/evidence/ui-aesthetic-refinement/final-home-verification.json",
+        "docs/evidence/ui-aesthetic-refinement/final-home-results.json",
+        "docs/evidence/ui-aesthetic-refinement/home-final-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/home-final-desktop-1440.png",
+        "docs/evidence/ui-aesthetic-refinement/home-final-rtl-mobile-390.png",
+        "docs/evidence/ui-aesthetic-refinement/home-final-rtl-desktop-1440.png"
+      ],
+      "frontend_lint": "passed; npm ci --no-audit --no-fund and npm run lint (frontend, exit 0)",
+      "frontend_build": "passed; npm exec tsc -- --noEmit and npm run build (frontend, exit 0); connected-local frontend image rebuilt",
+      "browser_visual_smoke": "passed; synthetic Home at 390/768/991/992/1440/1920 and Arabic RTL at 390/1440; 24px desktop hero gutters, sidebar below hero, 16px desktop intro gap, mobile -28px overlap, #f3f8f6 canvas, original colored action order and four footer tabs preserved; signed-out intro/lower-only sign-in assertions passed. Full-route/axe/live-provider gates remain separate."
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "durable resumable PDF batches, page review/correction, confirmed Material deletion, and enforced/visible source limits",
+      "status": "implemented_locally_validated; live Drive deletion and real 1,000-page/OCR proof remain blocked",
+      "evidence": [
+        "docs/PRODUCT_SPEC.md",
+        "docs/API_CONTRACT.md",
+        "docs/DATA_MODEL.md",
+        "docs/UI_CONTRACT.md",
+        "docs/DRIVE_INGESTION.md",
+        "backend/app/ingest_limits.py",
+        "backend/app/ingest.py",
+        "backend/app/ingestion_api.py",
+        "backend/app/core_schemas.py",
+        "backend/migrations/versions/0003_material_delete_job_link.py",
+        "backend/tests/test_sources.py",
+        "docs/evidence/ingestion-review/README.md",
+        "docs/evidence/ingestion-review/add-material-mobile-390.png",
+        "docs/evidence/ingestion-review/add-material-desktop-1440.png",
+        "docs/evidence/ingestion-review/delete-material-modal-1440.png",
+        "backend command: UV_CACHE_DIR=/tmp/opencode/uv-cache .venv/bin/python -m pytest tests -q -rs (cwd backend; exit 0; 195 passed, 4 skipped)",
+        "frontend command: npm run lint && npm exec tsc -- --noEmit && npm run build (cwd frontend; exit 0)",
+        "locale command: python3 scripts/check_locales.py (cwd repository root; exit 0; 10 locales and 288 keys)",
+        "API command: PATH=/tmp/opencode/uv/bin:$PATH UV_CACHE_DIR=/tmp/opencode/uv-cache bash scripts/check_api_contracts.sh (cwd repository root; exit 0)",
+        "browser command: synthetic Playwright capture harness using installed Chromium (cwd frontend; exit 0; 390px/1440px, no horizontal overflow or browser errors, DELETE expected_version/confirmation payload checked)"
+      ],
+      "backend": {
+        "passed": 195,
+        "skipped": 4,
+        "exit_code": 0
+      },
+      "frontend_lint": "passed; ESLint clean (frontend, exit 0)",
+      "frontend_build": "passed; TypeScript noEmit and Next.js production build (frontend, exit 0)",
+      "browser_visual_smoke": "passed; captured and inspected Add Material mobile/desktop and deletion modal with synthetic source fixtures; modal request carries the expected version and explicit DELETE confirmation; screenshots have no horizontal overflow or browser/page errors. The original PDF fixture is blank and synthetic.",
+      "live_drive": "blocked/unrun; D07 provider-confirmed delete/readback, consent, and direct-drop behavior have not been exercised with a connected account.",
+      "reported_user_pdf_failure": "not reproduced in this batch; a genuine 1,000-page PDF, live OCR quality and provider outage recovery were not run."
     }
   ]
 }

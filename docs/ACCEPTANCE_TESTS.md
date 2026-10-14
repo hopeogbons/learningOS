@@ -7,8 +7,8 @@ These are implementation tests to create/run, not checks already passed. Tests m
 | ID | Action / required result | Gate |
 |---|---|---|
 | F01 | App+worker boot; liveness and DB-backed readiness; migration from clean DB; original Home renders | B1 |
-| F02 | Ingest both original chemistry chapters+Markdown/text; real source locators resolve; tiny/no-heading/empty/encrypted cases truthful | B2 |
-| F03 | CSV/XLSX preserve sheet/cell or row/column refs; bounded parsing and UTF-8 non-chemistry material | B2 |
+| F02 | Ingest original chemistry chapters plus PDF/Markdown/TXT/DOCX/RST; structure-aware page/heading/line locators resolve; 160-token windows stay within source structure with 20-token context overlap; a 210-page and 1,000-page PDF complete in resumable 40-page batches with global page locators, exact page manifest, OCR attention, and no false ready state | B2 |
+| F03 | CSV/TSV/XLSX preserve headers and row/sheet/cell refs; JSON/YAML key paths cite exact original text; per-format byte/page/expanded-size/depth/cell/pixel limits are visibly communicated and enforced; oversized Drive drops show attention, not silent skip | B2/B7 |
 | F04 | Select exactly five titles across two materials, Go → 0/5; unselected/late-uploaded titles never change denominator | B3 |
 | F05 | Drag and keyboard reorder, reload persists; conflicting version returns 409; duplicate/foreign title IDs rejected | B3 |
 | F06 | No scope → cannot start; session pinned to immutable scope despite later editing | B3/B4 |
@@ -25,13 +25,16 @@ These are implementation tests to create/run, not checks already passed. Tests m
 | F17 | Clear photo matches visible source; blurry photo needs retake; image usage proven only after real vision call | B8 connected |
 | F18 | Fixed-clock +0/+3 due behavior; success ladder 1→3→7→14→30→30; failure→1; stage stable on retry | B9 |
 | F19 | Weak spots/calibration survive API+worker restart; IANA timezone/DST/Africa-Lagos boundaries correct | B9 |
-| F20 | Three-turn voice on supported browser: transcript edit, targeted cited follow-up, saved attempt; deny mic/unsupported browser → typing | B10 connected |
+| F20 | Two-way Voice Study: tutor speaks cited teaching/question/Reviewer feedback; learner transcript is editable and graded through the text path with confidence; targeted cited follow-up is speakable; three-voice-turn cap; mic denial/unavailable locale → typing | B10 connected |
 | F21 | No production debug completion/date override/demo principal/fake provider; every template affordance works or clearly disabled | B11 |
 | F22 | Fresh staged/release checkout frozen install, migrations, documented startup and meaningful full suite pass | B11 |
+| F23 | Confirmed material deletion removes its revisions/chunks/concepts/citations and material-linked progress/review data; refreshes the active scope from surviving titles; deletes only provider-confirmed files in the bound Drive folder; preserves data and offers retry on Drive failure; foreign material IDs are indistinguishable 404 | B2/B7 |
+| F24 | Page manifest accounts for every PDF page exactly once; low-quality OCR remains review-required; owner can compare the original page, correct/accept text, retry/finalize, and original bytes/hash stay unchanged | B2 |
+| F25 | Restart worker between PDF batches; completed pages are not reprocessed, remaining page ranges resume, chapter/page offsets stay global, no duplicate Chunks, and private temporary batch objects are removed after successful finalization | B2 |
 
 ## Visual/accessibility cases
 
-V01: 390/768/1440 Home captures against supplied baseline; green hero and standalone brain/circuit logo as authorized on 2026-10-14; 264px sidebar, original six shortcut colors and card geometry remain recognizable. V02: every route mobile+desktop, 360px and 991/992 boundary, 200% zoom/long strings; no overflow or hidden required capability. V03: keyboard drawer traps/restores focus, Escape and navigation close, tabs/links have correct active state, keyboard reorder works. V04: axe/contrast/label review, 44px actions, screen-reader source/confidence/progress feedback, reduced motion. Screenshot review is recorded by file and reviewer; a screenshot existing alone is not a review.
+V01: 390/768/1440 Home captures against supplied baseline and latest user reference; matching opal brain/circuit-pattern hero with asymmetrically scattered, non-grid marks on mobile/desktop, 24px desktop hero gutters, no vertical wordmark, colored six-action grid, and desktop sidebar begins below the header. V02: every route mobile+desktop, 360px and 991/992 boundary, 200% zoom/long strings; no overflow or hidden required capability. V03: keyboard drawer traps/restores focus, Escape and navigation close, tabs/links have correct active state, keyboard reorder works. V04: axe/contrast/label review, 44px actions, screen-reader source/confidence/progress feedback, reduced motion. Home auth-state check: upper product-information card remains visible with no sign-in action; the lower Due for Review callout contains the sign-in request. Screenshot review is recorded by file and reviewer; a screenshot existing alone is not a review.
 
 ## Production/security cases
 

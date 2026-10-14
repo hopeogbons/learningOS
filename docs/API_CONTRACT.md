@@ -15,8 +15,12 @@ Authentication is per-learner except health and OIDC start/callback. Envelope er
 | GET `/dashboard` | one consistent authenticated snapshot | learner, collections_count, due_count, scope_progress, resume, calibration, recent_materials, connection summary |
 | GET `/collections`, POST `/collections` | name, note, icon/color key, storage_mode local/drive (Drive default when connected); cursor | Collection + folder provisioning state/job; no fake ready folder |
 | GET/PATCH/DELETE `/collections/{id}` | ownership/version; archive policy | Collection / outcome |
-| POST `/collections/{id}/materials` | multipart file; persisted parent-folder routing; limits; idempotency; managed Drive upload when connected | 202 `{job_id,material_id,state,storage_state}`; final provider receipt proves saved |
+| POST `/collections/{id}/materials` | multipart PDF/Markdown/text/DOCX/RST/CSV/TSV/XLSX/JSON/YAML/log/JPG/PNG; persisted parent-folder routing; per-source limits; idempotency; managed Drive upload when connected | 202 `{job_id,material_id,state,storage_state}`; final provider receipt proves saved |
 | GET `/collections/{id}/materials` | paginated metadata | materials+revision status |
+| GET `/ingestion/limits` | authenticated; reports effective upload cap after installation configuration | `{max_upload_bytes}` |
+| GET `/materials/{id}/ingestion-pages` | owner; cursor and limit 1–40; current revision only | completeness manifest with global page numbers, extraction method, status, warning and page text excerpt capped at 200,000 characters |
+| PATCH `/materials/{id}/ingestion-pages/{page}` | owner; `{text,expected_version}`; only review-required page of an unfinished PDF revision | page correction recorded; next batch/finalize job status |
+| DELETE `/collections/{id}/materials/{material_id}` | owner + parent Collection; `{expected_version,confirmation:"DELETE"}`; idempotent durable deletion job | 202 JobDTO; completion only after Drive file deletion and private-object cleanup are confirmed |
 | GET `/collections/{id}/outline` | scope revision and material ordering | materials[{id,title,chunks[{id,title,citation_ids,selected,position}]}], active_scope, version |
 | POST `/collections/{id}/scope` | `{chunk_ids,expected_version}` | immutable scope_revision + progress |
 | PATCH `/collections/{id}/materials/reorder` | `{ordered_ids,expected_version}` | new version and ordering |
@@ -36,6 +40,7 @@ Authentication is per-learner except health and OIDC start/callback. Envelope er
 | GET `/citations/{id}` | ownership; revision locator resolves | excerpt,source metadata,authorized viewer URL/coordinates |
 | GET `/jobs/{id}` | owner only | status/progress/retryable/error_code/result IDs |
 | POST `/jobs/{id}/retry` | idempotent; failed/needs-attention only | queued job outcome |
+| GET `/jobs/{id}` | deletion/extraction job owner only; bounded result | state and sanitized page/batch progress |
 | GET `/connections` | actual status + supported runtime providers | capability rows |
 | POST `/connections/{provider}/connect` | explicit consent; scoped Drive read/create/upload, Gmail read-only | OAuth start URL with disclosed scopes |
 | GET `/connections/{provider}/callback` | session-bound state validation | connected redirect |
@@ -52,7 +57,7 @@ Confidence is required before feedback and cannot be changed after seeing the ve
 
 Backend returns serializable JSON only: semantic icon keys and color keys, numeric progress and counts, status/route IDs, bounded row subsets plus total counts. Frontend maps these to original Lucide components and palette. `due_count` and displayed preview length may differ deliberately; label counts from the same snapshot. All Home links pass collection/scope IDs when needed. Confidence and accuracy use the same window/sample count. Greetings use learner local time, never a hardcoded 'Good Morning'.
 
-Voice recognition yields text to the same answer contract; voice does not create a separate grading path. Server speech endpoints provide verified selected-language STT/TTS when browser support is absent, with explicit permission/privacy/quotas and session ownership. They are required to meet the all-ten spoken target if a browser cannot do so; typing is still available on permission denial or outage. Live date-override query parameters are forbidden; time travel lives in demo CLI/test clock only.
+Voice Study is a two-way conversation over the same session state machine: tutor messages (cited teaching, question, Reviewer feedback) may be spoken; learner speech becomes an editable transcript and then uses the same confidence/answer/grading endpoint as typed text. Server speech endpoints provide verified selected-language STT/TTS when browser support is absent, with explicit permission/privacy/quotas and session ownership. They are required to meet the all-ten spoken target if a browser cannot do so; typing is still available on permission denial or outage. Live date-override query parameters are forbidden; time travel lives in demo CLI/test clock only.
 
 ## Revision 2 API additions
 

@@ -4,9 +4,9 @@ import json
 import socket
 import pytest
 import httpx
-from sqlalchemy import create_engine, select, func
+from sqlalchemy import create_engine, select, func, event
 from sqlalchemy.orm import sessionmaker
-from app.db import Base
+from app.db import Base,utcnow
 from app.models import Learner,Collection,Material,MaterialRevision,Chunk,Concept,Citation,ProviderConnection,Job,ScopeRevision,StudySession,SessionItem
 from app.ingest import persist_snapshot,parse_descriptor,ingest_material,provision_drive,sync_drive
 from app.sources.base import SourceError
@@ -21,6 +21,8 @@ from app.settings import settings
 @pytest.fixture
 def db(tmp_path,monkeypatch):
     engine=create_engine('sqlite://',connect_args={'check_same_thread':False},poolclass=__import__('sqlalchemy').pool.StaticPool)
+    @event.listens_for(engine,'connect')
+    def sqlite_foreign_keys(connection,_):connection.execute('PRAGMA foreign_keys=ON')
     Base.metadata.create_all(engine)
     session=sessionmaker(engine,expire_on_commit=False)()
     session.add(Learner(id='owner'));session.add(Learner(id='other'));session.commit()
@@ -37,7 +39,7 @@ def test_markdown_preserves_headings_lines_and_hashes(db):
     persist_snapshot(db,revision,snapshot);persist_snapshot(db,revision,snapshot)
     assert db.scalar(select(func.count(Chunk.id)))==2
     citation=db.scalar(select(Citation).where(Citation.locator_json['heading'].as_string()=='Cells'))
-    assert citation.locator_json['line_start']==1 and citation.locator_json['line_end']==3
+    assert citation.locator_json['line_start']==2 and citation.locator_json['line_end']==2
     assert citation.excerpt_hash==hashlib.sha256(citation.excerpt.encode()).hexdigest()
     assert db.scalar(select(func.count(Concept.id)))>=2
     assert material.current_revision_id==revision.id
@@ -51,6 +53,82 @@ def test_spreadsheets_real_locators():
     book=Workbook();sheet=book.active;sheet.title='Biology';sheet.append(['Term','Meaning']);sheet.append(['DNA','Genetic information']);blob=io.BytesIO();book.save(blob)
     section=extract_file(blob.getvalue(),'terms.xlsx').sections[0]
     assert section.locator['sheet']=='Biology' and section.locator['cell_range']=='A2:B2'
+
+
+def test_customer_support_token_windows_keep_exact_offsets_and_twenty_token_overlap():
+    import tiktoken
+    from app.sources.local import split_teaching_windows
+
+    text=' '.join(f'Sentence {number} preserves an exact source fact.' for number in range(180))
+    windows=split_teaching_windows(text)
+    encoder=tiktoken.get_encoding('cl100k_base')
+    assert len(windows)>1
+    for window in windows:
+        assert text[window['start']:window['end']]==window['text']
+        assert text[window['core_start']:window['core_end']]==window['core_text']
+        assert len(encoder.encode(window['text']))<=160
+    for previous,current in zip(windows,windows[1:]):
+        assert current['token_start']==previous['token_end']-20
+        assert current['core_token_start']==previous['token_end']
+        assert current['core_start']>=previous['core_end']
+
+
+def test_docx_sections_keep_headings_and_table_rows_in_body_order():
+    from docx import Document as DocxDocument
+
+    document=DocxDocument()
+    document.add_heading('Eligibility',level=1)
+    document.add_paragraph('Refunds are available within thirty days.')
+    table=document.add_table(rows=1,cols=2)
+    table.rows[0].cells[0].text='Plan'
+    table.rows[0].cells[1].text='Annual fee'
+    document.add_heading('Exclusions',level=1)
+    document.add_paragraph('Digital goods are final.')
+    blob=io.BytesIO();document.save(blob)
+    sections=extract_file(blob.getvalue(),'policy.docx').sections
+    eligibility=next(section for section in sections if section.title=='Eligibility')
+    exclusions=next(section for section in sections if section.title=='Exclusions')
+    assert 'Refunds are available' in eligibility.text
+    assert 'Plan | Annual fee' in eligibility.text
+    assert 'Digital goods' not in eligibility.text
+    assert 'Digital goods are final' in exclusions.text
+    assert eligibility.locator['docx_block_start']<exclusions.locator['docx_block_start']
+
+
+def test_rst_and_plain_text_heading_paths_are_structure_aware():
+    rst=b'Install Guide\n=============\n\nRun the installer.\n\nTroubleshooting\n---------------\n\nCheck the port.\n'
+    sections=extract_file(rst,'guide.rst').sections
+    troubleshooting=next(section for section in sections if 'Check the port' in section.text)
+    assert troubleshooting.title=='Troubleshooting'
+    assert troubleshooting.locator['line_start']>1
+    text=b'COMPANY HANDBOOK\n\nWelcome to the team.\n\nLEAVE POLICY\n\nStaff accrue 21 days of leave.\n'
+    leave=next(section for section in extract_file(text,'handbook.txt').sections if '21 days' in section.text)
+    assert leave.title=='LEAVE POLICY'
+    assert 'Welcome to the team' not in leave.text
+
+
+def test_tsv_json_and_yaml_keep_row_headers_and_key_paths():
+    tsv=extract_file(b'Term\tMeaning\nATP\tEnergy carrier\n','terms.tsv').sections[0]
+    assert tsv.locator['format']=='tsv' and tsv.locator['row_start']==2
+    assert 'Meaning: Energy carrier' in tsv.text
+    raw=b'{"policy":{"refund_days":30}}'
+    json_section=next(section for section in extract_file(raw,'policy.json').sections if section.locator['key_path']=='policy.refund_days')
+    assert raw.decode()[json_section.locator['section_char_start']:json_section.locator['section_char_end']]==json_section.text
+    assert json_section.text=='30'
+    yaml_section=next(section for section in extract_file(b'refund:\n  days: 30\n','policy.yaml').sections if section.locator['key_path']=='refund.days')
+    assert yaml_section.text=='30'
+
+
+def test_pdf_layout_text_splits_on_conservative_uppercase_headings(monkeypatch):
+    from types import SimpleNamespace
+
+    page=SimpleNamespace(extract_text=lambda **kwargs:'COMPANY HANDBOOK\nWelcome to the team.\n\nLEAVE POLICY\nStaff accrue 21 days of leave.')
+    monkeypatch.setattr('pypdf.PdfReader',lambda _:SimpleNamespace(is_encrypted=False,pages=[page]))
+    sections=extract_file(b'%PDF-synthetic','handbook.pdf').sections
+    leave=next(section for section in sections if '21 days' in section.text)
+    assert leave.title=='LEAVE POLICY'
+    assert leave.locator['page']==1
+    assert leave.locator['heading_path']==['LEAVE POLICY']
 
 
 def test_pdf_page_locator_and_scan_needs_attention():
@@ -97,10 +175,12 @@ def test_chunk_lines_resolve_after_leading_blank_lines(filename, prefix):
 
 
 def test_photo_never_uses_stub_ocr():
-    with pytest.raises(SourceError) as unavailable:extract_file(b'\x89PNG\r\n\x1a\nsynthetic','notes.png')
+    from PIL import Image
+    image=io.BytesIO();Image.new('RGB',(2,2),'white').save(image,format='PNG');image=image.getvalue()
+    with pytest.raises(SourceError) as unavailable:extract_file(image,'notes.png')
     assert unavailable.value.code=='vision_unavailable'
     calls=[]
-    snapshot=extract_file(b'\x89PNG\r\n\x1a\nsynthetic','notes.png',vision=lambda data,mime:(calls.append(mime) or 'Visible source text.'))
+    snapshot=extract_file(image,'notes.png',vision=lambda data,mime:(calls.append(mime) or 'Visible source text.'))
     assert calls==['image/png'] and snapshot.sections[0].locator['reading_method']=='vision'
 
 
@@ -217,7 +297,9 @@ def test_upload_api_replay_worker_citation_owner_and_failed_photo(db,client):
     citation=db.scalar(select(Citation).where(Citation.learner_id=='owner'))
     assert client.get('/api/v1/citations/'+citation.id).json()['excerpt']==citation.excerpt
     assert client.get('/api/v1/material-revisions/'+first['revision_id']+'/original').content==b'# Cells\nCells contain DNA.'
-    photo=client.post('/api/v1/collections/collection/materials/upload',files={'file':('photo.png',b'\x89PNG\r\n\x1a\nsynthetic','image/png')},data={'idempotency_key':'photo-one'}).json()
+    from PIL import Image
+    image=io.BytesIO();Image.new('RGB',(2,2),'white').save(image,format='PNG')
+    photo=client.post('/api/v1/collections/collection/materials/upload',files={'file':('photo.png',image.getvalue(),'image/png')},data={'idempotency_key':'photo-one'}).json()
     with pytest.raises(SourceError) as exc:ingest_material(db,db.get(Job,photo['job_id']))
     assert exc.value.code=='vision_unavailable'
     assert client.get('/api/v1/materials/'+photo['material_id']).json()['status']=='needs-attention'
@@ -354,6 +436,7 @@ def test_drive_ui_scan_dedup_manual_drop_version_and_removal(db,client,monkeypat
     assert sync_drive(db,poll)['discovered']==1
     assert sync_drive(db,poll)['discovered']==0
     revision=db.scalar(select(MaterialRevision).where(MaterialRevision.drive_file_id=='manual'))
+    assert db.get(Material,revision.material_id).source_type=='txt'
     ingestjob=db.scalar(select(Job).where(Job.idempotency_key==f'ingest:{revision.id}'))
     ingest_material(db,ingestjob);db.commit()
     old_revision=revision.id;old_material=revision.material_id
@@ -364,6 +447,34 @@ def test_drive_ui_scan_dedup_manual_drop_version_and_removal(db,client,monkeypat
     adapter.files.pop('manual');sync_drive(db,poll)
     assert db.get(MaterialRevision,old_revision).metadata_json['requires_reconciliation'] is True
     assert db.get(Material,old_material).current_revision_id==old_revision
+
+
+def test_direct_drive_unsupported_and_oversized_drops_create_attention_materials(db,monkeypatch):
+    from cryptography.fernet import Fernet
+    monkeypatch.setattr(settings,'credentials_key',Fernet.generate_key().decode())
+    db.add(ProviderConnection(learner_id='owner',provider='drive',status='connected',scopes=SCOPES,
+        encrypted_credentials=encrypt_credentials({'synthetic':True})))
+    collection=Collection(id='attention-drive-collection',learner_id='owner',name='Drive',
+        storage_mode='drive',provisioning_state='pending')
+    db.add(collection);db.commit()
+    adapter=StubDrive();monkeypatch.setattr('app.ingest.drive_adapter',lambda *_:adapter)
+    provision=Job(learner_id='owner',kind='drive-provision',payload={});db.add(provision);db.flush()
+    provision_drive(db,provision)
+    adapter.files['unsupported']={'id':'unsupported','name':'run.exe','mimeType':'application/octet-stream',
+        'version':'1','parents':[collection.drive_folder_id],'size':100,'appProperties':{}}
+    adapter.files['oversized']={'id':'oversized','name':'large.txt','mimeType':'text/plain',
+        'version':'1','parents':[collection.drive_folder_id],'size':settings.max_upload_bytes+1,'appProperties':{}}
+    poll=Job(learner_id='owner',kind='drive-sync',payload={'collection_id':collection.id});db.add(poll);db.commit()
+
+    assert sync_drive(db,poll)['discovered']==2
+    rejected=db.scalars(select(Material).where(Material.collection_id==collection.id)).all()
+    assert len(rejected)==2 and all(material.status=='needs-attention' for material in rejected)
+    revisions=db.scalars(select(MaterialRevision).where(MaterialRevision.collection_id==collection.id)).all()
+    errors={revision.metadata_json['filename']:revision.metadata_json['error_code'] for revision in revisions}
+    assert errors=={'run.exe':'unsupported_type','large.txt':'oversize'}
+    assert all(revision.private_blob_key is None and revision.size==0 for revision in revisions)
+    assert sync_drive(db,poll)['discovered']==0
+    assert db.scalar(select(func.count(Material.id)).where(Material.collection_id==collection.id))==2
 
 
 def test_drive_link_receipt_replay_preserve_snapshot(db,client,monkeypatch):
@@ -404,6 +515,26 @@ def test_concept_grouping_keeps_original_whitespace_exact(db):
     assert all(c.excerpt in chunk.text for c in citations)
     assert all(chunk.text[c.locator_json['excerpt_start']:c.locator_json['excerpt_end']]==c.excerpt for c in citations if 'concept_segment' in c.locator_json)
     assert all('# Exact source' not in c.excerpt for c in citations if 'concept_segment' in c.locator_json)
+
+
+def test_teaching_windows_persist_as_concepts_beneath_one_selected_title(db):
+    text='# One selected section\n'+' '.join(f'Fact {n} explains a distinct learning idea.' for n in range(70))
+    snapshot=extract_file(text.encode(),'long-section.md')
+    collection=Collection(id='collection',learner_id='owner',name='Window test');db.add(collection);db.flush()
+    material=Material(id='material',learner_id='owner',collection_id=collection.id,title='Long section');db.add(material);db.flush()
+    revision=MaterialRevision(id='revision',learner_id='owner',collection_id=collection.id,material_id=material.id,content_hash='window-hash');db.add(revision);db.flush()
+    persist_snapshot(db,revision,snapshot)
+    chunks=db.scalars(select(Chunk)).all()
+    concepts=db.scalars(select(Concept).order_by(Concept.position)).all()
+    citations=db.scalars(select(Citation).order_by(Citation.created_at,Citation.id)).all()
+    assert len(chunks)==1 and chunks[0].title=='One selected section'
+    assert len(concepts)>1
+    for concept in concepts:
+        citation=db.get(Citation,concept.citation_ids[0])
+        assert concept.text in citation.excerpt
+        assert citation.excerpt in revision.extracted_text
+        assert citation.excerpt_hash==hashlib.sha256(citation.excerpt.encode()).hexdigest()
+        assert chunks[0].text[citation.locator_json['excerpt_start']:citation.locator_json['excerpt_end']]==citation.excerpt
 
 
 def test_encrypted_pdf_truthful():
@@ -502,6 +633,270 @@ def test_pasted_link_descriptor_cannot_bypass_small_quota(db,client,monkeypatch)
     assert db.scalar(select(func.count(Chunk.id)))==0
 
 
+def test_pdf_page_manifest_and_correction_are_owned_versioned_and_resumable(db,client):
+    from app.jobs import HANDLERS
+
+    collection=Collection(id='pdf-review-collection',learner_id='owner',name='PDF review')
+    db.add(collection);db.flush()
+    material=Material(id='pdf-review-material',learner_id='owner',collection_id=collection.id,
+                      title='Scanned source',source_type='pdf',status='needs-attention',version=4)
+    db.add(material);db.flush()
+    original=b'%PDF synthetic immutable original'
+    original_key=LocalStorage(settings.private_storage_dir).put('owner',original)
+    revision=MaterialRevision(
+        id='pdf-review-revision',learner_id='owner',collection_id=collection.id,
+        material_id=material.id,content_hash=hashlib.sha256(original).hexdigest(),
+        mime='application/pdf',size=len(original),private_blob_key=original_key,
+        metadata_json={'filename':'scanned.pdf'},
+    )
+    db.add(revision);db.flush();material.current_revision_id=revision.id
+    staged={
+        'revision_id':revision.id,'batch_index':0,'sections':[],
+        'page_results':[{'page_number':1,'status':'needs-review','method':'vision',
+                         'warning':'low_ocr_quality','text_chars':0,'section_count':0,
+                         'chapter_path':[]}],
+    }
+    staged_bytes=json.dumps(staged,separators=(',',':')).encode()
+    result_key=LocalStorage(settings.private_storage_dir).put('owner',staged_bytes)
+    manifest={
+        'version':1,'status':'needs-review','page_count':1,'batch_size':40,
+        'processed_pages':1,'review_required_pages':[1],'review_required_count':1,
+        'chapter_paths':[[]],'extracted_text_bytes':0,'batch_result_bytes':len(staged_bytes),
+        'pages':[{'page_number':1,'status':'needs-review','method':'vision',
+                  'warning':'low_ocr_quality','text_chars':0,'section_count':0,
+                  'chapter_path':[]}],
+        'batches':[{'index':0,'start_page':1,'end_page':1,'state':'completed',
+                    'result_blob_key':result_key,'result_bytes':len(staged_bytes),
+                    'extracted_text_bytes':0}],
+        'obsolete_result_blob_keys':[],
+    }
+    revision.metadata_json={**revision.metadata_json,'ingestion_manifest':manifest}
+    db.commit()
+
+    listing=client.get(f'/api/v1/materials/{material.id}/ingestion-pages?limit=1')
+    assert listing.status_code==200
+    assert listing.json()['items'][0]['page_number']==1
+    assert listing.json()['items'][0]['text']=='\n\n'.join([])
+    assert listing.json()['items'][0]['status']=='needs-review'
+
+    corrected=client.patch(
+        f'/api/v1/materials/{material.id}/ingestion-pages/1',
+        json={'expected_version':4,'text':'The page establishes the reviewed source fact.'},
+    )
+    assert corrected.status_code==200
+    assert corrected.json()['status']=='corrected'
+    assert corrected.json()['version']==5
+    assert corrected.json()['material_status']=='processing'
+    assert db.get(Job,corrected.json()['finalize_job_id']).kind=='ingest-pdf-finalize'
+    assert 'ingest-pdf-batch' in HANDLERS and 'ingest-pdf-finalize' in HANDLERS
+
+    reread=client.get(f'/api/v1/materials/{material.id}/ingestion-pages?limit=1').json()
+    assert reread['items'][0]['text']=='The page establishes the reviewed source fact.',reread
+    db.refresh(revision);db.refresh(material)
+    page=revision.metadata_json['ingestion_manifest']['pages'][0]
+    assert page.get('correction_hash')==hashlib.sha256(b'The page establishes the reviewed source fact.').hexdigest(),page
+    assert page['status']=='corrected' and material.status=='processing'
+    reread=client.get(f'/api/v1/materials/{material.id}/ingestion-pages?limit=1').json()
+    assert reread['items'][0]['text']=='The page establishes the reviewed source fact.'
+    assert reread['items'][0]['text_truncated'] is False
+    assert LocalStorage(settings.private_storage_dir).get('owner',original_key)==original
+    assert client.get('/api/v1/materials/foreign-material/ingestion-pages').status_code==404
+
+
+def test_large_pdf_pipeline_resumes_40_page_batches_without_losing_global_locators(db,monkeypatch):
+    from app.ingest import _start_pdf_pipeline,ingest_pdf_batch
+    from app.sources.base import ExtractedSection
+    from app.ingest_limits import PDF_BATCH_PAGES
+
+    collection=Collection(id='pdf-batch-collection',learner_id='owner',name='PDF batches')
+    db.add(collection);db.flush()
+    material=Material(id='pdf-batch-material',learner_id='owner',collection_id=collection.id,
+                      title='large.pdf',source_type='pdf',status='queued')
+    db.add(material);db.flush()
+    raw=b'%PDF synthetic large source'
+    blob_key=LocalStorage(settings.private_storage_dir).put('owner',raw)
+    revision=MaterialRevision(id='pdf-batch-revision',learner_id='owner',collection_id=collection.id,
+        material_id=material.id,content_hash=hashlib.sha256(raw).hexdigest(),
+        private_blob_key=blob_key,mime='application/pdf',size=len(raw),
+        metadata_json={'filename':'large.pdf'})
+    db.add(revision);db.flush();material.current_revision_id=revision.id
+    root_job=Job(learner_id='owner',kind='ingest-material',payload={'revision_id':revision.id})
+    db.add(root_job);db.commit()
+    monkeypatch.setattr('app.ingest.pdf_manifest_info',lambda _: {
+        'page_count':41,'chapter_paths':[[] for _ in range(41)],
+    })
+
+    started=_start_pdf_pipeline(db,revision,material,raw,'large.pdf',root_job)
+    assert started['page_count']==41 and started['batch_size']==PDF_BATCH_PAGES==40
+    manifest=revision.metadata_json['ingestion_manifest']
+    assert [(batch['start_page'],batch['end_page']) for batch in manifest['batches']]==[(1,40),(41,41)]
+    first_job=db.get(Job,manifest['batches'][0]['job_id'])
+    assert first_job.kind=='ingest-pdf-batch' and first_job.state=='queued'
+
+    def extract_batch(_data,_filename,start,end,_paths,vision=None):
+        sections=[ExtractedSection(f'Page {number}',f'Page {number} source fact.','pdf',
+            {'page':number,'page_start':number,'page_end':number,'heading_path':[]})
+            for number in range(start,end+1)]
+        pages=[{'page_number':number,'status':'text-extracted','method':'text','warning':None,
+                'text_chars':len(f'Page {number} source fact.'),'section_count':1,'chapter_path':[]}
+               for number in range(start,end+1)]
+        return sections,pages
+
+    monkeypatch.setattr('app.ingest.extract_pdf_page_batch',extract_batch)
+    first=ingest_pdf_batch(db,first_job)
+    assert first['processed_pages']==40 and first['status']=='processing'
+    db.refresh(revision)
+    manifest=revision.metadata_json['ingestion_manifest']
+    second_job=db.get(Job,manifest['batches'][1]['job_id'])
+    assert second_job.kind=='ingest-pdf-batch' and second_job.state=='queued'
+    assert ingest_pdf_batch(db,second_job)['processed_pages']==41
+    db.refresh(revision);db.refresh(material)
+    manifest=revision.metadata_json['ingestion_manifest']
+    assert manifest['status']=='finalizing' and material.status=='processing'
+    finalize=db.get(Job,manifest['finalize_job_id'])
+    assert finalize.kind=='ingest-pdf-finalize' and finalize.state=='queued'
+    assert [page['page_number'] for page in manifest['pages']]==list(range(1,42))
+    assert all(page['status']=='text-extracted' for page in manifest['pages'])
+
+
+def test_pdf_manifest_accepts_1000_pages_and_rejects_page_1001(monkeypatch):
+    from types import SimpleNamespace
+    from app.ingest import _new_pdf_manifest
+    from app.sources.local import pdf_manifest_info
+
+    monkeypatch.setattr('pypdf.PdfReader',lambda _:SimpleNamespace(
+        is_encrypted=False,pages=[None]*1000,outline=[]))
+    manifest=pdf_manifest_info(b'%PDF synthetic page manifest')
+    queued,pages=_new_pdf_manifest(manifest)
+    assert queued['page_count']==1000 and len(pages)==1000
+    assert len(queued['batches'])==25
+    assert (queued['batches'][0]['start_page'],queued['batches'][0]['end_page'])==(1,40)
+    assert (queued['batches'][-1]['start_page'],queued['batches'][-1]['end_page'])==(961,1000)
+    assert [page['page_number'] for page in pages]==list(range(1,1001))
+
+    monkeypatch.setattr('pypdf.PdfReader',lambda _:SimpleNamespace(
+        is_encrypted=False,pages=[None]*1001,outline=[]))
+    with pytest.raises(SourceError) as exceeded:
+        pdf_manifest_info(b'%PDF synthetic page limit')
+    assert exceeded.value.code=='pdf_page_limit'
+
+
+def _seed_deletion_graph(db,collection,material_id,revision_id,content):
+    material=Material(id=material_id,learner_id='owner',collection_id=collection.id,
+                      title=material_id,source_type='markdown',position=0)
+    db.add(material);db.flush()
+    blob_key=LocalStorage(settings.private_storage_dir).put('owner',content.encode())
+    revision=MaterialRevision(id=revision_id,learner_id='owner',collection_id=collection.id,
+        material_id=material.id,content_hash=hashlib.sha256(content.encode()).hexdigest(),
+        private_blob_key=blob_key,size=len(content),metadata_json={'filename':f'{material_id}.md'})
+    db.add(revision);db.flush();material.current_revision_id=revision.id
+    from app.sources.base import SourceSnapshot,ExtractedSection
+    persist_snapshot(db,revision,SourceSnapshot([ExtractedSection(material_id,content,'text',{'line_start':1,'line_end':1})]))
+    return material,revision,blob_key
+
+
+def test_confirmed_material_deletion_removes_only_owned_history_and_rebuilds_scope(db,client):
+    from datetime import timedelta
+    from app.models import (ScopeItem,TitleAssessment,ProgressEvent,ReviewState)
+    from app.jobs import WORKER_ID
+    from app.ingest import delete_material
+
+    db.connection().exec_driver_sql('PRAGMA foreign_keys=ON')
+    collection=Collection(id='delete-collection',learner_id='owner',name='Deletion')
+    db.add(collection);db.flush()
+    deleted,deleted_revision,deleted_blob=_seed_deletion_graph(
+        db,collection,'delete-target','delete-target-revision','Target source fact.')
+    retained,retained_revision,retained_blob=_seed_deletion_graph(
+        db,collection,'delete-retained','delete-retained-revision','Retained source fact.')
+    deleted_chunk=db.scalar(select(Chunk).where(Chunk.material_revision_id==deleted_revision.id))
+    retained_chunk=db.scalar(select(Chunk).where(Chunk.material_revision_id==retained_revision.id))
+    deleted_revision_id=deleted_revision.id
+    deleted_chunk_id=deleted_chunk.id
+    retained_chunk_id=retained_chunk.id
+    scope=ScopeRevision(id='delete-scope',learner_id='owner',collection_id=collection.id,revision_number=1,active=True)
+    db.add(scope);db.flush()
+    db.add_all([
+        ScopeItem(learner_id='owner',scope_revision_id=scope.id,chunk_id=deleted_chunk.id,position=0),
+        ScopeItem(learner_id='owner',scope_revision_id=scope.id,chunk_id=retained_chunk.id,position=1),
+        TitleAssessment(learner_id='owner',chunk_id=deleted_chunk.id,scope_revision_id=scope.id,complete=True,rationale='target evidence',evidence_event_ids=['event-target'],critical_coverage={}),
+        TitleAssessment(learner_id='owner',chunk_id=retained_chunk.id,scope_revision_id=scope.id,complete=True,rationale='retained evidence',evidence_event_ids=['event-retained'],critical_coverage={}),
+    ])
+    session=StudySession(id='delete-session',learner_id='owner',collection_id=collection.id,
+                         scope_revision_id=scope.id,status='awaiting_answer',summary_json={'private':'synthetic'})
+    db.add(session);db.flush()
+    concept=db.scalar(select(Concept).where(Concept.chunk_id==deleted_chunk.id))
+    item=SessionItem(id='delete-item',learner_id='owner',session_id=session.id,concept_id=concept.id,
+                     chunk_id=deleted_chunk.id,public_question='Question',position=0)
+    db.add(item);db.flush();session.current_item_id=item.id
+    db.add(ProgressEvent(learner_id='owner',concept_id=concept.id,chunk_id=deleted_chunk.id,
+        session_id=session.id,item_id=item.id,confidence=4,correct=True,answer='synthetic answer',
+        reviewer_json={},idempotency_key='delete-progress'))
+    db.add(ReviewState(learner_id='owner',chunk_id=deleted_chunk.id,stage=1,next_review_at=utcnow()))
+    session_id=session.id
+    db.commit()
+
+    response=client.request('DELETE',f'/api/v1/collections/{collection.id}/materials/{deleted.id}',
+        json={'expected_version':deleted.version,'confirmation':'DELETE'})
+    assert response.status_code==202
+    assert db.get(Material,deleted.id).status=='deleting'
+    job=db.get(Job,response.json()['id'])
+    job.state='running';job.lease_owner=WORKER_ID;job.lease_until=utcnow()+timedelta(minutes=5)
+    db.commit()
+    result=delete_material(db,job)
+
+    assert result=={'deleted':True,'drive_files_deleted':0}
+    db.expire_all()
+    assert db.get(Material,deleted.id) is None and db.get(Material,retained.id) is not None
+    assert db.get(MaterialRevision,deleted_revision_id) is None
+    assert db.scalar(select(func.count(Chunk.id)).where(Chunk.material_revision_id==deleted_revision_id))==0
+    assert db.scalar(select(func.count(Citation.id)).where(Citation.revision_id==deleted_revision_id))==0
+    active=db.scalar(select(ScopeRevision).where(ScopeRevision.collection_id==collection.id,ScopeRevision.active.is_(True)))
+    assert active.revision_number==2
+    active_ids=set(db.scalars(select(ScopeItem.chunk_id).where(ScopeItem.scope_revision_id==active.id)))
+    assert active_ids=={retained_chunk_id}
+    preserved=db.scalar(select(TitleAssessment).where(TitleAssessment.scope_revision_id==active.id,TitleAssessment.chunk_id==retained_chunk_id))
+    assert preserved and preserved.complete and preserved.rationale=='retained evidence'
+    session=db.get(StudySession,session_id)
+    assert session.status=='interrupted' and session.current_item_id is None and session.summary_json=={}
+    assert db.scalar(select(func.count(SessionItem.id)).where(SessionItem.session_id==session_id))==0
+    assert db.scalar(select(func.count(ProgressEvent.id)).where(ProgressEvent.session_id==session_id))==0
+    assert db.scalar(select(func.count(ReviewState.id)).where(ReviewState.chunk_id==deleted_chunk_id))==0
+    assert LocalStorage(settings.private_storage_dir).get('owner',retained_blob)=='Retained source fact.'.encode()
+    assert not (__import__('pathlib').Path(settings.private_storage_dir)/deleted_blob).exists()
+
+
+def test_drive_delete_failure_keeps_material_and_learning_history(db,monkeypatch):
+    from datetime import timedelta
+    from app.jobs import WORKER_ID,NeedsAttention
+    from app.ingest import delete_material_handler
+
+    collection=Collection(id='drive-delete-collection',learner_id='owner',name='Drive',
+        storage_mode='drive',provisioning_state='ready',drive_folder_id='managed-folder',drive_root_id='root')
+    db.add(collection);db.flush()
+    material,revision,_=_seed_deletion_graph(db,collection,'drive-delete-target','drive-delete-revision','Remote source fact.')
+    revision.origin='direct_drop';revision.storage_state='saved-to-drive';revision.drive_file_id='remote-original'
+    chunk=db.scalar(select(Chunk).where(Chunk.material_revision_id==revision.id));db.commit()
+    job=Job(learner_id='owner',kind='delete-material',entity_id=material.id,
+        payload={'material_id':material.id,'collection_id':collection.id},state='running',
+        lease_owner=WORKER_ID,lease_until=utcnow()+timedelta(minutes=5))
+    db.add(job);db.commit()
+
+    class FailedDriveDelete:
+        def get_file(self,_):
+            return {'id':'managed-folder','mimeType':'application/vnd.google-apps.folder','parents':['root']}
+        def delete_file(self,file_id,folder_id):
+            assert (file_id,folder_id)==('remote-original','managed-folder')
+            raise SourceError('drive_permission','Synthetic permission failure.')
+
+    monkeypatch.setattr('app.ingest.drive_adapter',lambda *_:FailedDriveDelete())
+    with pytest.raises(NeedsAttention,match='drive_permission'):
+        delete_material_handler(db,job)
+    db.refresh(material);db.refresh(revision)
+    assert material.status=='needs-attention'
+    assert db.get(MaterialRevision,revision.id) is not None
+    assert db.scalar(select(Chunk.id).where(Chunk.id==chunk.id))==chunk.id
+
+
 def test_direct_drop_bytes_and_material_count_quota(db,monkeypatch):
     from cryptography.fernet import Fernet
     monkeypatch.setattr(settings,'credentials_key',Fernet.generate_key().decode())
@@ -565,6 +960,13 @@ def test_source_openapi_typed_public_models_and_no_duplicate_paths(client):
     schemas=document['components']['schemas']
     assert 'encrypted_credentials' not in str(schemas['ConnectionDTO'])
     assert 'resumable_url' not in str(schemas['MaterialStorageDTO'])
+
+
+def test_upload_limit_endpoint_reports_effective_server_cap(client,monkeypatch):
+    monkeypatch.setattr(settings,'max_upload_bytes',5*1024*1024)
+    assert client.get('/api/v1/ingestion/limits').json()=={'max_upload_bytes':5*1024*1024}
+    monkeypatch.setattr(settings,'max_upload_bytes',40*1024*1024)
+    assert client.get('/api/v1/ingestion/limits').json()=={'max_upload_bytes':20*1024*1024}
 
 
 def test_source_language_file_intake_persists_before_extraction(db, client):

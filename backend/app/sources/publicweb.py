@@ -9,8 +9,9 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from urllib.parse import urlsplit, urlunsplit, urljoin
 from .base import ExtractedSection, SourceError, SourceSnapshot
+from ..ingest_limits import MAX_PUBLIC_BYTES, MAX_PUBLIC_URL_CHARS
 
-MAX_BYTES = 2 * 1024 * 1024
+MAX_BYTES = MAX_PUBLIC_BYTES
 
 
 def validate_url_syntax(url: str):
@@ -18,7 +19,7 @@ def validate_url_syntax(url: str):
     try:
         parsed=urlsplit(url)
         if parsed.scheme not in {'http','https'} or not parsed.hostname or parsed.username or parsed.password or parsed.port not in {None,80,443}:raise ValueError()
-        if len(url)>4096 or any(ord(c)<33 for c in url) or '\\' in url:raise ValueError()
+        if len(url)>MAX_PUBLIC_URL_CHARS or any(ord(c)<33 for c in url) or '\\' in url:raise ValueError()
         host=parsed.hostname.encode('idna').decode('ascii').lower().rstrip('.')
         try:ipaddress.ip_address(host)
         except ValueError:pass
