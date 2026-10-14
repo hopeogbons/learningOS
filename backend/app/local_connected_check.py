@@ -16,8 +16,8 @@ def issues(expected_web_port=3000):
         ('OIDC_ISSUER', settings.oidc_issuer),
         ('OIDC_CLIENT_ID', settings.oidc_client_id),
         ('OIDC_CLIENT_SECRET', settings.oidc_client_secret),
-        ('LEARNING_OS_API_KEY', settings.api_key),
-        ('LLM_MODEL', settings.model),
+        ('OPENROUTER_API_KEY' if settings.llm_provider == 'openrouter' else 'LEARNING_OS_API_KEY', settings.api_key),
+        ('OPENROUTER_MODEL' if settings.llm_provider == 'openrouter' else 'LLM_MODEL', settings.model),
         ('DRIVE_CLIENT_ID', settings.drive_client_id),
         ('DRIVE_CLIENT_SECRET', settings.drive_client_secret),
         ('TOKEN_ENCRYPTION_KEY', settings.credentials_key),
@@ -32,7 +32,7 @@ def issues(expected_web_port=3000):
     for name,value in (('OIDC_CLIENT_ID',settings.oidc_client_id),('OIDC_CLIENT_SECRET',settings.oidc_client_secret),
                        ('DRIVE_CLIENT_ID',settings.drive_client_id),('DRIVE_CLIENT_SECRET',settings.drive_client_secret),
                        ('TOKEN_ENCRYPTION_KEY',settings.credentials_key),('SESSION_SIGNING_KEY',settings.session_secret),
-                       ('LEARNING_OS_API_KEY',settings.api_key),('LLM_MODEL',settings.model)):
+                       ('OPENROUTER_API_KEY' if settings.llm_provider == 'openrouter' else 'LEARNING_OS_API_KEY',settings.api_key),('OPENROUTER_MODEL' if settings.llm_provider == 'openrouter' else 'LLM_MODEL',settings.model)):
         if value and value[:1] in {'"', "'"} and value[-1:] == value[:1]:
             result.append(name + ' has surrounding quotes; Docker raw values must be unquoted')
     try:

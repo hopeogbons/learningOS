@@ -25,8 +25,14 @@ for line in path.read_text().splitlines():
     if '$' in value or '\n' in value:
         sys.exit('Environment review requires literal values; resolve interpolation securely first.')
     values[key] = value
-required = ['PUBLIC_DOMAIN', 'BACKEND_IMAGE', 'FRONTEND_IMAGE', 'DATABASE_URL', 'OIDC_ISSUER', 'OIDC_CLIENT_ID', 'OIDC_CLIENT_SECRET', 'SESSION_SIGNING_KEY', 'TOKEN_ENCRYPTION_KEY', 'LEARNING_OS_API_KEY', 'LLM_MODEL', 'STORAGE_ENDPOINT', 'STORAGE_REGION', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY', 'STORAGE_SECRET_KEY', 'DRIVE_CLIENT_ID', 'DRIVE_CLIENT_SECRET', 'DRIVE_REDIRECT_URI']
+required = ['PUBLIC_DOMAIN', 'BACKEND_IMAGE', 'FRONTEND_IMAGE', 'DATABASE_URL', 'OIDC_ISSUER', 'OIDC_CLIENT_ID', 'OIDC_CLIENT_SECRET', 'SESSION_SIGNING_KEY', 'TOKEN_ENCRYPTION_KEY', 'STORAGE_ENDPOINT', 'STORAGE_REGION', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY', 'STORAGE_SECRET_KEY', 'DRIVE_CLIENT_ID', 'DRIVE_CLIENT_SECRET', 'DRIVE_REDIRECT_URI']
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'backend'))
+from app.llm_config import llm_configuration
+provider, provider_key, provider_model = llm_configuration(values)
+required += ['OPENROUTER_API_KEY'] if provider == 'openrouter' else ['LEARNING_OS_API_KEY']
 missing = [key for key in required if not values.get(key)]
+if not provider_model:
+    missing.append('OPENROUTER_MODEL' if provider == 'openrouter' else 'LLM_MODEL')
 if missing:
     sys.exit('Missing production settings: ' + ', '.join(missing))
 if values.get('APP_MODE') != 'production':

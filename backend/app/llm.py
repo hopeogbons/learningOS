@@ -186,10 +186,11 @@ class DemoProvider:
 
 class OpenAIProvider:
     name = "openai"
+    base_url = "https://api.openai.com/v1/"
 
     def __init__(self) -> None:
         self.key = os.getenv("LEARNING_OS_API_KEY")
-        self.model = os.getenv("LLM_MODEL")
+        self.model = os.getenv("LLM_MODEL") or os.getenv("LEARNING_OS_MODEL")
         if not self.key or not self.model:
             raise ProviderUnavailable("LEARNING_OS_API_KEY and a verified LLM_MODEL are required")
         self.version = self.model
@@ -197,7 +198,7 @@ class OpenAIProvider:
     def _request(self, path: str, **kwargs: Any) -> dict | bytes:
         try:
             with httpx.Client(timeout=httpx.Timeout(90, connect=10)) as client:
-                response = client.post("https://api.openai.com/v1/" + path,
+                response = client.post(self.base_url + path,
                                        headers={"Authorization": "Bearer " + self.key}, **kwargs)
                 response.raise_for_status()
                 return response.json() if "json" in response.headers.get("content-type", "") else response.content
@@ -301,7 +302,38 @@ class OpenAIProvider:
         return result
 
 
+class OpenRouterProvider(OpenAIProvider):
+    name = "openrouter"
+    base_url = "https://openrouter.ai/api/v1/"
+
+    def __init__(self):
+        from .llm_config import llm_configuration
+        _, self.key, self.model = llm_configuration({**os.environ, "LLM_PROVIDER": "openrouter"})
+        if not self.key:
+            raise ProviderUnavailable("OPENROUTER_API_KEY is required for OpenRouter")
+        self.version = self.model
+
+    def _request(self, path, **kwargs):
+        if path != "chat/completions":
+            raise ProviderUnavailable("OpenRouter text selection does not provide OpenAI speech or Realtime")
+        body = dict(kwargs.get("json", {}))
+        if "max_completion_tokens" in body:
+            body["max_tokens"] = body.pop("max_completion_tokens")
+        body["provider"] = {"require_parameters": True}
+        kwargs["json"] = body
+        return super()._request(path, **kwargs)
+
+
 def get_provider():
-    # The actual immutable application mode is resolved by shared validated settings.
-    from app.settings import settings
+    from .settings import settings
+    from .llm_config import llm_configuration
+    if settings.app_mode in {"demo", "test"}:
+        return DemoProvider()
+    provider, _, _ = llm_configuration()
+    return OpenRouterProvider() if provider == "openrouter" else OpenAIProvider()
+
+
+def get_speech_provider():
+    # Native speech/Realtime has its own OpenAI credential even when text uses OpenRouter.
+    from .settings import settings
     return DemoProvider() if settings.app_mode in {"demo", "test"} else OpenAIProvider()

@@ -16,7 +16,7 @@ from sqlalchemy import select, update
 from starlette.concurrency import run_in_threadpool
 from .auth import get_learner
 from .db import get_db, utcnow, as_utc
-from .llm import get_provider, ProviderUnavailable, InvalidModelOutput
+from .llm import get_speech_provider as get_provider, ProviderUnavailable, InvalidModelOutput
 from .models import Learner, StudySession, SessionItem, ProgressEvent, Job, Concept
 from .sessions import owned, source_context
 
@@ -162,7 +162,7 @@ class SpeechCapabilitiesDTO(BaseModel):
 
 @router.get('/speech/capabilities', response_model=SpeechCapabilitiesDTO)
 def capabilities(learner=Depends(get_learner)):
-    configured = bool(os.getenv('LEARNING_OS_API_KEY') and os.getenv('LLM_MODEL') and os.getenv('STT_MODEL') and os.getenv('TTS_MODEL') and os.getenv('TTS_VOICE'))
+    configured = bool(os.getenv('LEARNING_OS_API_KEY') and (os.getenv('LLM_MODEL') or os.getenv('LEARNING_OS_MODEL')) and os.getenv('STT_MODEL') and os.getenv('TTS_MODEL') and os.getenv('TTS_VOICE'))
     return {'provider': 'openai-configured-unverified' if configured else 'unavailable', 'raw_audio_retained': False, 'languages': [{'locale': locale, 'stt': 'configured-unverified' if configured else 'unavailable', 'tts': 'configured-unverified' if configured else 'unavailable', 'verified': False, 'fallback': 'typing'} for locale in LOCALES], 'max_audio_bytes': MAX_AUDIO_BYTES, 'max_audio_seconds': MAX_AUDIO_SECONDS, 'max_voice_turns': None, 'live_gate': 'requires-real-provider-and-browser-audio-proof'}
 
 

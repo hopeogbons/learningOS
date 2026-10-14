@@ -116,3 +116,7 @@ Study an original source in the target languages and review meaning and unchange
 To exercise a locale during a supervised L04 browser test, temporarily enable only that locale in the startup process (for example, prefix the connected dev command with `VERIFIED_SPEECH_LOCALES=en-GB APP_MODE=live`). This is a test override, not certification. Keep the saved private-file allowlist empty until that locale's native transcript, audibility, and three-turn checks pass, then record its evidence and enable only approved tags. Restore the unverified/typing state after an unsuccessful test. Never enable all ten based only on the synthetic endpoint report.
 
 Production gates remain separate: PostgreSQL/private storage/OIDC/HTTPS, performance, restore/rollback, immutable new images, and an explicitly reviewed host. Rebuild the connected images from the updated checkout with `--build`; previously built demo images or downloaded archives may predate these fixes.
+
+## Fast provider switch
+
+Follow docs/PROVIDER_SWITCH.md to select OpenRouter with LLM_PROVIDER, OPENROUTER_API_KEY and OPENROUTER_MODEL in the same private localhost.env file. Text-provider readiness uses that selection. Keep the OpenAI key for the implemented speech/live voice services.

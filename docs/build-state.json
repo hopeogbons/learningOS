@@ -712,6 +712,20 @@
         "skipped": 0,
         "exit_code": 0
       }
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "urgent explicit/automatic-presence OpenAI to OpenRouter text provider switch; separate OpenAI speech credential",
+      "status": "implemented; 38 focused selection/routing/readiness/speech/staging regressions passed; actual OpenRouter call unavailable without configured key and permitted destination",
+      "evidence": [
+        "docs/PROVIDER_SWITCH.md",
+        "backend/tests/test_provider_switch.py"
+      ],
+      "backend": {
+        "passed": 38,
+        "skipped": 0,
+        "exit_code": 0
+      }
     }
   ]
 }

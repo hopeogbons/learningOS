@@ -3,15 +3,18 @@ from dataclasses import dataclass, field
 import os
 from pathlib import Path
 
+from .llm_config import llm_configuration
+
 BASE = Path(__file__).resolve().parents[1]
 
 @dataclass
 class Settings:
     app_mode: str = field(default_factory=lambda: os.getenv("APP_MODE", "demo"))
+    llm_provider: str = field(default_factory=lambda: llm_configuration()[0])
     database_url: str = field(default_factory=lambda: os.getenv("DATABASE_URL", f"sqlite:///{BASE / '.runtime' / 'learningos.db'}"))
     private_storage_dir: str = field(default_factory=lambda: os.getenv("PRIVATE_STORAGE_DIR", str(BASE / '.runtime' / 'private')))
-    api_key: str | None = field(default_factory=lambda: os.getenv("LEARNING_OS_API_KEY"))
-    model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", os.getenv("LEARNING_OS_MODEL", "")))
+    api_key: str | None = field(default_factory=lambda: llm_configuration()[1])
+    model: str = field(default_factory=lambda: llm_configuration()[2])
     session_secret: str = field(default_factory=lambda: os.getenv("SESSION_SIGNING_KEY", os.getenv("SESSION_SECRET", "local-demo-only-not-a-production-secret")))
     oidc_issuer: str | None = field(default_factory=lambda: os.getenv("OIDC_ISSUER"))
     oidc_client_id: str | None = field(default_factory=lambda: os.getenv("OIDC_CLIENT_ID"))
