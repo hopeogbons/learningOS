@@ -123,6 +123,135 @@
           }
         }
       }
+    },
+    "maintenance_updates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "scope",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1
+          },
+          "frontend_lint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "frontend_build": {
+            "type": "string",
+            "minLength": 1
+          },
+          "synthetic_9kb_pdf_browser_upload": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reported_user_pdf_failure": {
+            "type": "string",
+            "minLength": 1
+          },
+          "live_drive": {
+            "type": "string",
+            "minLength": 1
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "backend": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "passed",
+              "skipped",
+              "exit_code"
+            ],
+            "properties": {
+              "passed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "skipped": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "exit_code": {
+                "type": "integer"
+              }
+            }
+          },
+          "deployment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_commit",
+              "target",
+              "status",
+              "public_production"
+            ],
+            "properties": {
+              "source_commit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string",
+                "minLength": 1
+              },
+              "services": {
+                "type": "string",
+                "minLength": 1
+              },
+              "health_ready": {
+                "type": "string",
+                "minLength": 1
+              },
+              "brand": {
+                "type": "string",
+                "minLength": 1
+              },
+              "small_pdf_original_provenance": {
+                "type": "string",
+                "minLength": 1
+              },
+              "data_volume": {
+                "type": "string",
+                "minLength": 1
+              },
+              "public_production": {
+                "type": "string",
+                "minLength": 1
+              },
+              "merged_pr": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
