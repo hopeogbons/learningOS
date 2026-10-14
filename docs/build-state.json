@@ -517,7 +517,19 @@
       "frontend_build": "passed",
       "synthetic_9kb_pdf_browser_upload": "passed",
       "reported_user_pdf_failure": "unresolved_missing_file_or_error",
-      "live_drive": "unrun"
+      "live_drive": "unrun",
+      "deployment": {
+        "merged_pr": 1,
+        "source_commit": "b759a3c60dae75076eb1748e934845c0b470b388",
+        "target": "existing cloud learningos-github-review Docker demo",
+        "status": "deployed_verified",
+        "services": "backend/worker/frontend healthy",
+        "health_ready": "200",
+        "brand": "#173b3f",
+        "small_pdf_original_provenance": "passed",
+        "data_volume": "preserved",
+        "public_production": "unconfigured"
+      }
     }
   ]
 }

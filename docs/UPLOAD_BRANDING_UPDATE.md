@@ -32,3 +32,9 @@ Chunking is page/heading-aware paragraph/sentence splitting, not a verified sema
 To update an existing connected localhost installation, apply these source changes and rebuild using its existing documented launcher (bash scripts/local.sh start, or the Windows launcher), keeping its private configuration/data intact. Cloud file changes do not automatically replace an existing Docker image. Fresh Next build directories were used during verification to avoid stale cached CSS. No database reset/seed was used.
 
 The designated chat output directory was unavailable on this attached executor (missing /codex parent; creation denied even with escalation). The reusable logo/favicons and verification report remain in this repository; no downloadable chat artifact is claimed.
+
+## Follow-up deployment — 2026-10-14
+
+User explicitly authorized merge and deployment. PR #1 merged into GitHub main at `b759a3c60dae75076eb1748e934845c0b470b388`. Rebuilt both Docker images and updated the existing `learningos-github-review` cloud demo stack, preserving its data volume and skipping seed/migration replay (`up -d --no-deps --no-build --wait backend worker frontend`). Retained pre-update images under `before-green-update` tags. All three services became healthy. HTTP health/readiness/logo/SVG checks returned 200; actual browser CSS was #173b3f. A fresh synthetic 9,216-byte PDF browser upload reached Ready and its page citation returned the exact original bytes; no browser errors.
+
+Target is the existing cloud-local demo instance on frontend port 3150, API port 8150. This does not establish a public HTTPS production deployment or update a separate user-machine localhost instance. Public hosting remains unconfigured as documented in HOSTED_BETA.md. The specific reported PDF failure remains unresolved.
