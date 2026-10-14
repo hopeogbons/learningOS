@@ -1193,3 +1193,54 @@ def test_real_pdf_multipart_batches_resume_and_ground_original_pages(db,client,p
     assert finalize_pdf_material(db,db.get(Job,finalize_id))['status']=='ready'
     assert db.scalar(select(func.count(Chunk.id)))==page_count
     assert client.get(f"/api/v1/material-revisions/{intake['revision_id']}/original").content==raw
+
+
+def test_real_pdf_mixed_case_topics_and_legacy_checklist_keep_source_identity(db,client):
+    """Real PDF typography/header regression plus existing-upload labels, not mocked extraction."""
+    from pypdf import PdfWriter
+    from pypdf.generic import DictionaryObject,NameObject,DecodedStreamObject
+    from app.sources.local import extract_pdf_page_batch
+    writer=PdfWriter()
+    font=writer._add_object(DictionaryObject({NameObject('/Type'):NameObject('/Font'),NameObject('/Subtype'):NameObject('/Type1'),NameObject('/BaseFont'):NameObject('/Helvetica')}))
+    pages=[('Table of Contents','Chapter 1 Introduction ........ 2'),('Introduction','An atom contains protons and electrons.'),('Chapter 1 Atomic Structure','A neutral atom has equal numbers of protons and electrons.'),('Energy Transfers','ATP carries cellular energy between reactions.')]
+    for heading,body in pages:
+        page=writer.add_blank_page(width=612,height=792)
+        page[NameObject('/Resources')]=DictionaryObject({NameObject('/Font'):DictionaryObject({NameObject('/F1'):font})})
+        stream=DecodedStreamObject();stream.set_data(f'BT /F1 10 Tf 50 770 Td (ABC.pdf) Tj 0 -40 Td /F1 20 Tf ({heading}) Tj 0 -30 Td /F1 11 Tf ({body}) Tj ET'.encode())
+        page[NameObject('/Contents')]=writer._add_object(stream)
+    output=io.BytesIO();writer.write(output);raw=output.getvalue()
+    sections,_=extract_pdf_page_batch(raw,'ABC.pdf',1,4,[[],[],[],[]])
+    assert [s.title for s in sections]==[h for h,_ in pages]
+    from pypdf import PdfReader
+    from app.sources.local import _normalise_pdf_text
+    original_pages=PdfReader(io.BytesIO(raw)).pages
+    assert all(s.text==_normalise_pdf_text(original_pages[s.locator['page']-1].extract_text(extraction_mode='layout')).strip()[s.locator['section_char_start']:s.locator['section_char_end']] for s in sections)
+    db.add(Collection(id='topic-pdf',learner_id='owner',name='Topics'));db.commit()
+    from app.ingest import ingest_pdf_batch,finalize_pdf_material
+    uploaded=client.post('/api/v1/collections/topic-pdf/materials/upload',files={'file':('ABC.pdf',raw,'application/pdf')},data={'idempotency_key':'mixed-case-topics'})
+    assert uploaded.status_code==202
+    receipt=uploaded.json();ingest_material(db,db.get(Job,receipt['job_id']))
+    revision_row=db.get(MaterialRevision,receipt['revision_id'])
+    manifest=revision_row.metadata_json['ingestion_manifest']
+    ingest_pdf_batch(db,db.get(Job,manifest['batches'][0]['job_id']))
+    db.refresh(revision_row)
+    finalize_pdf_material(db,db.get(Job,revision_row.metadata_json['ingestion_manifest']['finalize_job_id']))
+    uploaded_outline=client.get('/api/v1/collections/topic-pdf/outline').json()['materials'][0]['chunks']
+    assert [row['title'] for row in uploaded_outline]==[heading for heading,_ in pages]
+    assert client.get(f"/api/v1/material-revisions/{receipt['revision_id']}/original").content==raw
+    material=Material(id='topic-material',learner_id='owner',collection_id='topic-pdf',title='ABC.pdf',source_type='pdf',status='ready')
+    db.add(material);db.flush()
+    revision=MaterialRevision(id='topic-revision',learner_id='owner',collection_id='topic-pdf',material_id=material.id,content_hash=hashlib.sha256(raw).hexdigest())
+    db.add(revision);db.flush();material.current_revision_id=revision.id
+    legacy=Chunk(id='legacy-topic',learner_id='owner',material_revision_id=revision.id,title='ABC.pdf',text='ABC.pdf\nChapter 1 Atomic Structure\nAtoms contain protons.',source_locator_json={'page':3},position=0)
+    db.add(legacy);db.flush()
+    db.add(ScopeRevision(id='topic-scope',learner_id='owner',collection_id='topic-pdf',revision_number=1,active=True));db.flush()
+    from app.models import ScopeItem
+    db.add(ScopeItem(learner_id='owner',scope_revision_id='topic-scope',chunk_id=legacy.id,position=0));db.commit()
+    response=client.get('/api/v1/collections/topic-pdf/outline');assert response.status_code==200
+    row=next(material for material in response.json()['materials'] if material['id']=='topic-material')['chunks'][0]
+    assert row['selected'] and response.json()['active_scope']['id']=='topic-scope'
+    assert row['id']=='legacy-topic' and row['title']=='Chapter 1 Atomic Structure — p. 3'
+    db.refresh(legacy)
+    assert legacy.title=='ABC.pdf' and legacy.text.startswith('ABC.pdf\n')
+    assert revision.content_hash==hashlib.sha256(raw).hexdigest()

@@ -182,7 +182,58 @@ def _all_caps_heading(line: str) -> bool:
     return bool(re.fullmatch(r"[A-Z][A-Z0-9 &/()'-]{2,59}", value))
 
 
-def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: dict, *, markdown=False, rst=False, all_caps=False) -> list[ExtractedSection]:
+def _pdf_heading_level(value):
+    if not value or len(value) > 140 or re.search(r"\.{2,}\s*\d+\s*$", value):
+        return 0
+    if re.match(r"^(?:chapter|part|unit|lesson)\s+(?:\d+|[IVXLCDM]+)\b", value, re.I):
+        return 1
+    if re.fullmatch(r"(?:table of )?contents|introduction|preface|foreword|abstract|overview|conclusion(?:s)?|references|bibliography|appendix(?:\s+[A-Z0-9]+)?", value, re.I):
+        return 2
+    number = re.match(r"^(\d+(?:\.\d+)*)[.)]?\s+([A-Z][^.!?]{2,100})$", value)
+    return min(6, number[1].count('.') + 2) if number else 0
+
+
+def _pdf_header(value, filename):
+    normalize = lambda x: re.sub(r"[^\w]", "", x.casefold())
+    return normalize(value) in {normalize(filename), normalize(Path(filename).stem)} or bool(re.fullmatch(r"(?:page\s*)?\d+", value, re.I))
+
+
+def pdf_display_title(title, text, locator, filename):
+    """Improve old filename-only labels without mutating scope IDs or original content."""
+    if not _pdf_header(re.sub(r" — \d+$", "", title), filename):
+        return title
+    lines = [line.strip() for line in text.splitlines() if line.strip() and not _pdf_header(line.strip(), filename)]
+    heading = next((line for line in lines if _pdf_heading_level(line)), None)
+    preview = heading or (lines[0][:110] if lines else Path(filename).stem)
+    page = locator.get('page_start', locator.get('page'))
+    return f"{preview} — p. {page}" if page else preview
+
+
+def _pdf_font_headings(page, filename):
+    fragments = []
+    def visit(text, cm, tm, font, size):
+        if text.strip() and size:
+            fragments.append((text, float(size), str((font or {}).get('/BaseFont', ''))))
+    try:
+        page.extract_text(visitor_text=visit)
+    except Exception:
+        return set()
+    weights = {}
+    for text, size, _ in fragments:
+        weights[size] = weights.get(size, 0) + len(text.strip())
+    body_size = max(weights, key=weights.get) if weights else 0
+    candidates = set()
+    for text, size, font in fragments:
+        if size <= body_size * 1.15 and not ('bold' in font.lower() and size >= body_size):
+            continue
+        for line in text.splitlines():
+            value = re.sub(r"\s+", " ", line).strip()
+            if 2 < len(value) <= 120 and len(value.split()) <= 14 and not re.search(r"[.!?;:]$", value) and not _pdf_header(value, filename):
+                candidates.add(value)
+    return candidates
+
+
+def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: dict, *, markdown=False, rst=False, all_caps=False, pdf_headings=None) -> list[ExtractedSection]:
     """Split a prose source at its own headings and retain exact text offsets."""
     lines = text.splitlines(keepends=True)
     line_starts = [0]
@@ -191,6 +242,7 @@ def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: d
     if len(lines) == 0:
         return []
 
+    contents_page = locator_kind == "pdf" and any(re.fullmatch(r"(?:table of )?contents", line.strip(), re.I) for line in lines)
     caps_count = sum(_all_caps_heading(line) for line in lines) if all_caps else 0
     nonempty = sum(bool(line.strip()) for line in lines)
     promote_caps = bool(all_caps and not (caps_count > 12 and caps_count * 4 > nonempty))
@@ -211,7 +263,9 @@ def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: d
                 level, title, consumed = 2, value, 2
                 if index > 0 and re.fullmatch(r"([=\-`:'\"~^_*+#])\1{2,}\s*", lines[index - 1].strip()):
                     starts.append((index - 1, 1, ""))
-        elif promote_caps and _all_caps_heading(value):
+        elif locator_kind == "pdf" and (not contents_page or re.fullmatch(r"(?:table of )?contents", value, re.I)) and not _pdf_header(value, filename) and (_pdf_heading_level(value) or value in (pdf_headings or set())):
+            level, title = _pdf_heading_level(value) or 2, value
+        elif promote_caps and _all_caps_heading(value) and not contents_page and (locator_kind != "pdf" or not _pdf_header(value, filename)):
             level, title = 2, value
         if level:
             starts.append((index, level, title))
@@ -232,6 +286,8 @@ def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: d
         stripped = raw.strip()
         if not stripped:
             return
+        if locator_kind == "pdf" and not heading_path and all(_pdf_header(line.strip(), filename) for line in stripped.splitlines() if line.strip()):
+            return
         leading = len(raw) - len(raw.lstrip())
         trailing = len(raw) - len(raw.rstrip())
         start_char = raw_start + leading
@@ -250,7 +306,8 @@ def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: d
             "section_char_start": start_char,
             "section_char_end": end_char,
         }
-        result.append(ExtractedSection(locator["heading"], body, locator_kind, locator))
+        label = pdf_display_title(locator["heading"], body, locator, filename) if locator_kind == "pdf" else locator["heading"]
+        result.append(ExtractedSection(label, body, locator_kind, locator))
 
     for heading_line, level, title in starts:
         if not title:
@@ -285,7 +342,8 @@ def _prose_sections(text: str, filename: str, locator_kind: str, base_locator: d
         "section_char_start": start_char,
         "section_char_end": end_char,
     }
-    return [ExtractedSection(locator["heading"], text[start_char:end_char], locator_kind, locator)]
+    label = pdf_display_title(first_line, text[start_char:end_char], locator, filename) if locator_kind == "pdf" else locator["heading"]
+    return [ExtractedSection(label, text[start_char:end_char], locator_kind, locator)]
 
 
 def pdf_manifest_info(data: bytes) -> dict:
@@ -435,12 +493,12 @@ def extract_pdf_page_batch(
                 page_sections = _prose_sections(
                     text, filename, "pdf",
                     {"page": page_number, "reading_method": method or "text"},
-                    markdown=True, all_caps=True,
+                    markdown=True, all_caps=True, pdf_headings=_pdf_font_headings(page, filename),
                 ) if text else []
                 normalized_sections = []
                 for section in page_sections:
                     local_heading_path = list(section.locator.get("heading_path", []))
-                    full_heading_path = chapter_path + local_heading_path
+                    full_heading_path = [part for part in chapter_path + local_heading_path if not _pdf_header(part, filename)]
                     locator = {
                         **section.locator,
                         "page": page_number,
@@ -450,7 +508,7 @@ def extract_pdf_page_batch(
                         "chapter_path": chapter_path,
                         "heading_path": full_heading_path,
                     }
-                    title = " / ".join(full_heading_path) if chapter_path else section.title
+                    title = " / ".join(full_heading_path) if full_heading_path else section.title
                     normalized_sections.append(ExtractedSection(title, section.text, "pdf", locator))
                 sections.extend(normalized_sections)
                 page_results.append({

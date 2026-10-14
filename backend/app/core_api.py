@@ -10,6 +10,7 @@ from .db import get_db, utcnow, as_utc
 from .models import *
 from .auth import get_learner
 from .settings import settings
+from .sources.local import pdf_display_title
 from .jobs import enqueue, register, NeedsAttention
 
 from .core_schemas import *
@@ -260,7 +261,9 @@ def outline(collection_id: str, learner=Depends(get_learner), db=Depends(get_db)
     cache = material_cache(db, material_rows)
     for material in material_rows:
         data = material_dto(db, material, cache)
-        data["chunks"] = [{"id": c.id, "title": c.title, "position": c.position, "citation_ids": sorted(citations.get(c.id, set())), "selected": c.id in selected} for c in chunks if c.material_revision_id == material.current_revision_id]
+        source_revision = cache.get(material.current_revision_id)
+        source_filename = (source_revision.metadata_json or {}).get("filename", material.title) if source_revision else material.title
+        data["chunks"] = [{"id": c.id, "title": pdf_display_title(c.title, c.text, c.source_locator_json or {}, source_filename) if material.source_type == "pdf" else c.title, "position": c.position, "citation_ids": sorted(citations.get(c.id, set())), "selected": c.id in selected} for c in chunks if c.material_revision_id == material.current_revision_id]
         result.append(data)
     return {"materials": result, "active_scope": scope_dto(db, scope), "version": collection.version, "progress": progress_dto(db, collection, scope)}
 

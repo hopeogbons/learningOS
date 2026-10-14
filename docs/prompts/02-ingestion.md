@@ -42,3 +42,7 @@ The prior `source-excerpts-v2` behavior remains immutable for existing revisions
 ## Latest core-demo acceptance — supersedes older communication scope
 
 Read docs/CONVERSATION_EXPERIENCE.md before implementation. Its one-interface Text/Voice note/Live voice workflow and Done when gates govern this batch. Study selects text; Voice selects genuine realtime; voice-note selects record/send. Preserve session, scope, transcript and draft when switching. Source evidence is an unobtrusive disclosure, while internal grounding and confidence-controlled assessment remain mandatory. Only key PDF, mode-entry/persistence, speech ownership and actual provider tests are required for this demo iteration.
+
+## PDF topic checklist — Done when
+
+A PDF filename or repeated running header must not become the label of every selectable section. Prefer real bookmark paths, visible chapter/numbered/structural headings and conservatively detected larger/bold PDF typography. Contents-list entries are not separate chapters merely because they mention chapter names. Preserve exact extracted content offsets, original page evidence and retained originals. If no heading can be verified, use a source-text preview with its page locator, never an invented chapter/topic. Existing filename-labeled PDFs must also get meaningful checklist display labels without changing chunk IDs, immutable scope, order, content hashes or saved progress. Protect this with one genuine mixed-case/font PDF upload regression plus a legacy-outline case; no superficial test proliferation.

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "target": "cloud Docker demo",
+  "visible_topics": [
+    "Table of Contents",
+    "Introduction",
+    "Chapter 1 Atomic Structure",
+    "Energy Transfers"
+  ],
+  "original_bytes_preserved": true,
+  "only_new_synthetic_collection_used": true
+}

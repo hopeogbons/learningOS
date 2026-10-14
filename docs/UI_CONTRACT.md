@@ -102,3 +102,5 @@ Latest conversation Done when: apply docs/CONVERSATION_EXPERIENCE.md patient, mo
 Active Study conversations use a compact navigation header and omit the redundant greeting/route introduction, reserving viewport space for the bounded chat and speech controls. Other pages keep their existing greetings. Controls may scroll on very small screens instead of being clipped.
 
 The active chat height reserves space for the offline demo notice as well as navigation, so confidence/send controls remain accessible in both demo and connected modes.
+
+PDF topic checklist labels follow ingestion Done when: actual human-readable source headings, with page-qualified source previews when no heading exists. Filename belongs to the material card; repeated filename labels are not acceptable section names. Existing IDs/selection/progress are preserved when improving labels.

@@ -754,6 +754,21 @@
       "frontend_lint": "passed",
       "frontend_build": "passed; frozen production image and TypeScript",
       "browser_visual_smoke": "passed; mobile/desktop and live-mode captures inspected; 12 focused interaction checks"
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "human-readable PDF topic checklist with existing-upload label compatibility",
+      "status": "implemented; real PDF font/structural heading upload and immutable legacy selection regression passed",
+      "evidence": [
+        "docs/prompts/02-ingestion.md",
+        "backend/tests/test_sources.py",
+        "docs/evidence/pdf-topic-labels/deployed.json"
+      ],
+      "backend": {
+        "passed": 79,
+        "skipped": 0,
+        "exit_code": 0
+      }
     }
   ]
 }
