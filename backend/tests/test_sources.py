@@ -60,6 +60,42 @@ def test_pdf_page_locator_and_scan_needs_attention():
     with pytest.raises(SourceError):extract_file(b'invalid','broken.pdf')
 
 
+def test_long_text_chunks_follow_paragraphs_and_keep_exact_lines():
+    paragraphs = [' '.join([f'Paragraph {index} explains its own topic.'] * 35) for index in range(8)]
+    text = '# Real heading\n' + '\n\n'.join(paragraphs)
+    snapshot = extract_file(text.encode(), 'long.md')
+    assert len(snapshot.sections) > 1
+    for section in snapshot.sections:
+        assert len(section.text) <= 4000
+        locator = section.locator
+        assert text[locator['section_char_start']:locator['section_char_end']] == section.text
+        assert locator['heading'] == 'Real heading'
+        assert locator['line_start'] == 1 + text[:locator['section_char_start']].count('\n')
+        assert locator['line_end'] == 1 + text[:locator['section_char_end']].count('\n')
+    assert all(any(paragraph in section.text for section in snapshot.sections) for paragraph in paragraphs)
+
+
+def test_long_pdf_page_chunks_keep_page_and_original_offsets(monkeypatch):
+    from types import SimpleNamespace
+    text = '\n\n'.join([' '.join(['A source-supported fact.'] * 45)] * 8)
+    monkeypatch.setattr('pypdf.PdfReader', lambda _: SimpleNamespace(is_encrypted=False, pages=[SimpleNamespace(extract_text=lambda: text)]))
+    sections = extract_file(b'%PDF-synthetic', 'small.pdf').sections
+    assert len(sections) > 1
+    assert all(section.locator['page'] == 1 and section.locator['filename'] == 'small.pdf' for section in sections)
+    assert all(len(section.text) <= 4000 for section in sections)
+    assert all(text[section.locator['section_char_start']:section.locator['section_char_end']] == section.text for section in sections)
+
+
+@pytest.mark.parametrize('filename,prefix', [('long.txt', '\n\n  '), ('long.md', '\n\n# Original heading\n')])
+def test_chunk_lines_resolve_after_leading_blank_lines(filename, prefix):
+    text = prefix + '\n\n'.join([' '.join(['Source fact.'] * 140)] * 8) + '\n\n'
+    lines = text.splitlines()
+    for section in extract_file(text.encode(), filename).sections:
+        locator = section.locator
+        resolved = '\n'.join(lines[locator['line_start']-1:locator['line_end']]).strip()
+        assert resolved == section.text
+
+
 def test_photo_never_uses_stub_ocr():
     with pytest.raises(SourceError) as unavailable:extract_file(b'\x89PNG\r\n\x1a\nsynthetic','notes.png')
     assert unavailable.value.code=='vision_unavailable'

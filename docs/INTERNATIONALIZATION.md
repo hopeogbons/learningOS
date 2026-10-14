@@ -8,7 +8,7 @@ The language-selector screenshot is the target registry: English (`en`), Chinese
 
 ## Interface requirements
 
-Add the language chooser to Profile and the existing desktop account/top-bar area; make it reachable in the mobile drawer. Keep all six shortcuts and the current brand blue/card styling. Show native language label plus English annotation like the reference, selected state, keyboard navigation and accessible names. Individual native labels use bidi isolation. No flags: languages and countries are not interchangeable.
+Add the language chooser to Profile and the existing desktop account/top-bar area; make it reachable in the mobile drawer. Keep all six shortcuts and the Andela green brand/card styling specified in UI_CONTRACT. Show native language label plus English annotation like the reference, selected state, keyboard navigation and accessible names. Individual native labels use bidi isolation. No flags: languages and countries are not interchangeable.
 
 Central message IDs and full catalogs for all ten languages, with interpolation/plural rules via a supported React/Next.js i18n library after compatibility verification. Extract every user-visible string, including source status/errors, voice help, confidence scale, notifications and screen-reader text. Do not run translation services in render or silently turn untranslated placeholders into a support claim. Missing catalog keys fail CI; an explicit unavailable-language state is better than a partly translated screen labeled supported. User collection/source titles stay user-authored unless the learner asks for a translated display alias.
 

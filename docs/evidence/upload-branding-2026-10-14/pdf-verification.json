@@ -1,0 +1,18 @@
+{
+  "mode": "offline-demo",
+  "source": "synthetic",
+  "size_bytes": 9216,
+  "checks": [
+    {
+      "name": "9 KB PDF actual browser multipart -> durable worker -> Ready",
+      "outcome": "passed",
+      "http_status": 202
+    },
+    {
+      "name": "page-1 source citation and exact original PDF bytes",
+      "outcome": "passed",
+      "original_sha256_matches": true
+    }
+  ],
+  "browser_errors": []
+}

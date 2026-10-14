@@ -80,3 +80,7 @@ scripts/release_check.sh --production /absolute/private/production.env
 ```
 
 After the failed latency target and required live gates are resolved, public deployment can be reviewed using the prepared command in README.md. Domain/account/spending/publication choices have not been invented. The final source commit and archive hashes are recorded in the downloadable RELEASE_MANIFEST.json; local commits are also preserved in a Git bundle because remote publication and fresh-task local-commit restoration are unverified.
+
+## Maintenance update — 2026-10-14
+
+See UPLOAD_BRANDING_UPDATE.md for the Andela green/transparent logo update, bounded source extraction v2 and original-byte citation verification. Backend 178 passed/3 PostgreSQL-fixture skips; frontend lint/build passed; synthetic 9 KB PDF succeeded in the actual UI/worker flow. The user-reported PDF failure remains unresolved without the file or error; no live Drive/public deployment claim is added. Prior release blockers remain unchanged.

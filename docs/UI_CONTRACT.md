@@ -1,24 +1,26 @@
 # Dashboard fidelity contract — applies to every prompt
 
+**User branding update (2026-10-14):** The supplied brain/circuit mark and Andela palette supersede the reference template’s blue chrome and book logo. Preserve all six dashboard action colors, card geometry, typography and layout. The immutable reference remains historical design evidence.
+
 **Visual source of truth:** `reference/dashboard/`. Before implementing, inspect its `src/app/page.tsx`, `layout.tsx`, `globals.css`, `src/components/*.tsx`, `src/data/dashboard.ts`, package files and screenshots in `reference/screenshots/`. Copy it to `frontend/` rather than recreating it. The archive supplies the Home screen; the other routes below are new screens to design using that shell, not existing supplied designs.
 
 ## Preserve these specifics
 
 | Element | Exact source / rule |
 |---|---|
-| Colors | `--edu-brand #2149e0`; dark `#1a37c9`; ink `#1f2a44`; muted `#5d6882`; surface `#f4f6fb`; borders `#e6eaf3` |
+| Colors | Andela emerald `#40c15f`, kale `#173b3f`, green black `#132128`, opal `#b0d6cd`, white `#ffffff`. General chrome, hero, links, focus and selected states use accessible green variations. Emerald is an accent; use dark greens for readable text and white-on-dark controls. |
 | Type | Inter Variable font, local `@fontsource-variable/inter`; existing weights, sizes and spacing |
 | Styling order | Bootstrap CSS in `layout.tsx`; Tailwind theme/utilities prefix `tw:`; handwritten CSS last; no Tailwind preflight |
 | Breakpoints | Mobile <992px; desktop ≥992px; Bootstrap/Tailwind xxl 1400px; test 991 and 992 boundaries |
 | Desktop shell | Fixed white 264px sidebar; `.app-main` left margin; sticky top bar; content max 1280px; 32px content side padding |
-| Mobile shell | Blue gradient `.hero`, flat bottom, fading `.hero::after`; 84px avatar; content max 640px with -28px overlap; bottom safe-area padding |
+| Mobile shell | Green gradient `.hero`, flat bottom, fading `.hero::after`; 84px avatar; content max 640px with -28px overlap; bottom safe-area padding |
 | Quick actions | Study blue `#2F7BEB`, Review amber `#F59E0B`, Add Material green `#22B14C`, Outline purple `#7C5CE6`, Voice red `#E5444F`, Progress teal `#14B8A6`; same six labels/order |
 | Quick layout | Mobile 3×2 inside one white rounded card; desktop 3 columns then 6 at xxl; desktop status lines |
 | Navigation | Desktop groups Home / Learn / Library / Insights / Account; mobile bottom Home, Collections, Study, Review; remaining pages in drawer |
 | Due list | Three rows on Home mobile; fourth visible on desktop; full list at Review route; original icon/tint/citation/interval treatment |
 | Desktop panels | Greeting + resume, four stats, DueForReview/Collections left, Calibration/RecentMaterials right; preserve `col-xl-7` / `col-xl-5` split |
 | Cards | Existing white cards, `rounded-4`, soft shadows, source badges, spacing classes; no unrelated glass theme/dark redesign |
-| Identity | `Logo.tsx`, `icon.svg`, existing book mark; `Avatar.tsx` and local placeholder; don't download arbitrary portraits |
+| Identity | `Logo.tsx`, `icon.svg`, standalone vector brain/circuit mark; transparent negative space, no enclosing square or white background; favicon derived from the same SVG; `Avatar.tsx` and local placeholder; don't download arbitrary portraits |
 
 ## Component adaptation rules
 
@@ -46,12 +48,12 @@
 
 ## Visual verification and acceptance
 
-Capture deterministic fixture Home screenshots at 390×844, 768×1024 and 1440×1000 matching `reference/screenshots/`. Freeze time/greeting/avatar/data; compare layout and static chrome before wiring real data. Review intentionally changed content separately from geometry. Pixel comparison target ≤1% changed pixels in designated static chrome using a documented threshold (initial proposal 0.2; calibrate renderer noise, record masks). Never use a broad mask over substantive UI. Update baselines only after explaining an intentional visual change. Also capture every new route at mobile and desktop.
+Capture deterministic fixture Home screenshots at 390×844, 768×1024 and 1440×1000 matching `reference/screenshots/`. Freeze time/greeting/avatar/data; compare layout and static chrome before wiring real data. Review intentionally changed content separately from geometry. Brand/logo regions intentionally differ from the original blue/book reference; record those changes explicitly and check remaining geometry without hiding substantive UI. Pixel comparison target ≤1% changed pixels in designated static chrome using a documented threshold (initial proposal 0.2; calibrate renderer noise, record masks). Never use a broad mask over substantive UI. Update baselines only after explaining an intentional visual change. Also capture every new route at mobile and desktop.
 
 Test 360px width, 991/992px breakpoint, 200% zoom, long collection/title labels, empty data, network failure, keyboard-only drawer and reordering. No clipped action labels, hidden required features on mobile, overlapping bottom bar, page-level horizontal overflow, browser console errors, or unreadable confidence controls. The Home may hide desktop detail panels, but their capabilities must remain reachable through routed screens. Run automated accessibility checks and manual focus/contrast review; token colors do not prove all text combinations pass WCAG.
 
 ## Revision 2: language selection and upload placement
 
-Language chooser follows the ten ordered options/native labels in contracts/language-registry.json. Add it to the existing account/top-bar/Profile and mobile drawer, preserving blue selected-state tint, cards and six quick actions. Arabic uses logical-direction shell styles/RTL while keeping original geometry; local CJK/Arabic fallback fonts, per-label bidi isolation, and long-language-label tests are mandatory. User-owned source labels stay original unless explicitly translated as aliases.
+Language chooser follows the ten ordered options/native labels in contracts/language-registry.json. Add it to the existing account/top-bar/Profile and mobile drawer, preserving green selected-state tint, cards and six quick actions. Arabic uses logical-direction shell styles/RTL while keeping original geometry; local CJK/Arabic fallback fonts, per-label bidi isolation, and long-language-label tests are mandatory. User-owned source labels stay original unless explicitly translated as aliases.
 
 Add Material keeps the original green FilePlus2/Camera/Link icons and Collection picker; it now shows destination Collection/folder, upload/provision/write/ingest stages, actual Drive confirmation, retry and Local/Disconnected state. Paste URL is an ordinary form action here. CollectionsPanel displays Drive ready only after real folder provisioning, with Local/provisioning/attention badges; direct drops surface last-sync/new-material state. Speech controls display chosen study/speech language and actual fallback. See INTERNATIONALIZATION and DRIVE_INGESTION, not a new design system.

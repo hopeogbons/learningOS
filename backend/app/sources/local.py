@@ -6,6 +6,41 @@ from pathlib import Path
 from .base import ExtractedSection, SourceError, SourceSnapshot
 
 SUPPORTED = {'.pdf', '.md', '.txt', '.csv', '.xlsx', '.png', '.jpg', '.jpeg'}
+MAX_TEXT_CHUNK_CHARS = 4000
+
+
+def coherent_sections(section: ExtractedSection) -> list[ExtractedSection]:
+    """Bound retrieval units within a source section, preferring real boundaries.
+
+    Never cross a heading or PDF page. Offsets address the original extracted
+    section, and every resulting excerpt is an exact contiguous source slice.
+    """
+    text = section.text
+    if len(text) <= MAX_TEXT_CHUNK_CHARS:
+        return [section]
+    result, start = [], 0
+    while start < len(text):
+        end = min(start + MAX_TEXT_CHUNK_CHARS, len(text))
+        if end < len(text):
+            window = text[start:end]
+            boundaries = list(re.finditer(r'\n\s*\n', window))
+            if not boundaries:
+                boundaries = list(re.finditer(r'[.!?。！？](?:\s+|(?=[^\x00-\x7f]))', window))
+            if not boundaries:
+                boundaries = list(re.finditer(r'\s+', window))
+            if boundaries:
+                end = start + boundaries[-1].end()
+        segment = text[start:end]
+        left = start + len(segment) - len(segment.lstrip())
+        right = end - len(segment) + len(segment.rstrip())
+        if left < right:
+            locator = {**section.locator, 'section_char_start': left, 'section_char_end': right}
+            if section.locator_kind == 'text':
+                locator['line_start'] = section.locator['line_start'] + text[:left].count('\n')
+                locator['line_end'] = section.locator['line_start'] + text[:right].count('\n')
+            result.append(ExtractedSection(f'{section.title} — {len(result)+1}', text[left:right], section.locator_kind, locator))
+        start = end
+    return result
 
 
 def extract_file(data: bytes, filename: str, mime: str = '', vision=None) -> SourceSnapshot:
@@ -43,13 +78,17 @@ def extract_file(data: bytes, filename: str, mime: str = '', vision=None) -> Sou
         start, title = 1, Path(filename).stem
         for index, line in enumerate(lines, 1):
             if suffix == '.md' and re.match(r'^#{1,6}\s+\S', line):
-                prior = '\n'.join(lines[start-1:index-1]).strip()
+                raw_prior = '\n'.join(lines[start-1:index-1])
+                prior = raw_prior.strip()
                 if prior and re.sub(r'^#{1,6}\s+.*$', '', prior, flags=re.MULTILINE).strip():
-                    sections.append(ExtractedSection(title, prior, 'text', {'filename': filename, 'heading': title, 'line_start': start, 'line_end': index-1}))
+                    content_start = start + raw_prior[:len(raw_prior)-len(raw_prior.lstrip())].count('\n')
+                    sections.append(ExtractedSection(title, prior, 'text', {'filename': filename, 'heading': title, 'line_start': content_start, 'line_end': index-1}))
                 start, title = index, re.sub(r'^#{1,6}\s+', '', line).strip()
-        tail = '\n'.join(lines[start-1:]).strip()
+        raw_tail = '\n'.join(lines[start-1:])
+        tail = raw_tail.strip()
         if tail and (suffix != '.md' or re.sub(r'^#{1,6}\s+.*$', '', tail, flags=re.MULTILINE).strip()):
-            sections.append(ExtractedSection(title, tail, 'text', {'filename': filename, 'heading': title, 'line_start': start, 'line_end': len(lines)}))
+            content_start = start + raw_tail[:len(raw_tail)-len(raw_tail.lstrip())].count('\n')
+            sections.append(ExtractedSection(title, tail, 'text', {'filename': filename, 'heading': title, 'line_start': content_start, 'line_end': len(lines)}))
     elif suffix == '.csv':
         if len(data)>2*1024*1024:raise SourceError('text_size_limit','Limit CSV sources to 2 MiB.')
         try:
@@ -98,6 +137,8 @@ def extract_file(data: bytes, filename: str, mime: str = '', vision=None) -> Sou
         if not text or not text.strip():
             raise SourceError('unreadable_photo', 'Retake this photo with clear lighting and readable text.')
         sections.append(ExtractedSection(Path(filename).stem, text.strip(), 'photo', {'filename': filename, 'section': 1, 'reading_method': 'vision'}))
+    if suffix in {'.pdf', '.md', '.txt'}:
+        sections = [part for section in sections for part in coherent_sections(section)]
     if not sections:
         raise SourceError('empty_source', 'No readable study content was found.')
     if len(sections) > 10000:

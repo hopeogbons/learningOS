@@ -220,7 +220,7 @@ export function CalibrationCard({
         <ul className="list-unstyled m-0 d-flex flex-column gap-3">
           {[
             { key: "home.confidence", value: p?.confidence, color: "#F59E0B" },
-            { key: "home.accuracy", value: p?.accuracy, color: "#2149E0" },
+            { key: "home.accuracy", value: p?.accuracy, color: "#173b3f" },
           ].map((row) => (
             <li key={row.key}>
               <div className="d-flex justify-content-between mb-1 tw:text-sm">
