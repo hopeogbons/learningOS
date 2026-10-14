@@ -249,6 +249,14 @@
           "cwd": "/workspace/learningOS",
           "exit_code": null,
           "artifact": "docs/LIVE_VERIFICATION.md"
+        },
+        {
+          "name": "Drive setup readiness and synthetic POST OAuth/PKCE callback regressions passed; actual consent pending",
+          "outcome": "passed",
+          "command": "APP_MODE=test TEST_POSTGRES_URL=<isolated-synthetic-postgres> backend/.venv/bin/python -m pytest -q -rs backend/tests",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/drive-setup/verification.json"
         }
       ]
     },
@@ -460,13 +468,21 @@
           "cwd": "/workspace/learningOS/backend",
           "exit_code": 0,
           "artifact": "docs/evidence/ci-provider-mode-fix.json"
+        },
+        {
+          "name": "132 backend PostgreSQL tests without live credentials; frontend build/contracts; six connection UI cases; four production preflight cases",
+          "outcome": "passed",
+          "command": "isolated PostgreSQL pytest; npm run lint; tsc --noEmit; npm run build; check_api_contracts.sh; synthetic Chromium and production-config probes",
+          "cwd": "/workspace/learningOS",
+          "exit_code": 0,
+          "artifact": "docs/evidence/drive-setup/verification.json"
         }
       ]
     }
   ],
   "external_blockers": [
     "AI model availability and 42 live text/vision checks passed; L03 proficient/native semantic review remains pending.",
-    "User selected localhost: real Google Web-client registration, valid local callback, account sign-in/Drive consent and D01-D06 actual folder/write/drop proof remain pending. Local raw token/session keys are generated privately, never proxy placeholders.",
+    "User now requested a hosted connected beta. Hosting destination/access, domain/DNS and target account credentials are not yet available. Registered Google callbacks, actual sign-in/Drive consent and D01-D06 remain pending.",
     "All ten real TTS/STT synthetic roundtrips passed; L04 native transcript/audibility/browser three-turn proof and proficient catalog review remain pending. Runtime speech allowlist unchanged.",
     "Public-page pinned DNS route and permitted captions fetch remain unverified on the target network.",
     "Production host/OIDC/private S3/domain/DNS/HTTPS and P09 proof remain unconfigured; no public application deployment; reviewed source is now available on GitHub main.",

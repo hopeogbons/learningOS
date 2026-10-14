@@ -1,0 +1,31 @@
+{
+  "synthetic_configuration_only": true,
+  "external_connections": 0,
+  "immutable_digests_verified": false,
+  "cases": [
+    {
+      "case": "complete_synthetic",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "outcome": "passed"
+    },
+    {
+      "case": "wrong_drive_callback",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "outcome": "passed"
+    },
+    {
+      "case": "conflicting_origin",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "outcome": "passed"
+    },
+    {
+      "case": "missing_oidc",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "outcome": "passed"
+    }
+  ]
+}

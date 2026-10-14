@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "未知",
   "upload.sourceLanguageHelp": "选择原始资料的语言。您可以稍后更正此标签，而不会更改原文或引用。",
   "auth.required": "登录您的 Learning OS 账户以继续。",
-  "auth.signIn": "登录"
+  "auth.signIn": "登录",
+  "connections.demoDrive": "离线演示无法连接 Google Drive。请启动已配置的版本并登录，以连接您的账户。",
+  "connections.setupNeeded": "连接 Google Drive 前需要完成设置。请配置此应用的 Google 连接，然后重新加载此页面。",
+  "connections.setupRequired": "需要设置"
 }

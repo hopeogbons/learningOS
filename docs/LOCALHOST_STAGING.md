@@ -1,23 +1,55 @@
 # Connected staging on your own computer
 
-The selected review target is localhost. A browser on your computer cannot reach the Codex cloud machine's loopback address. Download the current source package and run it on the same computer as your browser. This is a private connected review environment, not a public production deployment. The tested scripts require Linux Bash (or Windows WSL2), Git, Node.js 24, Python 3.12, uv, curl, and setsid.
+The selected review target is localhost: the browser and Docker run on your own computer. The offline `compose.demo.yml` target cannot connect Drive; its Connect action must show unavailable. For real Google sign-in and Drive use the separate connected target below. It keeps connected user data in a different named volume from the synthetic demo.
 
-## Install and prepare private settings
+## Docker Desktop setup (Windows, macOS, or Linux)
 
-Unpack the source archive and enter its `learningOS` folder. Install the existing frozen locks, then create a separate connected-data directory and fresh local session/encryption keys:
+Download the latest source from [GitHub](https://github.com/hopeogbons/learningOS) or update your existing checkout without discarding private settings. Open PowerShell or a terminal in the folder containing `README.md`. Install/start Docker Desktop (Linux containers on Windows), or Docker Engine with Compose on Linux. Docker provides Node and Python; host Node, Python, WSL terminal tools, and uv are not required for this path. Run `docker compose version`: version **2.30 or newer** is required because the private env file is read literally using `format: raw`.
+
+Stop the offline demo to free ports 3000 and 8000. This retains its existing data:
+
+```text
+docker compose -f deploy/compose.demo.yml down
+```
+
+Create private connected settings using a one-shot container. In **Windows PowerShell or macOS Terminal**:
+
+```text
+docker compose -f deploy/compose.connected-local.yml --profile init run --build --rm --no-deps init
+```
+
+On **Linux**, run the helper as your host user so its private file is owned/editable by you:
+
+```bash
+docker compose -f deploy/compose.connected-local.yml --profile init run --build --rm --no-deps --user "$(id -u):$(id -g)" init
+```
+
+The helper creates `.runtime/localhost/localhost.env`, generates real random local session/encryption keys, and uses `/data` container paths. It creates the file with mode `0600` on Unix; Docker Desktop Windows file protection follows the host's ACLs, so keep the project in your private user directory. The init container has no network access after the image build. Running init again preserves the entire existing file and all keys. Do not regenerate the encryption key after connecting Drive; keep it with your private backups. No cloud secret is copied.
+
+In Windows PowerShell open the file with:
+
+```powershell
+notepad .runtime\localhost\localhost.env
+```
+
+On macOS/Linux use your local text editor. Fill `LEARNING_OS_API_KEY` and `LLM_MODEL` with the actual provider key and a supported structured-output/vision model you have verified. Fill the Google client settings described below. Speech provider fields are needed when testing speech; leave `VERIFIED_SPEECH_LOCALES` empty until each language has native-transcript, audible-output, and browser evidence. Keep `APP_MODE=live` and the supplied origins/callback URI. Do not paste secrets into chat or Git.
+
+The Docker env file is **literal data**, never shell code: write `NAME=value` with the actual value after `=`, without surrounding quotes or `export`, and never `source` it. Dollar signs and `#` inside values stay literal. If a previous native setup generated quoted key values, remove only the surrounding quotation marks from `SESSION_SIGNING_KEY` and `TOKEN_ENCRYPTION_KEY`, preserving the original key contents. Container data-path overrides are supplied by Compose; your prior native path defaults are not edited.
+
+## Optional native setup
+
+For Linux Bash/WSL2 with Git, Node.js 24, Python 3.12, uv, curl, and setsid already installed, the original frozen-lock path is still available:
 
 ```bash
 bash scripts/setup.sh
 python scripts/prepare_localhost.py
 ```
 
-The first command prepares the labeled offline demo. The second creates `.runtime/localhost/localhost.env` with private permissions, local paths, and fresh generated keys. It refuses to overwrite an existing file. Do not regenerate the encryption key after connecting Drive; keep it with your private backups. No existing cloud secret is copied into the download or generated file.
-
-Edit that private file locally. Fill `LEARNING_OS_API_KEY`, `LLM_MODEL`, `STT_MODEL`, `TTS_MODEL`, and `TTS_VOICE` with your actual provider settings. Fill the Google client names described below. Keep `APP_MODE=live`, both origins, and the callback URI exactly as supplied. The connected database is separate from the synthetic demo. Leave `VERIFIED_SPEECH_LOCALES` empty until native transcripts, audible output, and browser exchanges have been checked for those locales; the UI retains typing fallback meanwhile.
+This creates native paths and does not replace an existing settings file. Choose one runtime at a time; native SQLite data and the connected Docker volume are distinct. Docker-generated `/data` values must be changed to actual private host paths before using that same file natively; retain the session/encryption keys.
 
 ## Google sign-in and Drive consent
 
-Use an actual Google **Web application** OAuth client. Its consent screen must allow your test account; enable Google Drive API in that project. Review the requested scopes: `openid profile` for sign-in and `drive.file` plus `drive.readonly` for app-managed uploads and manually dropped-file discovery. The read scope is broad at the provider level; the application restricts its reads to connected Collection folders.
+Use an actual Google **Web application** OAuth client. Its consent screen must allow your test account; if the app is in Testing, add that Google account under its test users. Enable Google Drive API in that project. Review the requested scopes: `openid profile` for sign-in and `drive.file` plus `drive.readonly` for app-managed uploads and manually dropped-file discovery. The read scope is broad at the provider level; the application restricts its reads to connected Collection folders.
 
 Register both exact authorized redirect URIs:
 
@@ -30,7 +62,30 @@ http://127.0.0.1:3000/api/v1/connections/drive/callback
 
 ## Start the connected review
 
-uv loads the private environment file as data, without executing its contents as shell code:
+After saving the private settings and registering both callbacks, in **PowerShell or a terminal** run:
+
+```text
+docker compose -f deploy/compose.connected-local.yml up --build -d --wait
+```
+
+Open **`http://127.0.0.1:3000`** on that computer. Sign in with your permitted Google test account, then open **Connections → Connect Drive** and grant the application's consent. Authentication uses Google OIDC; no demo identity is inserted. Missing/invalid local authentication or model configuration blocks startup/readiness rather than substituting demo success. Configuration presence is not proof Google/provider credentials work. The first frozen image build can take several minutes.
+
+Both web/API ports bind only to `127.0.0.1`; connected state lives in the `learningos-connected-local_connected-data` volume. Stop with:
+
+```text
+docker compose -f deploy/compose.connected-local.yml down
+```
+
+Do not add `-v`: it deletes the connected database and private source files. Changes to the private env file require rerunning the `up` command to recreate affected containers. If startup fails, inspect service state and local logs:
+
+```text
+docker compose -f deploy/compose.connected-local.yml ps -a
+docker compose -f deploy/compose.connected-local.yml logs --tail 80 migrate backend worker
+```
+
+Keep logs private and redact credential/account/source data before sharing errors. Do not run `docker compose config` with filled secrets and paste its output; that command may display them. An OAuth `redirect_uri_mismatch` requires the exact URI registrations above; an access-denied test account needs consent-screen/test-user or organization approval, rather than repeated Connect retries. A failure before Google's consent page is typically missing local configuration or use of the offline target.
+
+For the optional **native** path only, uv reads the private file as data:
 
 ```bash
 export UV_CACHE_DIR="$PWD/.runtime/uv-cache"
@@ -38,7 +93,7 @@ APP_MODE=live uv run --frozen --project backend --env-file "$PWD/.runtime/localh
 APP_MODE=live uv run --frozen --project backend --env-file "$PWD/.runtime/localhost/localhost.env" bash scripts/dev.sh
 ```
 
-Open `http://127.0.0.1:3000` **on that computer**. Sign in with the permitted test account, then open Connections and connect Drive through Google's consent flow. The connected setup applies migrations without inserting a demo identity. The dev command runs API, durable worker, and frontend on loopback; keep that terminal running. Do not use the production Compose target with these HTTP/SQLite settings.
+Keep that terminal running. Do not use production Compose with localhost HTTP/SQLite settings.
 
 ## Required connected checks
 
@@ -48,4 +103,4 @@ Study an original source in the target languages and review meaning and unchange
 
 To exercise a locale during a supervised L04 browser test, temporarily enable only that locale in the startup process (for example, prefix the connected dev command with `VERIFIED_SPEECH_LOCALES=en-GB APP_MODE=live`). This is a test override, not certification. Keep the saved private-file allowlist empty until that locale's native transcript, audibility, and three-turn checks pass, then record its evidence and enable only approved tags. Restore the unverified/typing state after an unsuccessful test. Never enable all ten based only on the synthetic endpoint report.
 
-Production gates remain separate: PostgreSQL/private storage/OIDC/HTTPS, performance, restore/rollback, immutable new images, and an explicitly reviewed host. The former container images and build archive predate the connected-verification fixes and must not be described as containing them.
+Production gates remain separate: PostgreSQL/private storage/OIDC/HTTPS, performance, restore/rollback, immutable new images, and an explicitly reviewed host. Rebuild the connected images from the updated checkout with `--build`; previously built demo images or downloaded archives may predate these fixes.

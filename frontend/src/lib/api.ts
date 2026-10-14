@@ -53,6 +53,7 @@ export type Connection = {
   provider: string;
   status: string;
   configured?: boolean;
+  setup_state?: "demo" | "unconfigured" | "ready" | null;
   scopes?: string[];
   error?: string;
   connected?: boolean;

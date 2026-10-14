@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "viewport": 390,
+      "setup_state": "demo",
+      "outcome": "passed",
+      "connect_post_with_csrf": false,
+      "provider_intercepted": true
+    },
+    {
+      "viewport": 390,
+      "setup_state": "unconfigured",
+      "outcome": "passed",
+      "connect_post_with_csrf": false,
+      "provider_intercepted": true
+    },
+    {
+      "viewport": 390,
+      "setup_state": "ready",
+      "outcome": "passed",
+      "connect_post_with_csrf": true,
+      "provider_intercepted": true
+    },
+    {
+      "viewport": 1440,
+      "setup_state": "demo",
+      "outcome": "passed",
+      "connect_post_with_csrf": false,
+      "provider_intercepted": true
+    },
+    {
+      "viewport": 1440,
+      "setup_state": "unconfigured",
+      "outcome": "passed",
+      "connect_post_with_csrf": false,
+      "provider_intercepted": true
+    },
+    {
+      "viewport": 1440,
+      "setup_state": "ready",
+      "outcome": "passed",
+      "connect_post_with_csrf": true,
+      "provider_intercepted": true
+    }
+  ],
+  "passed": 6,
+  "real_google_consent": "unrun",
+  "limitation": "Synthetic connection metadata and intercepted consent prove UI behavior, not live registration."
+}

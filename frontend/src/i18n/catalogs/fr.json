@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "Inconnue",
   "upload.sourceLanguageHelp": "Choisissez la langue du document original. Vous pourrez corriger cette indication plus tard sans modifier le texte ni les citations.",
   "auth.required": "Connectez-vous à votre compte Learning OS pour continuer.",
-  "auth.signIn": "Se connecter"
+  "auth.signIn": "Se connecter",
+  "connections.demoDrive": "Google Drive est indisponible dans la démo hors ligne. Lancez la version connectée et connectez-vous pour associer votre compte.",
+  "connections.setupNeeded": "Google Drive doit être configuré avant la connexion. Configurez la connexion Google de cette installation, puis rechargez cette page.",
+  "connections.setupRequired": "Configuration requise"
 }

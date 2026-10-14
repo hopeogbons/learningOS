@@ -206,6 +206,85 @@ def test_connection_and_speech_unavailable_truthful(db,client,monkeypatch):
     assert client.post('/api/v1/sessions/speech-session/speech/transcribe',data={'item_id':item.id},files={'audio':('voice.wav',audio.getvalue(),'audio/wav')}).status_code==503
 
 
+@pytest.fixture
+def configured_drive(monkeypatch):
+    from cryptography.fernet import Fernet
+    monkeypatch.setattr(settings, 'app_mode', 'live')
+    monkeypatch.setattr(settings, 'drive_client_id', 'synthetic-web-client')
+    monkeypatch.setattr(settings, 'drive_client_secret', 'synthetic-client-secret')
+    monkeypatch.setattr(settings, 'credentials_key', Fernet.generate_key().decode())
+    monkeypatch.setattr(settings, 'public_url', 'http://127.0.0.1:3000')
+    monkeypatch.setattr(settings, 'drive_redirect_uri', 'http://127.0.0.1:3000/api/v1/connections/drive/callback')
+
+
+@pytest.mark.parametrize('mode', ['demo', 'test'])
+def test_demo_drive_is_unavailable_even_with_credentials(db, client, configured_drive, monkeypatch, mode):
+    monkeypatch.setattr(settings, 'app_mode', mode)
+    row = client.get('/api/v1/connections').json()[0]
+    assert row['provider'] == 'drive' and row['setup_state'] == 'demo'
+    assert row['configured'] is False
+    assert 'synthetic-client-secret' not in json.dumps(row)
+    response = client.post('/api/v1/connections/drive/connect')
+    assert response.status_code == 503
+    assert response.json()['detail']['code'] == 'drive_demo_unavailable'
+    assert db.scalar(select(func.count(ProviderConnection.id))) == 0
+
+
+@pytest.mark.parametrize('field,value', [
+    ('drive_client_id', None), ('drive_client_secret', None),
+    ('credentials_key', 'invalid-encryption-key'),
+    ('drive_redirect_uri', 'http://localhost:3000/api/v1/connections/drive/callback'),
+    ('public_url', 'http://untrusted.example:3000'),
+    ('public_url', 'http://127.0.0.1:99999'),
+])
+def test_drive_setup_errors_do_not_offer_connect_or_mutate(db, client, configured_drive, monkeypatch, field, value):
+    monkeypatch.setattr(settings, field, value)
+    row = client.get('/api/v1/connections').json()[0]
+    assert row['configured'] is False and row['setup_state'] == 'unconfigured'
+    assert row['status'] == 'disconnected'
+    assert client.post('/api/v1/connections/drive/connect').status_code == 503
+    assert db.scalar(select(func.count(ProviderConnection.id))) == 0
+
+
+def test_configured_drive_oauth_preserves_pkce_and_exact_callback(db, client, configured_drive, monkeypatch):
+    from urllib.parse import urlsplit, parse_qs
+    import base64
+    row = client.get('/api/v1/connections').json()[0]
+    assert row['configured'] is True and row['setup_state'] == 'ready'
+    assert row['status'] == 'disconnected', 'Configuration is not proof of consent'
+    response = client.post('/api/v1/connections/drive/connect')
+    assert response.status_code == 200
+    url = urlsplit(response.json()['authorization_url'])
+    assert url.scheme == 'https' and url.hostname == 'accounts.google.com'
+    query = parse_qs(url.query)
+    assert set(query['scope'][0].split()) == set(SCOPES)
+    assert query['redirect_uri'] == [settings.drive_redirect_uri]
+    connection = db.scalar(select(ProviderConnection).where(ProviderConnection.learner_id == 'owner'))
+    checkpoint = dict(connection.checkpoint)
+    verifier = decrypt_credentials(checkpoint['oauth_verifier'])['verifier']
+    expected = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip('=')
+    assert query['code_challenge'] == [expected]
+    assert query['code_challenge_method'] == ['S256']
+    assert checkpoint['oauth_state_hash'] == hashlib.sha256(query['state'][0].encode()).hexdigest()
+
+    def token_exchange(url, *, data, timeout):
+        assert url == 'https://oauth2.googleapis.com/token'
+        assert data['redirect_uri'] == settings.drive_redirect_uri
+        assert data['code_verifier'] == verifier
+        return httpx.Response(200, json={'access_token':'synthetic-access', 'refresh_token':'synthetic-refresh',
+                                        'expires_in':3600, 'scope':' '.join(SCOPES)})
+    monkeypatch.setattr('app.ingestion_api.httpx.post', token_exchange)
+    callback = client.get('/api/v1/connections/drive/callback', params={'state':query['state'][0], 'code':'synthetic-code'}, follow_redirects=False)
+    assert callback.status_code == 307
+    db.refresh(connection)
+    assert connection.status == 'connected' and connection.encrypted_credentials
+    assert not any(k.startswith('oauth_') for k in connection.checkpoint)
+    public = client.get('/api/v1/connections').json()
+    assert public[0]['status'] == 'connected'
+    assert 'synthetic-refresh' not in json.dumps(public)
+    assert settings.credentials_key not in json.dumps(public)
+
+
 class StubDrive:
     def __init__(self):self.folders={};self.files={};self.uploads=0;self.next=0
     def ensure_folder(self,identity,name,parent=None,existing_id=None):

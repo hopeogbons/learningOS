@@ -1,0 +1,42 @@
+{
+  "target": "hosted_connected_beta",
+  "deployment": "blocked_missing_host_and_account_configuration",
+  "checks": {
+    "backend_postgresql": {
+      "passed": 132,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 3
+    },
+    "frontend_lint": "passed",
+    "frontend_typescript": "passed",
+    "frontend_build": "passed",
+    "api_contract_drift": "passed",
+    "catalogs": {
+      "languages": 10,
+      "keys_per_language": 266,
+      "icu_formats": 23940
+    },
+    "browser_connection_states": {
+      "passed": 6,
+      "viewports": [
+        390,
+        1440
+      ],
+      "google_consent": "intercepted_synthetic_only"
+    },
+    "production_preflight_synthetic_cases": {
+      "passed": 4,
+      "external_calls": 0
+    }
+  },
+  "remaining": [
+    "Hosting destination/access and domain/DNS",
+    "Target-host portable AI credentials",
+    "Registered Google Web-client callbacks, sign-in and Drive consent",
+    "Private PostgreSQL/S3 configuration",
+    "Actual Drive D01-D06 and HTTPS deployment checks",
+    "Native language/voice review and recorded failed latency target"
+  ],
+  "secrets_in_evidence": false
+}

@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "Unknown",
   "upload.sourceLanguageHelp": "Choose the language of the original material. You can correct this label later without changing the source text or citations.",
   "auth.required": "Sign in to continue with your Learning OS account.",
-  "auth.signIn": "Sign in"
+  "auth.signIn": "Sign in",
+  "connections.demoDrive": "Google Drive is unavailable in the offline demo. Start the connected version and sign in to connect your account.",
+  "connections.setupNeeded": "Google Drive needs setup before you can connect. Configure the Google connection for this installation, then reload this page.",
+  "connections.setupRequired": "Setup required"
 }

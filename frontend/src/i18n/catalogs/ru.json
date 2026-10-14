@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "Неизвестен",
   "upload.sourceLanguageHelp": "Выберите язык исходного материала. Позже его можно исправить, не меняя исходный текст и цитаты.",
   "auth.required": "Войдите в аккаунт Learning OS, чтобы продолжить.",
-  "auth.signIn": "Войти"
+  "auth.signIn": "Войти",
+  "connections.demoDrive": "Google Drive недоступен в автономной демоверсии. Запустите подключённую версию и войдите, чтобы подключить аккаунт.",
+  "connections.setupNeeded": "Перед подключением Google Drive требуется настройка. Настройте подключение Google для этой установки и обновите страницу.",
+  "connections.setupRequired": "Требуется настройка"
 }

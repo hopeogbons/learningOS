@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "Tidak diketahui",
   "upload.sourceLanguageHelp": "Pilih bahasa materi asli. Anda dapat memperbaiki keterangan ini nanti tanpa mengubah teks sumber atau kutipannya.",
   "auth.required": "Masuk ke akun Learning OS Anda untuk melanjutkan.",
-  "auth.signIn": "Masuk"
+  "auth.signIn": "Masuk",
+  "connections.demoDrive": "Google Drive tidak tersedia dalam demo offline. Jalankan versi terhubung dan masuk untuk menghubungkan akun Anda.",
+  "connections.setupNeeded": "Google Drive perlu disiapkan sebelum dihubungkan. Siapkan koneksi Google untuk instalasi ini, lalu muat ulang halaman.",
+  "connections.setupRequired": "Penyiapan diperlukan"
 }

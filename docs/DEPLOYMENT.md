@@ -1,6 +1,6 @@
 # Deployment contract and release gates
 
-This package defines a production target; a future implementation must generate and test the actual Dockerfiles/Compose/CI files. Do not present these instructions as a completed deployment.
+Dockerfiles, Compose targets, migrations and CI are implemented. Local checks establish build and configuration behavior; a hosted deployment remains pending. The current goal is an invited connected beta for feedback. See [the hosted beta handoff](HOSTED_BETA.md) for the remaining account configuration and launch sequence.
 
 ## Required generated deployment files
 

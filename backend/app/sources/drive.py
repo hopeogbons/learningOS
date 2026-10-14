@@ -14,6 +14,30 @@ SCOPES = [WRITE_SCOPE, READ_SCOPE]
 FILE_FIELDS = 'id,name,mimeType,version,md5Checksum,size,parents,trashed,appProperties,capabilities(canAddChildren,canDownload)'
 
 
+def connection_setup_state():
+    """Report connectability without exposing values or claiming provider access."""
+    if settings.app_mode in {'demo', 'test'}:
+        return 'demo'
+    if not all((settings.drive_client_id, settings.drive_client_secret,
+                settings.credentials_key, settings.drive_redirect_uri)):
+        return 'unconfigured'
+    try:
+        Fernet(settings.credentials_key.encode())
+        origin = urlsplit(settings.public_url)
+        if origin.port is not None and not 1 <= origin.port <= 65535:
+            return 'unconfigured'
+        if (not origin.hostname or origin.username or origin.password or origin.query
+                or origin.fragment or origin.path not in {'', '/'}):
+            return 'unconfigured'
+        if origin.scheme != 'https' and not (origin.scheme == 'http' and origin.hostname in {'localhost', '127.0.0.1', '::1'}):
+            return 'unconfigured'
+        if settings.drive_redirect_uri != settings.public_url.rstrip('/') + '/api/v1/connections/drive/callback':
+            return 'unconfigured'
+    except (ValueError, TypeError):
+        return 'unconfigured'
+    return 'ready'
+
+
 def encrypt_credentials(value):
     if not settings.credentials_key: raise SourceError('credentials_key_missing', 'Secure credential storage is not configured.')
     return Fernet(settings.credentials_key.encode()).encrypt(json.dumps(value).encode()).decode()

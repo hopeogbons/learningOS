@@ -612,6 +612,11 @@
             "title": "Capabilities",
             "type": "object"
           },
+          "configured": {
+            "default": false,
+            "title": "Configured",
+            "type": "boolean"
+          },
           "error_code": {
             "anyOf": [
               {
@@ -645,6 +650,22 @@
             },
             "title": "Scopes",
             "type": "array"
+          },
+          "setup_state": {
+            "anyOf": [
+              {
+                "enum": [
+                  "demo",
+                  "unconfigured",
+                  "ready"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setup State"
           },
           "status": {
             "title": "Status",

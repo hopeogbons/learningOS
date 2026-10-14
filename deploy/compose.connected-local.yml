@@ -1,0 +1,79 @@
+# Requires Docker Compose 2.30+ for literal (raw) env_file support.
+name: learningos-connected-local
+x-backend: &backend
+  image: learningos-backend:connected-local
+  build:
+    context: ..
+    dockerfile: deploy/backend.Dockerfile
+  # Optional only so the init profile can run before the private file exists.
+  # APP_MODE=live validation/readiness blocks ordinary startup without settings.
+  env_file:
+    - path: ../.runtime/localhost/localhost.env
+      required: false
+      format: raw
+  environment:
+    APP_MODE: live
+    APP_ORIGIN: http://127.0.0.1:3000
+    PUBLIC_URL: http://127.0.0.1:3000
+    FRONTEND_URL: http://127.0.0.1:3000
+    LEARNING_OS_RUNTIME_DIR: /data
+    DATABASE_URL: sqlite:////data/learningos.db
+    PRIVATE_STORAGE_DIR: /data/private
+  volumes:
+    - connected-data:/data
+  security_opt: [no-new-privileges:true]
+services:
+  init:
+    image: learningos-backend:connected-local
+    build:
+      context: ..
+      dockerfile: deploy/backend.Dockerfile
+    profiles: [init]
+    # Docker Desktop exposes bind mounts to this non-root user. On Linux pass
+    # --user "$(id -u):$(id -g)" to match the host checkout's owner.
+    user: '${LOCALHOST_SETUP_UID:-1000}:${LOCALHOST_SETUP_GID:-1000}'
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+    command: [python, scripts/prepare_localhost.py, --docker]
+    network_mode: none
+    security_opt: [no-new-privileges:true]
+    healthcheck: {disable: true}
+  migrate:
+    <<: *backend
+    command: [sh, -c, 'python -m app.local_connected_check && alembic upgrade head']
+    healthcheck: {disable: true}
+    restart: 'no'
+  backend:
+    <<: *backend
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    ports: ['127.0.0.1:8000:8000']
+    restart: unless-stopped
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -m, app.worker_health]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
+    restart: unless-stopped
+  frontend:
+    image: learningos-frontend:connected-local
+    build:
+      context: ..
+      dockerfile: deploy/frontend.Dockerfile
+    ports: ['127.0.0.1:3000:3000']
+    depends_on:
+      backend: {condition: service_healthy}
+    environment:
+      LEARNING_OS_BACKEND_URL: http://backend:8000
+      API_BASE_URL: http://backend:8000
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+volumes:
+  connected-data:

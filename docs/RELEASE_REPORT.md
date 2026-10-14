@@ -2,6 +2,14 @@
 
 The requested application is implemented with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The release is an **offline demonstration candidate** with preliminary live provider verification. All twelve batches were attempted; complete connected and production gates remain pending. The user requested access outside Codex, so the reviewed source was pushed to the initial `main` branch at https://github.com/hopeogbons/learningOS. Public application deployment remains unpublished.
 
+## Hosted beta target and Drive connection correction
+
+The user now requests a hosted connected beta to give feedback on real functionality. Public deployment is authorized, but no hosting destination/access, domain/DNS, Google sign-in registration or private production storage is available. `HOSTED_BETA.md` records the concrete launch handoff; no hosted URL exists yet.
+
+Drive setup metadata now distinguishes offline demo, missing/invalid setup and configured consent. The UI explains setup requirements and disables unavailable actions; valid configuration starts OAuth with a CSRF-protected POST. Callback configuration is checked against the actual origin, and the production preflight rejects a mismatched callback or conflicting origins before launch. These checks do not establish real Google consent.
+
+The current source passed **132 backend tests with isolated PostgreSQL, zero skips**, lint, TypeScript, the frontend production build, API contract drift and ten 266-key catalogs (23,940 ICU formats). Six desktop/mobile connection cases passed with intercepted Google consent, and four synthetic production preflight cases passed without external calls. Screenshots were inspected. Evidence: `docs/evidence/drive-setup/`. A connected-local Docker target is available as a fallback; full connected-container startup, real Google consent and target-host validation remain unrun. Existing native-language/voice and latency limitations remain.
+
 ## PostgreSQL CI correction
 
 The reported six hosted-CI failures were reproduced with APP_MODE=test and provider keys removed. Test mode incorrectly selected the live provider; it now selects the deterministic fixture provider, just like demo mode. Live/connected/production still require real credentials and never fall back. Five new regressions protect both behaviors. The corrected no-key run passed 49 targeted source/provider tests and **121 full backend tests with real isolated PostgreSQL**, no skips, after frozen installation and migrations. Three upstream deprecation warnings remain; they do not cause these failures. See evidence/ci-provider-mode-fix.json and evidence/ci-postgres-no-keys.log. The hosted Actions rerun is a separate result.

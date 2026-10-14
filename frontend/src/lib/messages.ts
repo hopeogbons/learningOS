@@ -298,5 +298,8 @@ export const messages = {
   "notices.description": "Ingestion and review updates from your account.",
   "auth.required": "Sign in to continue with your Learning OS account.",
   "auth.signIn": "Sign in",
+  "connections.demoDrive": "Google Drive is unavailable in the offline demo. Start the connected version and sign in to connect your account.",
+  "connections.setupNeeded": "Google Drive needs setup before you can connect. Configure the Google connection for this installation, then reload this page.",
+  "connections.setupRequired": "Setup required",
 } as const;
 export type MessageKey = keyof typeof messages;

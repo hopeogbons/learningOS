@@ -22,6 +22,7 @@ export default function ConnectionsScreen() {
     [notice, setNotice] = useState<string | null>(null);
   const connection = list(query.data).find((c) => c.provider === "drive");
   const connected = connection?.status === "connected";
+  const configured = connection?.configured === true;
   async function action(kind: string) {
     setBusy(true);
     setError(null);
@@ -30,9 +31,10 @@ export default function ConnectionsScreen() {
       if (kind === "connect") {
         const data = await api<{ authorization_url: string }>(
           "/connections/drive/connect",
+          { method: "POST" },
         );
         const url = new URL(data.authorization_url);
-        if (!["https:", "http:"].includes(url.protocol))
+        if (url.origin !== "https://accounts.google.com")
           throw new Error(t("common.error"));
         window.location.assign(url.toString());
       } else if (kind === "disconnect") {
@@ -80,6 +82,11 @@ export default function ConnectionsScreen() {
             <p className="small text-body-secondary">
               {t("connections.driveHelp")}
             </p>
+            {connection && !configured && (
+              <p id="drive-setup-status" role="status" className="small text-body-secondary">
+                {t(connection.setup_state === "demo" ? "connections.demoDrive" : "connections.setupNeeded")}
+              </p>
+            )}
             <div className="d-flex align-items-center flex-wrap gap-2 mb-3">
               <StorageBadge
                 state={
@@ -101,7 +108,7 @@ export default function ConnectionsScreen() {
                     className="btn btn-primary d-flex align-items-center gap-2"
                     onClick={() => action("sync")}
                     disabled={
-                      busy ||
+                      busy || !configured ||
                       !list(collections.data).some(
                         (c) => c.storage_mode === "drive",
                       )
@@ -122,10 +129,11 @@ export default function ConnectionsScreen() {
                 <button
                   className="btn btn-primary d-flex align-items-center gap-2"
                   onClick={() => action("connect")}
-                  disabled={busy}
+                  disabled={busy || query.loading || !configured}
+                  aria-describedby={!configured ? "drive-setup-status" : undefined}
                 >
                   <Plug size={16} />
-                  {t("connections.connect")}
+                  {t(configured ? "connections.connect" : "connections.setupRequired")}
                 </button>
               )}
             </div>

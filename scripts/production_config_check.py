@@ -49,4 +49,10 @@ for key in ('OIDC_ISSUER', 'DRIVE_REDIRECT_URI', 'STORAGE_ENDPOINT'):
         sys.exit(f'{key} requires a verified HTTPS endpoint without URL credentials.')
 if not re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?', values['PUBLIC_DOMAIN']) or '.' not in values['PUBLIC_DOMAIN']:
     sys.exit('PUBLIC_DOMAIN must be a DNS hostname, without scheme or port.')
+origin = 'https://' + values['PUBLIC_DOMAIN']
+for key in ('APP_ORIGIN', 'PUBLIC_URL', 'FRONTEND_URL'):
+    if values.get(key) and values[key].rstrip('/') != origin:
+        sys.exit(f'{key} must match the HTTPS origin derived from PUBLIC_DOMAIN.')
+if values['DRIVE_REDIRECT_URI'] != origin + '/api/v1/connections/drive/callback':
+    sys.exit('DRIVE_REDIRECT_URI must match PUBLIC_DOMAIN and /api/v1/connections/drive/callback exactly.')
 print('Required production names, private file permissions, HTTPS URLs, mode and immutable image syntax passed. No external connection was made.')

@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "不明",
   "upload.sourceLanguageHelp": "原資料の言語を選択してください。原文や引用を変更せずに、後からこの言語設定を修正できます。",
   "auth.required": "続行するには Learning OS アカウントにログインしてください。",
-  "auth.signIn": "ログイン"
+  "auth.signIn": "ログイン",
+  "connections.demoDrive": "オフラインデモでは Google Drive に接続できません。接続版を起動してログインし、アカウントを接続してください。",
+  "connections.setupNeeded": "Google Drive に接続する前に設定が必要です。このアプリの Google 接続を設定してから、ページを再読み込みしてください。",
+  "connections.setupRequired": "設定が必要"
 }

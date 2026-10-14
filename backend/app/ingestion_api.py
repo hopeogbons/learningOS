@@ -5,7 +5,7 @@ import time
 import os
 import re
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 from pathlib import Path
 from urllib.parse import urlencode
 from uuid import uuid4
@@ -23,7 +23,7 @@ from .storage import get_storage
 from .ingest import owned, queue_provision, reserve_source_quota
 from .sources.base import SourceError
 from .sources.local import SUPPORTED
-from .sources.drive import SCOPES, encrypt_credentials, decrypt_credentials, DriveAdapter
+from .sources.drive import SCOPES, encrypt_credentials, decrypt_credentials, DriveAdapter, connection_setup_state
 
 router=APIRouter()
 
@@ -89,6 +89,8 @@ class ConnectionDTO(BaseModel):
     capabilities:dict[str,Any]
     last_sync:datetime|None
     error_code:str|None
+    configured:bool=False
+    setup_state:Literal['demo','unconfigured','ready']|None=None
 
 class OAuthStartDTO(BaseModel):
     authorization_url:str
@@ -255,13 +257,23 @@ def original(revision_id:str,db=Depends(get_db),learner=Depends(get_learner)):
 @router.get('/connections',response_model=list[ConnectionDTO])
 def connections(db=Depends(get_db),learner=Depends(get_learner)):
     rows=db.scalars(select(ProviderConnection).where(ProviderConnection.learner_id==learner.id)).all()
-    return [{'provider':r.provider,'status':r.status,'scopes':r.scopes,'capabilities':r.capability_json,'last_sync':r.last_sync,'error_code':r.error_code} for r in rows]
+    setup = connection_setup_state()
+    result = [{'provider':r.provider,'status':r.status,'scopes':r.scopes,'capabilities':r.capability_json,'last_sync':r.last_sync,'error_code':r.error_code,
+               'configured':setup=='ready' if r.provider=='drive' else False,
+               'setup_state':setup if r.provider=='drive' else None} for r in rows]
+    if not any(r.provider=='drive' for r in rows):
+        result.append({'provider':'drive','status':'disconnected','scopes':[], 'capabilities':{},'last_sync':None,'error_code':None,
+                       'configured':setup=='ready','setup_state':setup})
+    return result
 
 
 @router.post('/connections/drive/connect',response_model=OAuthStartDTO)
 @router.get('/connections/drive/connect',include_in_schema=False,response_model=OAuthStartDTO)
 def connect(db=Depends(get_db),learner=Depends(get_learner)):
-    if not all((settings.drive_client_id,settings.drive_client_secret,settings.credentials_key)):
+    setup = connection_setup_state()
+    if setup == 'demo':
+        raise HTTPException(503,{'code':'drive_demo_unavailable','message':'Google Drive is unavailable in the offline demo. Start the connected version and sign in.'})
+    if setup != 'ready':
         raise HTTPException(503,{'code':'drive_unconfigured','message':'Configure runtime Google OAuth and encrypted token storage before connecting Drive.'})
     connection=db.scalar(select(ProviderConnection).where(ProviderConnection.learner_id==learner.id,ProviderConnection.provider=='drive'))
     if not connection:
@@ -271,7 +283,7 @@ def connect(db=Depends(get_db),learner=Depends(get_learner)):
     challenge=base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip('=')
     connection.checkpoint={**connection.checkpoint,'oauth_state_hash':hashlib.sha256(state.encode()).hexdigest(),'oauth_verifier':encrypt_credentials({'verifier':verifier}),'oauth_expires_at':time.time()+600}
     db.commit()
-    query={'client_id':settings.drive_client_id,'redirect_uri':settings.public_url.rstrip('/')+'/api/v1/connections/drive/callback','response_type':'code','scope':' '.join(SCOPES),'state':state,'access_type':'offline','prompt':'consent','code_challenge':challenge,'code_challenge_method':'S256'}
+    query={'client_id':settings.drive_client_id,'redirect_uri':settings.drive_redirect_uri,'response_type':'code','scope':' '.join(SCOPES),'state':state,'access_type':'offline','prompt':'consent','code_challenge':challenge,'code_challenge_method':'S256'}
     return {'authorization_url':'https://accounts.google.com/o/oauth2/v2/auth?'+urlencode(query),'disclosure':'Creates/writes app-managed Collection folders. Read-only scope permits direct-drop discovery; app reads only bound folders. Live direct-drop visibility still requires verification.'}
 
 
@@ -284,7 +296,7 @@ def callback(state:str='',code:str='',error:str='',db=Depends(get_db),learner=De
     connection.checkpoint={k:v for k,v in checkpoint.items() if not k.startswith('oauth_')}; db.commit()
     if error or not code: raise HTTPException(400,'oauth_denied')
     try:
-        response=httpx.post('https://oauth2.googleapis.com/token',data={'client_id':settings.drive_client_id,'client_secret':settings.drive_client_secret,'code':code,'redirect_uri':settings.public_url.rstrip('/')+'/api/v1/connections/drive/callback','grant_type':'authorization_code','code_verifier':verifier},timeout=20)
+        response=httpx.post('https://oauth2.googleapis.com/token',data={'client_id':settings.drive_client_id,'client_secret':settings.drive_client_secret,'code':code,'redirect_uri':settings.drive_redirect_uri,'grant_type':'authorization_code','code_verifier':verifier},timeout=20)
         if response.status_code!=200: raise HTTPException(502,'oauth_token_exchange_failed')
         credentials=response.json();scopes=credentials.get('scope','').split()
         if not set(SCOPES)<=set(scopes): raise HTTPException(403,'drive_scope_incomplete')

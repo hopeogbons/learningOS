@@ -261,5 +261,8 @@
   "upload.unknownLanguage": "غير معروفة",
   "upload.sourceLanguageHelp": "اختر لغة المادة الأصلية. يمكنك تصحيح هذا التصنيف لاحقًا دون تغيير النص الأصلي أو الاستشهادات.",
   "auth.required": "سجّل الدخول إلى حسابك في Learning OS للمتابعة.",
-  "auth.signIn": "تسجيل الدخول"
+  "auth.signIn": "تسجيل الدخول",
+  "connections.demoDrive": "Google Drive غير متاح في العرض التجريبي دون اتصال. شغّل النسخة المتصلة وسجّل الدخول لربط حسابك.",
+  "connections.setupNeeded": "يجب إعداد Google Drive قبل الاتصال. اضبط اتصال Google لهذا التطبيق، ثم أعد تحميل هذه الصفحة.",
+  "connections.setupRequired": "الإعداد مطلوب"
 }

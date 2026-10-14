@@ -1054,6 +1054,11 @@ export interface components {
             capabilities: {
                 [key: string]: unknown;
             };
+            /**
+             * Configured
+             * @default false
+             */
+            configured: boolean;
             /** Error Code */
             error_code: string | null;
             /** Last Sync */
@@ -1062,6 +1067,8 @@ export interface components {
             provider: string;
             /** Scopes */
             scopes: string[];
+            /** Setup State */
+            setup_state?: ("demo" | "unconfigured" | "ready") | null;
             /** Status */
             status: string;
         };
