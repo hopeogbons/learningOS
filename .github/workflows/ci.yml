@@ -41,11 +41,17 @@ jobs:
           scripts/dev.sh &
           dev_pid=$!
           trap 'kill "$dev_pid" 2>/dev/null || true; wait "$dev_pid" 2>/dev/null || true' EXIT
+          ready=false
           for attempt in {1..90}; do
             kill -0 "$dev_pid" || exit 1
-            if curl --fail --silent http://127.0.0.1:8000/api/v1/ready >/dev/null && curl --fail --silent http://127.0.0.1:3000 >/dev/null; then break; fi
+            if curl --fail --silent http://127.0.0.1:8000/api/v1/ready >/dev/null && curl --fail --silent http://127.0.0.1:3000 >/dev/null && curl --fail --silent http://127.0.0.1:3000/api/v1/ready >/dev/null; then ready=true; break; fi
             sleep 1
           done
+          if [[ "$ready" != true ]]; then
+            echo "App startup timed out; browser tests were not started." >&2
+            curl --silent --max-time 5 http://127.0.0.1:8000/api/v1/ready || true
+            exit 1
+          fi
           python tests/e2e_smoke.py
           python tests/local_connected_frontend.py
           python tests/local_consent_frontend.py

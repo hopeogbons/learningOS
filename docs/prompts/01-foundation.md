@@ -38,3 +38,5 @@ Add language preferences/catalog framework and accessible chooser in existing to
 ## Reproducible control layout and labels
 
 Follow UI_CONTRACT’s 2026-10-14 control rules: vertically/horizontally center button content across full 44px hit areas, preserve existing colors, balance inputs and verify mobile/desktop/long/RTL labels. Collection detail links read Explore collection (localized), keeping the existing outline route/state intact. Run tests/control_layout.py on the fresh running demo; a screenshot or min-height declaration alone is not a pass.
+
+Readiness regression: freshly upgraded Alembic databases must become ready with a fresh worker heartbeat; outdated/unknown/incomplete schema heads stay 503. Resolve expected revisions from the shipped migration graph, not a literal ID. Check the same-origin frontend readiness route before browser tests.

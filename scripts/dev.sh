@@ -62,7 +62,7 @@ fi
 for attempt in {1..90}; do
   for owned_pid in "${child_pids[@]}"; do kill -0 "$owned_pid" 2>/dev/null || { echo 'A service exited. Inspect private .runtime/*.log files.' >&2; exit 1; }; done
   dashboard_status="$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:$api_port/api/v1/dashboard" || true)"
-  if curl --fail --silent "http://127.0.0.1:$api_port/api/v1/ready" >/dev/null && [[ "$dashboard_status" == "$expected_dashboard_status" ]] && curl --fail --silent "http://127.0.0.1:$web_port" >/dev/null; then ready=true; break; fi
+  if curl --fail --silent "http://127.0.0.1:$api_port/api/v1/ready" >/dev/null && [[ "$dashboard_status" == "$expected_dashboard_status" ]] && curl --fail --silent "http://127.0.0.1:$web_port" >/dev/null && curl --fail --silent "http://127.0.0.1:$web_port/api/v1/ready" >/dev/null; then ready=true; break; fi
   sleep 1
 done
 [[ "$ready" == true ]] || { echo 'Services did not become ready within 90 seconds.' >&2; exit 1; }

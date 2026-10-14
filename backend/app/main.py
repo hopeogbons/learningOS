@@ -1,6 +1,8 @@
 import importlib
 import logging
 import uuid
+from pathlib import Path
+from alembic.script import ScriptDirectory
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -54,14 +56,21 @@ async def unknown_error(request: Request, exc):
 def health():
     return {"status": "ok", "mode": settings.app_mode, "version": settings.version}
 
+def migration_heads():
+    """The shipped migration graph defines readiness, not a historical revision."""
+    directory = Path(__file__).resolve().parents[1] / "migrations"
+    return frozenset(ScriptDirectory(str(directory)).get_heads())
+
+
 @app.get("/api/v1/ready", response_model=ReadinessDTO)
 def ready():
     dependencies = {}
     try:
         with SessionLocal() as db:
             db.execute(text("SELECT 1"))
-            migration = db.execute(text("SELECT version_num FROM alembic_version")).scalar()
-            dependencies["database"] = "ready" if migration == "0002_durable_guards" else "migration-required"
+            applied = frozenset(db.execute(text("SELECT version_num FROM alembic_version")).scalars())
+            expected = migration_heads()
+            dependencies["database"] = "ready" if expected and applied == expected else "migration-required"
             heartbeat = db.scalar(select(func.max(WorkerHeartbeat.checked_at)))
             dependencies["worker"] = "ready" if heartbeat and (utcnow() - as_utc(heartbeat)).total_seconds() < settings.worker_freshness_seconds else "stale"
     except Exception:

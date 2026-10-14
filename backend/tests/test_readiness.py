@@ -1,5 +1,7 @@
 """Connected readiness cannot hide missing authentication or Drive setup."""
 import json
+from pathlib import Path
+from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine,text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -17,7 +19,8 @@ def ready_env(monkeypatch):
     factory=sessionmaker(engine,expire_on_commit=False)
     with factory() as db:
         db.execute(text('CREATE TABLE alembic_version (version_num VARCHAR(32))'))
-        db.execute(text("INSERT INTO alembic_version VALUES ('0002_durable_guards')"))
+        for head in ScriptDirectory(str(Path(__file__).resolve().parents[1] / "migrations")).get_heads():
+            db.execute(text("INSERT INTO alembic_version VALUES (:head)"), {"head": head})
         db.add(WorkerHeartbeat(worker_id='synthetic-worker',checked_at=utcnow()));db.commit()
     monkeypatch.setattr(main,'SessionLocal',factory)
     values={'app_mode':'live','api_key':'synthetic-private-api','model':'synthetic-model',
@@ -56,3 +59,45 @@ def test_test_mode_is_offline_and_missing_model_blocks_live(ready_env,monkeypatc
     monkeypatch.setattr(settings,'app_mode','test')
     response=main.ready();assert response.status_code==200
     assert json.loads(response.body)['dependencies']['model']=='offline-demo'
+
+
+@pytest.mark.parametrize('revision', ['0002_durable_guards', 'unknown_future_revision'])
+def test_readiness_rejects_database_that_does_not_match_shipped_heads(ready_env, revision):
+    with main.SessionLocal() as db:
+        db.execute(text('UPDATE alembic_version SET version_num=:revision'), {'revision': revision})
+        db.commit()
+    response = main.ready()
+    assert response.status_code == 503
+    assert json.loads(response.body)['dependencies']['database'] == 'migration-required'
+
+
+def test_readiness_handles_a_later_release_and_all_migration_heads(ready_env, monkeypatch):
+    monkeypatch.setattr(main, 'migration_heads', lambda: frozenset({'future_a', 'future_b'}))
+    with main.SessionLocal() as db:
+        db.execute(text('DELETE FROM alembic_version'))
+        db.execute(text('INSERT INTO alembic_version VALUES (:head)'), [{'head': 'future_a'}, {'head': 'future_b'}])
+        db.commit()
+    assert main.ready().status_code == 200
+    with main.SessionLocal() as db:
+        db.execute(text("DELETE FROM alembic_version WHERE version_num='future_b'"))
+        db.commit()
+    assert main.ready().status_code == 503
+
+
+def test_fresh_alembic_upgrade_is_ready_with_a_live_worker(tmp_path, monkeypatch):
+    from test_migrations import migrate
+    url = f"sqlite:///{tmp_path / 'fresh-readiness.db'}"
+    migrate(url)
+    engine = create_engine(url)
+    factory = sessionmaker(engine, expire_on_commit=False)
+    try:
+        with factory() as db:
+            db.add(WorkerHeartbeat(worker_id='synthetic-fresh-worker', checked_at=utcnow()))
+            db.commit()
+        monkeypatch.setattr(main, 'SessionLocal', factory)
+        monkeypatch.setattr(settings, 'app_mode', 'test')
+        response = main.ready()
+        assert response.status_code == 200
+        assert json.loads(response.body)['dependencies']['database'] == 'ready'
+    finally:
+        engine.dispose()

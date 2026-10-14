@@ -22,6 +22,7 @@ This repository builds the attached Learning OS design, using the supplied dashb
 
 ## Verification and completion
 
+- When migrations change, readiness must compare applied revisions with the shipped Alembic graph heads, never a fixed historical revision. Run the freshly migrated database readiness regression and verify the frontend-routed `/api/v1/ready`; browser tests must not start after a startup timeout.
 - Follow `docs/ACCEPTANCE_TESTS.md`; run checks that exercise actual behavior, not just formatting. Inspect mobile/desktop screenshots after UI changes. Distinguish passed, failed, expected failure, skipped and unrun; zero tests is not a pass.
 - Update build-state and per-batch evidence with commands, working directories, exit codes and limitations. Use `docs/RUBRIC_EVIDENCE.md` for uniqueness, scalability and Codex evidence. Presentation delivery belongs to the user.
 - Never claim native platform capabilities from configuration files alone, or production readiness from a local demo. A connected-release gate with unavailable credentials stays blocked.

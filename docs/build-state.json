@@ -670,6 +670,17 @@
       "browser_visual_smoke": "passed; captured and inspected Add Material mobile/desktop and deletion modal with synthetic source fixtures; modal request carries the expected version and explicit DELETE confirmation; screenshots have no horizontal overflow or browser/page errors. The original PDF fixture is blank and synthetic.",
       "live_drive": "blocked/unrun; D07 provider-confirmed delete/readback, consent, and direct-drop behavior have not been exercised with a connected account.",
       "reported_user_pdf_failure": "not reproduced in this batch; a genuine 1,000-page PDF, live OCR quality and provider outage recovery were not run."
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "migration-graph readiness and strict same-origin CI startup gate",
+      "status": "implemented_locally_validated; full GitHub verification pending",
+      "evidence": [
+        "docs/READINESS_FIX.md",
+        "backend/tests/test_readiness.py",
+        "backend/tests/test_migrations.py",
+        ".github/workflows/ci.yml"
+      ]
     }
   ]
 }

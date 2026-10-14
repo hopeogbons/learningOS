@@ -6,6 +6,7 @@ from uuid import uuid4
 from urllib.parse import urlencode
 import pytest
 from sqlalchemy import create_engine, inspect, text
+from alembic.script import ScriptDirectory
 
 BACKEND=Path(__file__).resolve().parents[1]
 
@@ -20,7 +21,8 @@ def verify_constraints(url):
     assert any(i["name"]=="uq_active_scope" and i["unique"] for i in info.get_indexes("scope_revisions"))
     assert any(c["column_names"]==["learner_id","idempotency_key"] for c in info.get_unique_constraints("jobs"))
     assert info.get_foreign_keys("scope_items")
-    with engine.connect() as conn:assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar()=="0003_material_delete"
+    with engine.connect() as conn:
+        assert set(conn.execute(text("SELECT version_num FROM alembic_version")).scalars()) == set(ScriptDirectory(str(BACKEND / "migrations")).get_heads())
     engine.dispose()
 
 def test_sqlite_fresh_upgrade_rollback_reupgrade(tmp_path):
