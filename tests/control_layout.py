@@ -60,6 +60,9 @@ def main():
                 assert job['state'] not in {'failed', 'needs-attention'}, job
                 assert time.monotonic() < deadline, 'Fixture ingestion timeout'
                 time.sleep(.2)
+            outline = api.get(f'/api/v1/collections/{cid}/outline'); outline.raise_for_status()
+            fixture_titles = [chunk['title'] for material in outline.json()['materials'] for chunk in material['chunks']]
+            assert len(fixture_titles) == 1 and fixture_titles[0].endswith('Control alignment')
             with sync_playwright() as p:
                 executable = os.getenv('PLAYWRIGHT_CHROMIUM_EXECUTABLE', '/usr/bin/chromium')
                 options = {'executable_path': executable} if Path(executable).is_file() else {}
@@ -88,7 +91,7 @@ def main():
                         page.screenshot(path=str(OUT / f'collections-{locale}-{width}.png'), full_page=True)
                         action.click()
                         expect(page).to_have_url(BASE + f'/collections/{cid}/outline')
-                        expect(page.get_by_text('Control alignment', exact=True)).to_be_visible()
+                        expect(page.get_by_text(fixture_titles[0], exact=True)).to_be_visible()
                         results.append({'locale': locale, 'width': width, 'centering': 'passed', 'wrapping': 'passed', 'collection_route': 'passed'})
                 api.patch('/api/v1/me', json={'ui_locale':'en'}).raise_for_status()
                 for width in (360,390,768,991,992,1440):

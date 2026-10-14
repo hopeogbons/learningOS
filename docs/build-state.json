@@ -673,14 +673,31 @@
     },
     {
       "date": "2026-10-14",
-      "scope": "migration-graph readiness and strict same-origin CI startup gate",
-      "status": "implemented_locally_validated; full GitHub verification pending",
+      "scope": "migration-graph readiness, strict same-origin startup gate and hierarchical-heading browser regressions",
+      "status": "implemented_locally_validated; cloud readiness and upload verified",
       "evidence": [
         "docs/READINESS_FIX.md",
         "backend/tests/test_readiness.py",
         "backend/tests/test_migrations.py",
-        ".github/workflows/ci.yml"
-      ]
+        ".github/workflows/ci.yml",
+        "tests/e2e_smoke.py",
+        "tests/control_layout.py",
+        "docs/evidence/readiness-fix/verification.json"
+      ],
+      "backend": {
+        "passed": 200,
+        "skipped": 3,
+        "exit_code": 0
+      },
+      "deployment": {
+        "source_commit": "1476334499f0c958328c2654204625ef84ec31fc",
+        "target": "existing cloud Docker demo",
+        "status": "deployed_verified",
+        "services": "backend/worker/frontend healthy",
+        "health_ready": "200",
+        "data_volume": "preserved",
+        "public_production": "unconfigured"
+      }
     }
   ]
 }

@@ -185,12 +185,17 @@ def main():
             expect(page.locator('.outline-row input[type="checkbox"]')).to_have_count(5)
             for checkbox in page.locator('.outline-row input[type="checkbox"]').all():
                 checkbox.check()
-            page.get_by_role("button", name="Move down: Atomic number", exact=True).focus()
+            original_material = next(m for m in client.get(f"/api/v1/collections/{cid}/outline").json()["materials"] if m["id"] == receipt["material_id"])
+            original_order = original_material["chunks"]
+            assert len(original_order) == 2
+            page.get_by_role("button", name=f"Move down: {original_order[0]['title']}", exact=True).focus()
             page.keyboard.press("Enter")
             page.get_by_role("button", name="Save order", exact=True).click()
             expect(page.get_by_role("button", name="Save order", exact=True)).to_have_count(0)
             page.reload(wait_until="networkidle")
-            expect(page.locator('.outline-row bdi').first).to_have_text("Neutrality")
+            expect(page.locator('.outline-row bdi').first).to_have_text(original_order[1]["title"])
+            persisted_material = next(m for m in client.get(f"/api/v1/collections/{cid}/outline").json()["materials"] if m["id"] == receipt["material_id"])
+            assert [chunk["id"] for chunk in persisted_material["chunks"]] == [original_order[1]["id"], original_order[0]["id"]], "Keyboard reorder must persist source IDs, including hierarchical heading labels"
             for checkbox in page.locator('.outline-row input[type="checkbox"]').all():
                 checkbox.check()
             page.get_by_role("button", name="Go — save scope and study", exact=True).click()

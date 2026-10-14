@@ -21,11 +21,13 @@ async def main():
     path=r.request.url.split('/api/v1')[-1];counts[path]+=1
     if path=='/me':data=profile
     elif path=='/dashboard':data=dashboard
+    elif path=='/ingestion/limits':data={'max_upload_bytes':20*1024*1024}
     elif path=='/connections':data=[{'provider':'drive','status':'connected' if connected else 'disconnected','configured':connected,'setup_state':'ready' if connected else 'demo'}]
     elif path=='/collections' and r.request.method=='POST':
      posts.append(r.request.post_data_json);data=collection
     elif path=='/collections':data={'items':[collection] if 'upload' in name else [],'next_cursor':None,'total':1 if 'upload' in name else 0}
-    elif path=='/collections/audit-collection/materials' and r.request.method=='POST':data={'material_id':'synthetic-material','revision_id':'synthetic-revision','job_id':'synthetic-job','status':'queued','storage_state':'upload-pending'}
+    elif path=='/collections/audit-collection/materials' and r.request.method=='POST':
+     counts['upload_posts']+=1;data={'material_id':'synthetic-material','revision_id':'synthetic-revision','job_id':'synthetic-job','status':'queued','storage_state':'upload-pending'}
     elif path=='/collections/audit-collection/materials':data={'items':[],'next_cursor':None,'total':0}
     else:data={}
     await r.fulfill(json=data)
@@ -45,6 +47,15 @@ async def main():
    else:assert await selector.locator('option[value=drive]').get_attribute('disabled') is not None
    assert not errors,errors;results.append({'case':'connected-drive-default-explicit-local' if connected else 'offline-local-drive-disabled','status':'passed'});print(results[-1],flush=True)
    await context.close()
+  context,page,counts,posts,errors=await case('upload-limits-unavailable')
+  await page.route('**/api/v1/ingestion/limits',lambda r:r.fulfill(status=503,json={'error':{'code':'source_limits_unavailable','message':'Synthetic unavailable limits','retryable':True}}))
+  await page.goto(base+'/add-material?collection=audit-collection')
+  await page.locator('input[type=file]').set_input_files({'name':'synthetic-note.txt','mimeType':'text/plain','buffer':b'Synthetic source for browser fixture.'})
+  await expect(page.get_by_role('alert').first).to_be_visible()
+  await expect(page.get_by_role('button',name='Add to Collection',exact=True)).to_be_disabled()
+  assert counts['upload_posts']==0,counts
+  assert not errors,errors;results.append({'case':'upload-disabled-without-confirmed-source-limits','status':'passed'});print(results[-1],flush=True)
+  await context.close()
   for terminal in ['succeeded','needs-attention','cancelled']:
    context,page,counts,posts,errors=await case('upload-'+terminal,width=390 if terminal=='needs-attention' else 1280)
    phase={'status':terminal}
@@ -55,6 +66,7 @@ async def main():
     counts['retry']+=1;phase['status']='succeeded';await r.fulfill(json={'id':'synthetic-job','status':'queued'})
    await page.route('**/api/v1/jobs/synthetic-job',jobroute);await page.route('**/api/v1/jobs/synthetic-job/retry',retryroute)
    await page.goto(base+'/add-material?collection=audit-collection');await page.locator('input[type=file]').set_input_files({'name':'synthetic-note.txt','mimeType':'text/plain','buffer':b'Synthetic source for browser fixture.'})
+   await expect(page.get_by_role('button',name='Add to Collection',exact=True)).to_be_enabled()
    await page.get_by_role('button',name='Add to Collection',exact=True).click()
    if terminal=='needs-attention':
     await page.get_by_role('button',name='Retry processing',exact=True).click();await page.wait_for_timeout(250);assert counts['retry']==1

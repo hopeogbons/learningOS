@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-14",
+  "source_fix": "1476334499f0c958328c2654204625ef84ec31fc",
+  "backend": {
+    "passed": 200,
+    "skipped": 3,
+    "exit_code": 0
+  },
+  "focused_readiness_migration_worker": {
+    "passed": 15,
+    "skipped": 1,
+    "exit_code": 0
+  },
+  "e2e": {
+    "checks_passed": 16,
+    "exit_code": 0
+  },
+  "connected_browser": {
+    "checks_passed": 10,
+    "exit_code": 0,
+    "live_provider_calls": 0
+  },
+  "consent_browser": {
+    "checks_passed": 14,
+    "exit_code": 0
+  },
+  "controls_browser": {
+    "collection_cases": 6,
+    "form_widths": [
+      360,
+      390,
+      768,
+      991,
+      992,
+      1440
+    ],
+    "exit_code": 0
+  },
+  "deployment": {
+    "target": "existing cloud Docker demo",
+    "forward_migration": "applied without seed",
+    "volume": "preserved",
+    "services": "healthy",
+    "routed_readiness": 200,
+    "synthetic_upload_worker": "passed"
+  },
+  "tokenizer_cache": {
+    "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+    "verified": true,
+    "public_asset_only": true
+  },
+  "public_production": "unconfigured"
+}

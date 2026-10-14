@@ -20,3 +20,15 @@ The development launcher checks readiness through the frontend rewrite as well a
 ## Fresh-build rule
 
 AGENTS, ARCHITECTURE, OPERATIONS, ACCEPTANCE_TESTS and the foundation build prompt require this behavior. Every migration must pass the actual fresh-upgrade readiness regression. Browser verification requires successful same-origin readiness and must never continue after the startup budget expires. Preserve learner data and follow forward migration procedures when a database is genuinely behind.
+
+## Follow-up verification
+
+Readiness passed in GitHub CI and the browser suite moved beyond startup. It then exposed a stale selector: source extraction now retains full heading paths (for example `Original browser fixture / Atomic number`), while browser tests searched for bare `Atomic number`. The browser checks now resolve their fixture's actual source titles, exercise the same keyboard move, verify displayed ordering after reload and assert persisted source-ID order. The control-layout navigation check also uses the actual uploaded fixture title. This preserves meaningful reorder/navigation assertions without forcing production to discard heading context.
+
+The initial restricted-cloud tokenizer failure was resolved by pre-caching the exact cl100k_base data from its public tiktoken-rs distribution on an allowed GitHub host, verified against tiktoken's expected SHA-256 `223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7`. Subsequent full backend check passed: 200 passed, 3 PostgreSQL-fixture skips. No substitute tokenizer or proxy bypass was used. Public cache files require readable permissions for the container's non-root user and must be reprovisioned after container recreation on a restricted host; this operational cache is not a secret or tracked source artifact.
+
+Cloud demo deployment: rebuilt backend/frontend, applied the additive forward migration without seeding, preserved the existing volume, then replaced API/worker/frontend containers. All services became healthy. Routed readiness returned 200, and a fresh synthetic Markdown upload was processed by the durable worker successfully. This is the existing cloud demo, not a public production or user-machine localhost deployment.
+
+The connected-UI mock also needed the new `/ingestion/limits` response; an empty mock response correctly left uploads disabled. Its fixture now supplies a synthetic positive limit and includes a negative case proving upload submission stays disabled when the limits request fails. No production guard was removed to make a test pass. Local full E2E passed all 16 recorded checks, and consent UI passed 14 checks.
+
+Final local browser gates passed: 16 full E2E checks, 10 connected-UI synthetic cases (including unavailable upload limits), 14 consent checks, and six translated collection/control cases plus six form widths. Full backend: 200 passed/3 PostgreSQL-fixture skips. Evidence summary: docs/evidence/readiness-fix/verification.json. Historical tracked screenshots are preserved; this run’s synthetic captures remain in work/readiness-browser-artifacts.
