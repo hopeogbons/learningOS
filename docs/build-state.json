@@ -452,6 +452,14 @@
           "cwd": "/workspace/learningOS",
           "exit_code": 0,
           "artifact": "docs/evidence/github-access-review.json"
+        },
+        {
+          "name": "CI test-mode/no-credential reproduction fixed: 49 targeted and 121 full PostgreSQL backend tests passed, zero skips",
+          "outcome": "passed",
+          "command": "APP_MODE=test uv sync --frozen; uv run --frozen alembic upgrade head; TEST_POSTGRES_URL=<isolated-synthetic-postgres> uv run --frozen pytest -q -rs (provider variables removed)",
+          "cwd": "/workspace/learningOS/backend",
+          "exit_code": 0,
+          "artifact": "docs/evidence/ci-provider-mode-fix.json"
         }
       ]
     }

@@ -265,4 +265,4 @@ class OpenAIProvider:
 def get_provider():
     # The actual immutable application mode is resolved by shared validated settings.
     from app.settings import settings
-    return DemoProvider() if settings.app_mode == "demo" else OpenAIProvider()
+    return DemoProvider() if settings.app_mode in {"demo", "test"} else OpenAIProvider()

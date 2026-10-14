@@ -10,7 +10,7 @@ x-backend: &backend
   restart: unless-stopped
   security_opt: [no-new-privileges:true]
   read_only: true
-  tmpfs: [/tmp:size=128m,mode=1777]
+  tmpfs: ['/tmp:size=128m,mode=1777']
   mem_limit: 1g
   cpus: '2.0'
 services:
@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     security_opt: [no-new-privileges:true]
     read_only: true
-    tmpfs: [/tmp:size=128m,mode=1777, /app/frontend/.next/cache:size=128m,uid=1000,gid=1000]
+    tmpfs: ['/tmp:size=128m,mode=1777', '/app/frontend/.next/cache:size=128m,uid=1000,gid=1000']
     mem_limit: 768m
     cpus: '1.0'
   edge:

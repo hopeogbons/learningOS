@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "issue": "PostgreSQL CI APP_MODE=test selected a live provider and required model credentials",
+  "reproduction": {
+    "app_mode": "test",
+    "real_api_key_present": false,
+    "model_identifier_present": false,
+    "failed_tests": [
+      "backend/tests/test_sources.py::test_upload_api_replay_worker_citation_owner_and_failed_photo",
+      "backend/tests/test_sources.py::test_connection_and_speech_unavailable_truthful",
+      "backend/tests/test_sources.py::test_drive_ui_scan_dedup_manual_drop_version_and_removal",
+      "backend/tests/test_sources.py::test_failed_connected_upload_is_not_local_success",
+      "backend/tests/test_sources.py::test_source_language_file_intake_persists_before_extraction",
+      "backend/tests/test_sources.py::test_source_language_correction_preserves_sources_citations_and_turn"
+    ],
+    "failed_count": 6
+  },
+  "fix": "Explicit demo/test fixture modes select DemoProvider; live/connected/production select OpenAIProvider and remain fail-closed without credentials",
+  "validation": {
+    "targeted_passed": 49,
+    "full_postgres_backend_passed": 121,
+    "skipped": 0,
+    "upstream_warnings": 3,
+    "frozen_install_exit_code": 0,
+    "migration_exit_code": 0,
+    "test_exit_code": 0
+  },
+  "compose_correction": "Quote comma-bearing tmpfs strings; real isolated PostgreSQL service started healthy; prepared production syntax retains complete tmpfs options",
+  "scope_limits": [
+    "No dependency or lockfile change; upstream deprecation warnings retained.",
+    "Local GitHub-equivalent reproduction passed; hosted Actions result must be checked separately.",
+    "No live provider verification or public application deployment was performed by the corrected CI reproduction."
+  ]
+}

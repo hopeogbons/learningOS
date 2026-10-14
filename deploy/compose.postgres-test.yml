@@ -13,4 +13,4 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
-    tmpfs: [/var/lib/postgresql/data:size=512m,uid=999,gid=999]
+    tmpfs: ['/var/lib/postgresql/data:size=512m,uid=999,gid=999']

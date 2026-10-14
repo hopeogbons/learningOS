@@ -2,6 +2,12 @@
 
 The requested application is implemented with the supplied Next.js/React/TypeScript dashboard and Python/FastAPI backend. The release is an **offline demonstration candidate** with preliminary live provider verification. All twelve batches were attempted; complete connected and production gates remain pending. The user requested access outside Codex, so the reviewed source was pushed to the initial `main` branch at https://github.com/hopeogbons/learningOS. Public application deployment remains unpublished.
 
+## PostgreSQL CI correction
+
+The reported six hosted-CI failures were reproduced with APP_MODE=test and provider keys removed. Test mode incorrectly selected the live provider; it now selects the deterministic fixture provider, just like demo mode. Live/connected/production still require real credentials and never fall back. Five new regressions protect both behaviors. The corrected no-key run passed 49 targeted source/provider tests and **121 full backend tests with real isolated PostgreSQL**, no skips, after frozen installation and migrations. Three upstream deprecation warnings remain; they do not cause these failures. See evidence/ci-provider-mode-fix.json and evidence/ci-postgres-no-keys.log. The hosted Actions rerun is a separate result.
+
+The isolated test launch also exposed unquoted tmpfs option commas in YAML. Complete mount strings are now quoted in test and prepared production Compose; the actual PostgreSQL service became healthy and the production file passed a syntax/options check. No production deployment or dependency/lockfile change was made. Earlier container/source evidence below describes its captured source version; the updated GitHub source rebuilds normally with the documented --build command.
+
 ## GitHub access and Docker demo follow-up
 
 The source is now accessible through the repository's regular Code → Download ZIP action. README supplies one Docker Compose startup command for the user's own computer, with no Codex/Node/Python/provider-key setup required for the offline demo. Current backend/frontend images were rebuilt and the isolated Compose stack started successfully. Initial `--wait` failed because the worker had no healthcheck; a container-local database heartbeat check now verifies only that worker's host, rejects stale/future timestamps, and returns failure without logging connection secrets. Both demo and prepared production Compose use it; no production deployment was made.
