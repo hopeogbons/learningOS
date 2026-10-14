@@ -105,7 +105,7 @@
   "collection.destination": "Место хранения",
   "collection.localDescription": "Локальное хранилище демо. Подключите Drive, чтобы сохранять оригиналы в управляемых папках коллекций.",
   "collection.driveDescription": "Папка Drive будет создана после проверки согласия.",
-  "collection.openOutline": "Открыть план",
+  "collection.openOutline": "Изучить коллекцию",
   "collection.add": "Добавить материал",
   "collection.folder": "Папка коллекции",
   "collection.lastSync": "Последняя синхронизация",

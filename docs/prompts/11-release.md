@@ -34,3 +34,7 @@ Independent native Reviewer/security/fidelity audits; coordinator resolves findi
 ## Revision 2 batch work
 
 Run all L01–L05 per target language and live D01–D06 for both entry paths, plus existing security/load/restore gates. Native/proficient translation and audible speech evidence are required; catalogs/API flags alone cannot pass. Document actual supported language/region/provider matrix and OAuth verification/test-user restrictions. Release cannot claim all-ten support or all-client Drive availability while those gates are blocked. Record revised downloadable reading files and source coverage; preserve original dashboard fidelity.
+
+## Reproducible control layout and labels
+
+Follow UI_CONTRACT’s 2026-10-14 control rules: vertically/horizontally center button content across full 44px hit areas, preserve existing colors, balance inputs and verify mobile/desktop/long/RTL labels. Collection detail links read Explore collection (localized), keeping the existing outline route/state intact. Run tests/control_layout.py on the fresh running demo; a screenshot or min-height declaration alone is not a pass.

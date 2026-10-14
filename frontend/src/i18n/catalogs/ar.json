@@ -105,7 +105,7 @@
   "collection.destination": "وجهة التخزين",
   "collection.localDescription": "تخزين تجريبي محلي. اتصل بـ Drive لحفظ الأصول في مجلدات المجموعات المُدارة.",
   "collection.driveDescription": "سيُنشأ مجلد Drive بعد التحقق من الموافقة.",
-  "collection.openOutline": "فتح المخطط",
+  "collection.openOutline": "استكشف المجموعة",
   "collection.add": "إضافة مادة",
   "collection.folder": "مجلد المجموعة",
   "collection.lastSync": "آخر مزامنة",

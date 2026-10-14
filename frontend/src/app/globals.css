@@ -301,11 +301,19 @@ body {
 :root {
   --bs-btn-border-radius: 0.75rem;
 }
+/* Center the content box as well as preserving the touch target. A minimum
+   height alone leaves Bootstrap's small/link labels aligned to the top. */
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
   min-height: 44px;
+  min-width: 44px;
+  white-space: normal;
 }
-.btn-sm {
-  min-height: 44px;
+.btn > svg {
+  flex-shrink: 0;
 }
 input:not([type="radio"]):not([type="checkbox"]),
 select {

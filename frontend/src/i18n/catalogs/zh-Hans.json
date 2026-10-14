@@ -105,7 +105,7 @@
   "collection.destination": "存储位置",
   "collection.localDescription": "本地演示存储。连接 Drive，可将原文件保存到托管的资料集文件夹。",
   "collection.driveDescription": "验证授权后创建 Drive 文件夹。",
-  "collection.openOutline": "打开大纲",
+  "collection.openOutline": "浏览学习集",
   "collection.add": "添加资料",
   "collection.folder": "资料集文件夹",
   "collection.lastSync": "上次同步",

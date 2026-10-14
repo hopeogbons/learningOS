@@ -105,7 +105,7 @@
   "collection.destination": "Destino de almacenamiento",
   "collection.localDescription": "Almacenamiento de demo local. Conecta Drive para guardar originales en las carpetas gestionadas de la colección.",
   "collection.driveDescription": "La carpeta de Drive se creará tras verificar el consentimiento.",
-  "collection.openOutline": "Abrir esquema",
+  "collection.openOutline": "Explorar colección",
   "collection.add": "Añadir material",
   "collection.folder": "Carpeta de la colección",
   "collection.lastSync": "Última sincronización",

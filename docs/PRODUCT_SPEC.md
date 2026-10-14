@@ -4,7 +4,7 @@ Learning OS turns a learner's own incremental material into a citation-backed te
 
 ## Primary journey
 
-Home → create/open Collection → Add Material → processing status → Outline → select titled sections from multiple materials → Go (create scope revision) → Study one concept → confidence before answering → Reviewer feedback → visible scope progress → spaced Review → persistent weak-spots/history. Resume returns to the same scope revision and next pending concept. Ingestion never auto-enrolls all titles.
+Home → create/open Collection (Explore collection) → Add Material → processing status → Outline → select titled sections from multiple materials → Go (create scope revision) → Study one concept → confidence before answering → Reviewer feedback → visible scope progress → spaced Review → persistent weak-spots/history. Resume returns to the same scope revision and next pending concept. Ingestion never auto-enrolls all titles.
 
 ## Learning invariants
 

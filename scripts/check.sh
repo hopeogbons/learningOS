@@ -14,7 +14,7 @@ python "$REPO_ROOT/scripts/test_operations.py"
 python "$REPO_ROOT/scripts/check_locales.py"
 (cd "$REPO_ROOT/frontend" && npm run lint && npm exec tsc -- --noEmit && npm run build)
 if [[ "$browser" == true ]]; then
-  (cd "$REPO_ROOT" && "${BROWSER_PYTHON:-python}" tests/e2e_smoke.py)
+  (cd "$REPO_ROOT" && "${BROWSER_PYTHON:-python}" tests/e2e_smoke.py && "${BROWSER_PYTHON:-python}" tests/control_layout.py)
 else
   echo 'Browser suite not requested. Run scripts/check.sh --browser with Playwright browsers installed.'
 fi

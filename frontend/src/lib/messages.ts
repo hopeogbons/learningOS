@@ -117,7 +117,7 @@ export const messages = {
     "Local demo storage. Connect Drive to save originals in managed Collection folders.",
   "collection.driveDescription":
     "Drive folder will be created after verified consent.",
-  "collection.openOutline": "Open outline",
+  "collection.openOutline": "Explore collection",
   "collection.add": "Add material",
   "collection.folder": "Collection folder",
   "collection.lastSync": "Last sync",

@@ -105,7 +105,7 @@
   "collection.destination": "Destination de stockage",
   "collection.localDescription": "Stockage de démo local. Connectez Drive pour enregistrer les originaux dans les dossiers gérés des collections.",
   "collection.driveDescription": "Le dossier Drive sera créé après vérification du consentement.",
-  "collection.openOutline": "Ouvrir le plan",
+  "collection.openOutline": "Explorer la collection",
   "collection.add": "Ajouter un document",
   "collection.folder": "Dossier de la collection",
   "collection.lastSync": "Dernière synchronisation",

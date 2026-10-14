@@ -105,7 +105,7 @@
   "collection.destination": "Destino de armazenamento",
   "collection.localDescription": "Armazenamento de demonstração local. Conecte o Drive para salvar originais nas pastas gerenciadas das coleções.",
   "collection.driveDescription": "A pasta do Drive será criada após verificar o consentimento.",
-  "collection.openOutline": "Abrir estrutura",
+  "collection.openOutline": "Explorar coleção",
   "collection.add": "Adicionar material",
   "collection.folder": "Pasta da coleção",
   "collection.lastSync": "Última sincronização",

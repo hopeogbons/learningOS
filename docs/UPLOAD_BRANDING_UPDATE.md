@@ -42,3 +42,5 @@ Target is the existing cloud-local demo instance on frontend port 3150, API port
 ## CI contract correction — 2026-10-14
 
 GitHub CI failed because `maintenance_updates` was added without updating the strict build-state schema. Extended the schema with optional, explicitly typed maintenance/backend/deployment records while preserving rejection of unknown fields. Added five regression cases covering the current published state, legacy state and invalid evidence. The validator now emits concise field-level errors instead of dumping the entire state. Local validation passed all six schemas and the ten-language registry; backend suite: 183 passed, 3 PostgreSQL-fixture skips. The correction affects orchestration validation/tests/documentation; deployed application behavior is unchanged.
+
+The schema correction at `bac4e0d94d21feef6a8892dbdc96f03d5b22678e` passed both GitHub Actions jobs (offline/browser and PostgreSQL), run https://github.com/hopeogbons/learningOS/actions/runs/38546681887.

@@ -530,6 +530,17 @@
         "data_volume": "preserved",
         "public_production": "unconfigured"
       }
+    },
+    {
+      "date": "2026-10-14",
+      "scope": "centered shared controls, Explore collection wording and fresh-build browser regression",
+      "status": "implemented_locally_validated",
+      "evidence": [
+        "docs/CONTROL_LAYOUT_UPDATE.md",
+        "docs/evidence/control-layout-2026-10-14/results.json"
+      ],
+      "frontend_lint": "passed",
+      "frontend_build": "passed"
     }
   ]
 }

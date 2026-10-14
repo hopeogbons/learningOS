@@ -49,6 +49,7 @@ jobs:
           python tests/e2e_smoke.py
           python tests/local_connected_frontend.py
           python tests/local_consent_frontend.py
+          python tests/control_layout.py
       - name: Compose syntax
         run: |
           docker compose -f deploy/compose.demo.yml config --quiet

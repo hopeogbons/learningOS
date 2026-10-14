@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "locale": "en",
+      "width": 390,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    },
+    {
+      "locale": "de",
+      "width": 390,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    },
+    {
+      "locale": "de",
+      "width": 1440,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    },
+    {
+      "locale": "ar",
+      "width": 390,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    },
+    {
+      "locale": "ar",
+      "width": 1440,
+      "centering": "passed",
+      "wrapping": "passed",
+      "collection_route": "passed"
+    }
+  ]
+}

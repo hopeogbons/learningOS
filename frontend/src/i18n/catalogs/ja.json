@@ -105,7 +105,7 @@
   "collection.destination": "保存先",
   "collection.localDescription": "ローカルデモ用の保存領域です。Drive に接続すると、管理対象のコレクションフォルダーに原本を保存できます。",
   "collection.driveDescription": "同意の確認後に Drive フォルダーを作成します。",
-  "collection.openOutline": "学習範囲を開く",
+  "collection.openOutline": "コレクションを見る",
   "collection.add": "教材を追加",
   "collection.folder": "コレクションフォルダー",
   "collection.lastSync": "最終同期",

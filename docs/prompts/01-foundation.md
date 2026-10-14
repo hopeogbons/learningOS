@@ -34,3 +34,7 @@ Backend and frontend contributors may run in parallel after schemas are coordina
 ## Revision 2 batch work
 
 Add language preferences/catalog framework and accessible chooser in existing topbar/Profile/mobile drawer; create complete message keys and ten catalog candidates with reviewed-status gate. Add folder/provisioning/upload-origin/remote receipt fields and local/Drive collection states to the initial migrations/DTOs. Server renders locale/dir, logical RTL shell and local script font fallback. Future Drive connection queues owned root/Collection folders; local demo remains explicit.
+
+## Reproducible control layout and labels
+
+Follow UI_CONTRACT’s 2026-10-14 control rules: vertically/horizontally center button content across full 44px hit areas, preserve existing colors, balance inputs and verify mobile/desktop/long/RTL labels. Collection detail links read Explore collection (localized), keeping the existing outline route/state intact. Run tests/control_layout.py on the fresh running demo; a screenshot or min-height declaration alone is not a pass.
