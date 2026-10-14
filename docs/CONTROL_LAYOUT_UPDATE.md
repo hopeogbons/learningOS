@@ -20,3 +20,7 @@ UI_CONTRACT and PRODUCT_SPEC define the intended controls and collection wording
 - Independent read-only review found no blockers; added explicit form visibility before measuring controls to avoid empty assertion loops.
 
 The initial local Next production attempt was blocked by the sandbox’s subprocess socket policy; the actual Docker build succeeded. Synthetic demo checks do not prove live Google Drive or public production hosting. Existing data is preserved during the deployment to the existing cloud demo.
+
+## Deployment verification
+
+Published implementation commit `05f57235c27bdea1a78b69c907e76bb0859beeac` to main. Updated only the existing cloud demo frontend container, preserving backend, worker and data volume. The new frontend image became healthy. `E2E_BASE_URL=http://127.0.0.1:3150 python tests/control_layout.py` passed all six translated collection cases and six responsive form widths against that deployed production frontend build. Public hosting status remains unchanged.

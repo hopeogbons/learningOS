@@ -534,13 +534,20 @@
     {
       "date": "2026-10-14",
       "scope": "centered shared controls, Explore collection wording and fresh-build browser regression",
-      "status": "implemented_locally_validated",
+      "status": "deployed_verified",
       "evidence": [
         "docs/CONTROL_LAYOUT_UPDATE.md",
         "docs/evidence/control-layout-2026-10-14/results.json"
       ],
       "frontend_lint": "passed",
-      "frontend_build": "passed"
+      "frontend_build": "passed",
+      "deployment": {
+        "source_commit": "05f57235c27bdea1a78b69c907e76bb0859beeac",
+        "target": "existing cloud Docker demo frontend on port 3150",
+        "status": "deployed_verified",
+        "services": "frontend healthy; backend/worker preserved",
+        "public_production": "unconfigured"
+      }
     }
   ]
 }
