@@ -1,5 +1,7 @@
 # Learning OS
 
+<img width="3782" height="1852" alt="learningOS" src="https://github.com/user-attachments/assets/73cd1e48-caed-4bd7-b2d8-8e5340df7a2e" />
+
 Learning OS turns your own source material into cited teaching, recall checks, confidence-aware assessment and spaced review. The Next.js/React/TypeScript frontend preserves the supplied Learning OS dashboard; Python/FastAPI, SQLAlchemy and durable database jobs implement the learning workflow.
 
 ## Run the real application locally
